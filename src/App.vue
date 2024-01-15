@@ -1,5 +1,16 @@
 <script setup lang="ts">
 import LevelContent from './components/LevelContent.vue'
+import { useWorldStore } from '@/stores/world'
+import { ref } from 'vue';
+
+const store = useWorldStore()
+const levels = store.levels
+const currentLevel = ref(0)
+
+store.$subscribe((mutation, state) => {
+  // TODO: send to server
+  console.log(JSON.stringify(state));
+})
 </script>
 
 <template>
@@ -10,35 +21,28 @@ import LevelContent from './components/LevelContent.vue'
       </a>
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-          <a href="#" class="nav-link active" aria-current="page">
+        <li v-for="(level, index) in levels" :key="index" class="nav-item">
+          <a href="#" class="nav-link" :class="index == currentLevel ? 'active' : ''" aria-current="page"
+            @click="currentLevel = index">
             <svg class="bi me-2" width="16" height="16">
               <use xlink:href="#home"></use>
             </svg>
-            Level 1
+            {{ level.name }}
           </a>
         </li>
         <li>
-          <a href="#" class="nav-link text-white">
-            <svg class="bi me-2" width="16" height="16">
-              <use xlink:href="#speedometer2"></use>
-            </svg>
-            Level 2
-          </a>
-        </li>
-        <li>
-          <a href="#" class="nav-link text-white">
+          <a href="#" class="nav-link text-white" @click="store.addLevel()">
             <svg class="bi me-2" width="16" height="16">
               <use xlink:href="#table"></use>
             </svg>
-            Level 3
+            + add level
           </a>
         </li>
       </ul>
     </div>
 
     <div class="flex-grow-1">
-      <LevelContent />
+      <LevelContent :level="currentLevel" />
     </div>
   </div>
 </template>

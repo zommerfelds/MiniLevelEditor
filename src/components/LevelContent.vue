@@ -1,8 +1,17 @@
 <script setup lang="ts">
+import { useWorldStore } from '@/stores/world'
+import { computed } from 'vue'
+
+const props = defineProps<{ level: number }>()
+const store = useWorldStore()
+const message = computed({
+  get() { return store.levels[props.level].message },
+  set(val) { store.levels[props.level].message = val }
+}) 
 </script>
 
 <template>
-  <textarea class="span6 w-100 h-100 text-white bg-dark p-3"></textarea>
+  <textarea class="span6 w-100 h-100 text-white bg-dark p-3" v-model="message"></textarea>
 </template>
 
 <style scoped>
