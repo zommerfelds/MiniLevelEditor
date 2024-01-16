@@ -5,3 +5,18 @@ A small level editor meant to be run in the browser. This is useful for game jam
 ## ⚠️ Work in progress ⚠️
 
 This tool is not implemented yet. Feel free to open an issue if you are interested to say hello :)
+
+TODO list:
+
+- [x] Set up basic Vue project
+- [x] Add a basic level switcher sidebar with state
+- [ ] Sync the state with a local file
+- [ ] Define a level format
+- [ ] Implement tile paining UI with just colors
+- [ ] Use tileset from file
+- [ ] Toolbar with basic tools (eraser? mover)
+- [ ] Layers
+- [ ] Define the auto-mapping model
+- [ ] Allow to define tile properties
+- [ ] Make project configuration (e.g. filename) more flexible
+- [ ] Make a YouTube video
