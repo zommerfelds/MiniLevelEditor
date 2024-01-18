@@ -8,12 +8,14 @@ export const useWorldStore = defineStore('world', () => {
     count.value++
   }
 
-  const message = ref("bla")
+  const message = ref('bla')
 
-  const levels = ref<[{ name: string, message: string }]>([{ name: "level 1", message: "level 1 content" }]);
+  const levels = ref<[{ name: string; message: string }]>([
+    { name: 'level 1', message: 'level 1 content' }
+  ])
 
   function addLevel() {
-    levels.value.push({ name: "bla", message: "foo" });
+    levels.value.push({ name: 'bla', message: 'foo' })
   }
 
   return { count, doubleCount, increment, message, levels, addLevel }
