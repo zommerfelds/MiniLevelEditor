@@ -6,11 +6,18 @@ A small level editor meant to be run in the browser. This is useful for game jam
 
 This tool is not implemented yet. Feel free to open an issue if you are interested to say hello :)
 
-TODO list:
+## How to run
+
+Run: `npm run dev`
+
+On the browser, open `http://localhost:5173/`
+
+## TODO list
 
 - [x] Set up basic Vue project
 - [x] Add a basic level switcher sidebar with state
-- [ ] Sync the state with a local file
+- [x] Integrate with local server
+- [ ] Save the state to disk
 - [ ] Add warning for when there is no server connected
 - [ ] Define a level format
 - [ ] Implement tile paining UI with just colors
@@ -20,6 +27,8 @@ TODO list:
 - [ ] Define the auto-mapping model
 - [ ] Allow to define tile properties
 - [ ] Make project configuration (e.g. filename) more flexible
+- [ ] Export package so it can be run with npx
+- [ ] Add a demo link
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
 

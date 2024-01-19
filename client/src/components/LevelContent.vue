@@ -6,7 +6,7 @@ const props = defineProps<{ level: number }>()
 const store = useWorldStore()
 const message = computed({
   get() {
-    return store.levels[props.level].message
+    return store.levels[props.level]?.message
   },
   set(val) {
     store.levels[props.level].message = val
