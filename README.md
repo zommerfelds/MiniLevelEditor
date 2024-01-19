@@ -18,9 +18,10 @@ On the browser, open `http://localhost:5173/`
 - [x] Add a level switcher sidebar with state
 - [x] Integrate with local server & save the state to disk
 - [x] Nicer logo + add to README
-- [ ] Define a level format
+- [x] Define a level format
+- [ ] Integrate Phaser in the editor
 - [ ] Implement tile paining UI with just colors
-- [ ] Use tileset from file
+- [ ] Use tileset from image
 - [ ] Toolbar with basic tools (eraser? mover)
 - [ ] Layers
 - [ ] Define the auto-mapping model
