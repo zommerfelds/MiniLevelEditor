@@ -14,9 +14,10 @@ On the browser, open `http://localhost:5173/`
 
 ## TODO list
 
-- [x] Set up basic Vue project
-- [x] Add a basic level switcher sidebar with state
+- [x] Set up Vue project
+- [x] Add a level switcher sidebar with state
 - [x] Integrate with local server & save the state to disk
+- [ ] Nicer logo + add to README
 - [ ] Define a level format
 - [ ] Implement tile paining UI with just colors
 - [ ] Use tileset from file
