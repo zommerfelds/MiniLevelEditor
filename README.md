@@ -16,9 +16,7 @@ On the browser, open `http://localhost:5173/`
 
 - [x] Set up basic Vue project
 - [x] Add a basic level switcher sidebar with state
-- [x] Integrate with local server
-- [ ] Save the state to disk
-- [ ] Add warning for when there is no server connected
+- [x] Integrate with local server & save the state to disk
 - [ ] Define a level format
 - [ ] Implement tile paining UI with just colors
 - [ ] Use tileset from file
@@ -28,6 +26,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Allow to define tile properties
 - [ ] Make project configuration (e.g. filename) more flexible
 - [ ] Export package so it can be run with npx
+- [ ] Serverless mode + warning for when there is no server connected
 - [ ] Add a demo link
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
