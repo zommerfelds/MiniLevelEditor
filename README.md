@@ -29,6 +29,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Export package so it can be run with npx
 - [ ] Serverless mode + warning for when there is no server connected
 - [ ] Add a demo link
+- [ ] Make JSON output git diff friendly
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
 
