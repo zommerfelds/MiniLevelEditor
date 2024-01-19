@@ -10,7 +10,7 @@ const currentLevel = ref(0)
 const getUrl = '/api/get'
 fetch(getUrl).then(async response => {
   const json = await response.json()
-  console.log('loading to local storage:', JSON.stringify(json))
+  console.log('Loaded from server:', JSON.stringify(json))
   store.levels = json.levels
 })
 
@@ -18,7 +18,7 @@ const postUrl = '/api/post'
 
 store.$subscribe(async (mutation, state) => {
   const stateStr = JSON.stringify(state)
-  console.log('sending to server:', stateStr)
+  console.log('Sending to server:', stateStr)
 
   const response = await fetch(postUrl, {
     method: 'POST',
@@ -33,8 +33,8 @@ store.$subscribe(async (mutation, state) => {
 <template>
   <div class="h-100 d-flex align-items-stretch">
     <div class="border-end d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-        <img class="pixelart" src="@/assets/logo.png" width="100" />
+      <a href="/" class="align-items-center">
+        <img class="pixelart" src="@/assets/logo.png" width="240" />
       </a>
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">

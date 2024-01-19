@@ -1,4 +1,4 @@
-# MiniLevelEditor
+<img src="client/src/assets/logo.png" alt="MiniLevelEditor logo" width="300" style="image-rendering: pixelated; padding-bottom: 1em"/>
 
 A small level editor meant to be run in the browser. This is useful for game jams or if you want to minimize required software installs. The goal is to run this in an online IDE e.g. Github Codespaces.
 
@@ -17,7 +17,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Set up Vue project
 - [x] Add a level switcher sidebar with state
 - [x] Integrate with local server & save the state to disk
-- [ ] Nicer logo + add to README
+- [x] Nicer logo + add to README
 - [ ] Define a level format
 - [ ] Implement tile paining UI with just colors
 - [ ] Use tileset from file
