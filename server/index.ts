@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express'
 import { promises as fsPromises } from 'fs';
+import { format } from 'prettier';
 
 const app: Express = express()
 const port = 3000
@@ -27,8 +28,9 @@ async function main() {
   app.post('/post', async (req: Request, res: Response) => {
     inMemoryData = req.body
     const jsonStr = JSON.stringify(inMemoryData)
-    await fsPromises.writeFile(filePath, jsonStr)
-    console.log("Saving new value:", jsonStr);
+    const jsonStrPretty = await format(jsonStr, { parser: 'json' })
+    await fsPromises.writeFile(filePath, jsonStrPretty)
+    console.log("Saving new value:", jsonStrPretty)
     res.send("OK")
   })
 

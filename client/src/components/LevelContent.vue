@@ -6,10 +6,16 @@ const props = defineProps<{ level: number }>()
 const store = useWorldStore()
 const message = computed({
   get() {
-    return store.levels[props.level]?.message
+    return JSON.stringify(store.levels[props.level])
   },
   set(val) {
-    store.levels[props.level].message = val
+    let parsed = undefined
+    try {
+      parsed = JSON.parse(val)
+    } catch (err) {
+      return
+    }
+    store.levels[props.level] = parsed
   }
 })
 </script>

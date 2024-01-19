@@ -3,10 +3,10 @@ import { defineStore } from 'pinia'
 
 // Local storage for all level data.
 export const useWorldStore = defineStore('world', () => {
-  const levels = ref<{ name: string; message: string }[]>([])
+  const levels = ref<any[]>([])
 
   function addLevel() {
-    levels.value.push({ name: 'bla', message: 'foo' })
+    levels.value.push({ todo: 'update the format here' })
   }
 
   return { levels, addLevel }
