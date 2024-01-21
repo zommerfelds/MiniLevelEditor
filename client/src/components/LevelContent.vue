@@ -31,7 +31,7 @@ onMounted(() => {
 
 <template>
   <textarea class="span6 w-100 h-25 text-white bg-dark p-3" v-model="message"></textarea>
-  <div id="phaser-game" class="w-100 h-75"></div>
+  <div id="phaser-game" class="w-100 h-75" style="overflow: hidden;"></div>
 </template>
 
 <style scoped>

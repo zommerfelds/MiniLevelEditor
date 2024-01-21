@@ -27,16 +27,11 @@ class MyScene extends Scene {
         const graphics = this.add.graphics()
         graphics.alpha = 0.5
         graphics.lineStyle(1, 0xffffff)
-
-        let y = 16
-        while (y < this.renderer.height) {
-            graphics.lineBetween(0, y * scale, this.renderer.width, y * scale)
-            y += 16
+        for (let y = 0; y <= 10; y++) {
+            graphics.lineBetween(0, y * 16 * scale, 10 * 16 * scale, y * 16 * scale)
         }
-        let x = 16
-        while (x < this.renderer.height) {
-            graphics.lineBetween(x * scale, 0, x * scale, this.renderer.height)
-            x += 16
+        for (let x = 0; x <= 10; x++) {
+            graphics.lineBetween(x * 16 * scale, 0, x * 16 * scale, 10 * 16 * scale)
         }
     }
 }
@@ -44,9 +39,9 @@ class MyScene extends Scene {
 // Inspired by https://github.com/Sun0fABeach/breakout
 function launch(containerId: string): Phaser.Game {
     return new Phaser.Game({
+        //width: 100,
+        //height: 100,
         type: Phaser.AUTO,
-        //width: 16 * 6,
-        //height: 16 * 6,
         scale: {
             mode: Phaser.Scale.RESIZE,
         },

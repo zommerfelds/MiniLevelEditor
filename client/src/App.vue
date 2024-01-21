@@ -58,7 +58,8 @@ store.$subscribe(async (mutation, state) => {
       </ul>
     </div>
 
-    <div class="flex-grow-1">
+    <!-- min-width fix: https://stackoverflow.com/a/66689926/3810493 -->
+    <div class="flex-grow-1" style="min-width: 0;">
       <LevelContent :level="currentLevel" />
     </div>
   </div>
