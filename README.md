@@ -1,6 +1,6 @@
 ![MiniLevelEditor logo](https://github.com/zommerfelds/MiniLevelEditor/assets/1260622/63d75f6f-49e2-4641-9e41-6296588dc612)
 
-A small level editor meant to be run in the browser. This is useful for game jams or if you want to minimize required software installs. The goal is to run this in an online IDE e.g. Github Codespaces.
+A small tile-based level editor that runs in the browser. This is useful for game jams or if you want to minimize required software installs. The goal is to run this in an online IDE e.g. Github Codespaces. The emphasis of this project is on the workflow, not necessarily on having all kinds of features.mode: Phaser.Scale.FIT,
 
 ## ⚠️ Work in progress ⚠️
 

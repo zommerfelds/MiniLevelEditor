@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useWorldStore } from '@/stores/world'
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { launch } from '@/phaser/phaser-main'
 
 const props = defineProps<{ level: number }>()
 const store = useWorldStore()
+
 const message = computed({
   get() {
     return JSON.stringify(store.levels[props.level])
@@ -18,10 +20,18 @@ const message = computed({
     store.levels[props.level] = parsed
   }
 })
+
+onMounted(() => {
+  const phaserInstance = launch('phaser-game')
+  onUnmounted(() => {
+    phaserInstance.destroy(true)
+  })
+})
 </script>
 
 <template>
-  <textarea class="span6 w-100 h-100 text-white bg-dark p-3" v-model="message"></textarea>
+  <textarea class="span6 w-100 h-25 text-white bg-dark p-3" v-model="message"></textarea>
+  <div id="phaser-game" class="w-100 h-75"></div>
 </template>
 
 <style scoped>
