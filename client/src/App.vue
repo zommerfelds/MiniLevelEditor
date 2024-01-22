@@ -8,7 +8,7 @@ const levels = computed(() => store.levels)
 const currentLevel = ref(0)
 
 const getUrl = '/api/get'
-fetch(getUrl).then(async response => {
+fetch(getUrl).then(async (response) => {
   const json = await response.json()
   console.log('Loaded from server:', JSON.stringify(json))
   store.levels = json.levels
@@ -22,8 +22,8 @@ store.$subscribe(async (mutation, state) => {
 
   const response = await fetch(postUrl, {
     method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: stateStr
+    headers: { 'Content-Type': 'application/json' },
+    body: stateStr,
   })
   const json = await response.text()
   console.log(json)
@@ -32,15 +32,23 @@ store.$subscribe(async (mutation, state) => {
 
 <template>
   <div class="h-100 d-flex align-items-stretch">
-    <div class="border-end d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px">
+    <div
+      class="border-end d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+      style="width: 280px"
+    >
       <a href="/" class="align-items-center">
         <img class="pixelart" src="@/assets/logo.png" width="240" />
       </a>
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
         <li v-for="(level, index) in levels" :key="index" class="nav-item">
-          <a href="#" class="nav-link" :class="index == currentLevel ? 'active' : ''" aria-current="page"
-            @click="currentLevel = index">
+          <a
+            href="#"
+            class="nav-link"
+            :class="index == currentLevel ? 'active' : ''"
+            aria-current="page"
+            @click="currentLevel = index"
+          >
             <svg class="bi me-2" width="16" height="16">
               <use xlink:href="#home"></use>
             </svg>
@@ -59,7 +67,7 @@ store.$subscribe(async (mutation, state) => {
     </div>
 
     <!-- min-width fix: https://stackoverflow.com/a/66689926/3810493 -->
-    <div class="flex-grow-1" style="min-width: 0;">
+    <div class="flex-grow-1" style="min-width: 0">
       <LevelContent :level="currentLevel" />
     </div>
   </div>

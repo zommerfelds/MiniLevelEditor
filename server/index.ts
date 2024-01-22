@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express'
-import { promises as fsPromises } from 'fs';
-import { format } from 'prettier';
+import { promises as fsPromises } from 'fs'
+import { format } from 'prettier'
 
 const app: Express = express()
 const port = 3000
@@ -8,7 +8,7 @@ const port = 3000
 const args = process.argv.slice(2)
 const filePath = args[0]
 if (filePath === undefined) {
-  throw "No file path argument specified"
+  throw 'No file path argument specified'
 }
 
 console.info('Loading from file ' + filePath)
@@ -18,7 +18,7 @@ async function main() {
   console.info('Data: ' + fileJsonStr)
   let inMemoryData = JSON.parse(fileJsonStr)
 
-  app.use(express.json());
+  app.use(express.json())
 
   app.get('/get', (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json')
@@ -30,8 +30,8 @@ async function main() {
     const jsonStr = JSON.stringify(inMemoryData)
     const jsonStrPretty = await format(jsonStr, { parser: 'json' })
     await fsPromises.writeFile(filePath, jsonStrPretty)
-    console.log("Saving new value:", jsonStrPretty)
-    res.send("OK")
+    console.log('Saving new value:', jsonStrPretty)
+    res.send('OK')
   })
 
   app.listen(port, () => {
