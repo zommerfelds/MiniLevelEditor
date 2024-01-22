@@ -1,9 +1,11 @@
 import Phaser from 'phaser'
-
 import { Scene } from 'phaser'
+import { useWorldStore } from '@/stores/world'
+import { toRaw } from 'vue'
 
 class MyScene extends Scene {
   origDragPoint?: Phaser.Math.Vector2 = undefined
+  store = useWorldStore()
 
   constructor() {
     super({ key: 'MyScene' })
@@ -16,8 +18,10 @@ class MyScene extends Scene {
   create(): void {
     console.log('Starting Phaser scene')
 
-    const width = 7
-    const height = 6
+    const level = toRaw(this.store.levels[0])
+    console.log(level)
+    const width = level.width
+    const height = level.height
 
     this.cameras.main.setZoom(5)
     this.cameras.main.centerOn((width * 16) / 2, (height * 16) / 2)
@@ -28,7 +32,7 @@ class MyScene extends Scene {
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        const img = this.add.image(x * 16.3, y * 16.3, 'tiles', Math.floor(Math.random() * 4))
+        const img = this.add.image(x * 16.3, y * 16.3, 'tiles', level.layers[0].data[x + y * width])
         img.setOrigin(0, 0)
       }
     }
@@ -37,8 +41,10 @@ class MyScene extends Scene {
   update(): void {
     if (this.game.input.activePointer.isDown && this.game.input.activePointer.button == 1) {
       if (this.origDragPoint) {
-        this.cameras.main.x += this.game.input.activePointer.position.x - this.origDragPoint.x
-        this.cameras.main.y += this.game.input.activePointer.position.y - this.origDragPoint.y
+        this.cameras.main.scrollX +=
+          (this.origDragPoint.x - this.game.input.activePointer.position.x) / this.cameras.main.zoom
+        this.cameras.main.scrollY +=
+          (this.origDragPoint.y - this.game.input.activePointer.position.y) / this.cameras.main.zoom
       }
       this.origDragPoint = this.game.input.activePointer.position.clone()
     } else {

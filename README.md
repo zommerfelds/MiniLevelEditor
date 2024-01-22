@@ -19,8 +19,8 @@ On the browser, open `http://localhost:5173/`
 - [x] Integrate with local server & save the state to disk
 - [x] Nicer logo + add to README
 - [x] Define a level format
-- [ ] Integrate Phaser in the editor
-- [ ] Implement tile paining UI with just colors
+- [x] Integrate Phaser in the editor
+- [ ] Implement basic tile paining UI
 - [ ] Use tileset from image
 - [ ] Toolbar with basic tools (eraser? mover)
 - [ ] Layers

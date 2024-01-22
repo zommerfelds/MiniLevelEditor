@@ -33,7 +33,7 @@ store.$subscribe(async (mutation, state) => {
 <template>
   <div class="h-100 d-flex align-items-stretch">
     <div
-      class="border-end d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+      class="border-end border-secondary d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
       style="width: 280px"
     >
       <a href="/" class="align-items-center">
