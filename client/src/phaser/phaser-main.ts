@@ -3,6 +3,8 @@ import Phaser from 'phaser'
 import { Scene } from 'phaser'
 
 class MyScene extends Scene {
+    origDragPoint?: Phaser.Math.Vector2 = undefined
+
     constructor() {
         super({ key: 'MyScene' })
     }
@@ -14,24 +16,40 @@ class MyScene extends Scene {
     create(): void {
         console.log('Starting Phaser scene')
 
-        const scale = 5
+        const width = 7
+        const height = 6
 
-        for (let x = 0; x < 10; x++) {
-            for (let y = 0; y < 10; y++) {
-                const img = this.add.image(x * 16 * scale, y * 16 * scale, 'tiles', Math.floor(Math.random() * 4))
+        this.cameras.main.setZoom(5)
+        this.cameras.main.centerOn((width * 16) / 2, (height * 16) / 2)
+
+        this.input.on('wheel', (_pointer: any, _gameObjects: any, _deltaX: any, deltaY: number) => {
+            this.cameras.main.zoom *= 1 - deltaY * 0.001
+        })
+
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                const img = this.add.image(
+                    x * 16.3,
+                    y * 16.3,
+                    'tiles',
+                    Math.floor(Math.random() * 4)
+                )
                 img.setOrigin(0, 0)
-                img.scale = scale
             }
         }
+    }
 
-        const graphics = this.add.graphics()
-        graphics.alpha = 0.5
-        graphics.lineStyle(1, 0xffffff)
-        for (let y = 0; y <= 10; y++) {
-            graphics.lineBetween(0, y * 16 * scale, 10 * 16 * scale, y * 16 * scale)
-        }
-        for (let x = 0; x <= 10; x++) {
-            graphics.lineBetween(x * 16 * scale, 0, x * 16 * scale, 10 * 16 * scale)
+    update(): void {
+        if (this.game.input.activePointer.isDown && this.game.input.activePointer.button == 1) {
+            if (this.origDragPoint) {
+                this.cameras.main.x +=
+                    this.game.input.activePointer.position.x - this.origDragPoint.x
+                this.cameras.main.y +=
+                    this.game.input.activePointer.position.y - this.origDragPoint.y
+            }
+            this.origDragPoint = this.game.input.activePointer.position.clone()
+        } else {
+            this.origDragPoint = undefined
         }
     }
 }
@@ -39,16 +57,13 @@ class MyScene extends Scene {
 // Inspired by https://github.com/Sun0fABeach/breakout
 function launch(containerId: string): Phaser.Game {
     return new Phaser.Game({
-        //width: 100,
-        //height: 100,
         type: Phaser.AUTO,
         scale: {
-            mode: Phaser.Scale.RESIZE,
+            mode: Phaser.Scale.RESIZE
         },
-        pixelArt: true,
         antialias: false,
         autoRound: true,
-        roundPixels: true,
+        roundPixels: false,
         parent: containerId,
         scene: [MyScene]
     })
