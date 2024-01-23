@@ -17,7 +17,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Set up Vue project
 - [x] Add a level switcher sidebar with state
 - [x] Integrate with local server & save the state to disk
-- [x] Nicer logo + add to README
+- [ ] Nicer logo + add to README (TODO: make outline work on white background)
 - [x] Define a level format
 - [x] Integrate Phaser in the editor
 - [ ] Implement basic tile paining UI
