@@ -6,6 +6,8 @@ A small tile-based level editor that runs in the browser. This is useful for gam
 
 This tool is not implemented yet. Feel free to open an issue if you are interested to say hello :)
 
+[Personal notes](https://docs.google.com/document/d/1PNKyq5fczIWapZl0H0cRPSAIOZsfjAB2MmLjjtfKcmM/edit#heading=h.4z0ttusyscsq)
+
 ## How to run
 
 Run: `npm run dev`

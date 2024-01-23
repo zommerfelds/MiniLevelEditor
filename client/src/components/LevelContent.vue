@@ -2,9 +2,13 @@
 import { useWorldStore } from '@/stores/world'
 import { computed, onMounted, onUnmounted } from 'vue'
 import { launch } from '@/phaser/phaser-main'
+import { useToolsStore, Tool } from '@/stores/tools'
 
 const props = defineProps<{ level: number }>()
 const store = useWorldStore()
+const tools = useToolsStore()
+
+console.log('Tool:', tools.selectedTool, Tool.Draw, tools.selectedTool == Tool.Draw)
 
 const message = computed({
   get() {
@@ -34,20 +38,48 @@ onMounted(() => {
     <div class="p-2 bg-dark text-light d-flex">
       <div class="p-2">Tile</div>
       <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-success" data-toggle="button">1</button>
-        <button type="button" class="btn btn-light" data-toggle="button">2</button>
-        <button type="button" class="btn btn-light" data-toggle="button">3</button>
-        <button type="button" class="btn btn-light" data-toggle="button">4</button>
+        <button
+          v-for="i in 4"
+          :key="i"
+          type="button"
+          class="btn"
+          :class="tools.selectedTile == i ? 'btn-success' : 'btn-light'"
+          data-toggle="button"
+          @click="tools.selectedTile = i"
+        >
+          {{ i }}
+        </button>
       </div>
       <div class="p-2 ms-3">Tool</div>
       <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-light" data-toggle="button">Move</button>
-        <button type="button" class="btn btn-light" data-toggle="button">Draw</button>
-        <button type="button" class="btn btn-light" data-toggle="button">Erase</button>
+        <button
+          type="button"
+          class="btn"
+          :class="tools.selectedTool == Tool.Move ? 'btn-success' : 'btn-light'"
+          data-toggle="button"
+        >
+          Move
+        </button>
+        <button
+          type="button"
+          class="btn"
+          :class="tools.selectedTool == Tool.Draw ? 'btn-success' : 'btn-light'"
+          data-toggle="button"
+        >
+          Draw
+        </button>
+        <button
+          type="button"
+          class="btn"
+          :class="tools.selectedTool == Tool.Erase ? 'btn-success' : 'btn-light'"
+          data-toggle="button"
+        >
+          Erase
+        </button>
       </div>
+      <div class="p-2 ms-3">S:{{ tools.selectedTool }}</div>
     </div>
     <!--textarea class="span6 w-100 text-white bg-dark p-3" v-model="message"></textarea-->
-    <!--div><textarea class="span6 w-100 text-white bg-dark p-3" v-model="message"></textarea></div-->
     <div id="phaser-game" class="w-100" style="overflow: hidden"></div>
   </div>
 </template>
