@@ -2,8 +2,11 @@
   "forwardPorts": [5173],
   "portsAttributes": {
     "5173": {
-      "label": "vite dev server",
+      "label": "vite dev client server",
     },
+    "3000": {
+      "label": "NodeJs backend server",
+      "onAutoForward": "ignore",
+    }
   },
-  "otherPortsAttributes": { "onAutoForward" : "ignore" },
 }
