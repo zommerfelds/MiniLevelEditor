@@ -20,17 +20,18 @@ On the browser, open `http://localhost:5173/`
 - [ ] Nicer logo + add to README (TODO: make outline work on white background)
 - [x] Define a level format
 - [x] Integrate Phaser in the editor
-- [ ] Implement basic tile paining UI
-- [ ] Use tileset from image
+- [ ] Implement basic tile paining UI (proof of concept)
+- [ ] Be able to configure image source for tileset
 - [ ] Toolbar with basic tools (eraser? mover)
+- [ ] Configurable tile size
 - [ ] Layers
 - [ ] Define the auto-mapping model
 - [ ] Allow to define tile properties
-- [ ] Make project configuration (e.g. filename) more flexible
 - [ ] Export package so it can be run with npx
 - [ ] Serverless mode + warning for when there is no server connected
 - [ ] Add a demo link
-- [ ] Make JSON output git diff friendly
+- [x] Make JSON output git diff friendly
+- [ ] Paint multiple tiles at the same time
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
 
