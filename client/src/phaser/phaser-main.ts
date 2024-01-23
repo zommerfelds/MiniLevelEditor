@@ -1,11 +1,13 @@
-import Phaser from 'phaser'
-import { Scene } from 'phaser'
+import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
+import Phaser, { Scene } from 'phaser'
 import { toRaw } from 'vue'
 
 class MyScene extends Scene {
   origDragPoint?: Phaser.Math.Vector2 = undefined
+  origToolBeforeDrag?: Tool = undefined
   store = useWorldStore()
+  tools = useToolsStore()
 
   constructor() {
     super({ key: 'MyScene' })
@@ -40,6 +42,10 @@ class MyScene extends Scene {
 
   update(): void {
     if (this.game.input.activePointer.isDown && this.game.input.activePointer.button == 1) {
+      if (this.origToolBeforeDrag == undefined) {
+        this.origToolBeforeDrag = this.tools.selectedTool
+        this.tools.selectedTool = Tool.Move
+      }
       if (this.origDragPoint) {
         this.cameras.main.scrollX +=
           (this.origDragPoint.x - this.game.input.activePointer.position.x) / this.cameras.main.zoom
@@ -49,6 +55,10 @@ class MyScene extends Scene {
       this.origDragPoint = this.game.input.activePointer.position.clone()
     } else {
       this.origDragPoint = undefined
+      if (this.origToolBeforeDrag != undefined) {
+        this.tools.selectedTool = this.origToolBeforeDrag
+        this.origToolBeforeDrag = undefined
+      }
     }
   }
 }

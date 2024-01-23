@@ -8,8 +8,6 @@ const props = defineProps<{ level: number }>()
 const store = useWorldStore()
 const tools = useToolsStore()
 
-console.log('Tool:', tools.selectedTool, Tool.Draw, tools.selectedTool == Tool.Draw)
-
 const message = computed({
   get() {
     return JSON.stringify(store.levels[props.level])
@@ -77,7 +75,6 @@ onMounted(() => {
           Erase
         </button>
       </div>
-      <div class="p-2 ms-3">S:{{ tools.selectedTool }}</div>
     </div>
     <!--textarea class="span6 w-100 text-white bg-dark p-3" v-model="message"></textarea-->
     <div id="phaser-game" class="w-100" style="overflow: hidden"></div>
