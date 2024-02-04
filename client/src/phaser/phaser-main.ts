@@ -41,7 +41,11 @@ class MyScene extends Scene {
   }
 
   update(): void {
-    if (this.game.input.activePointer.isDown && this.game.input.activePointer.button == 1) {
+    if (
+      this.game.input.activePointer.isDown &&
+      this.game.input.activePointer.downElement == this.game.canvas &&
+      (this.tools.selectedTool == Tool.Move || this.game.input.activePointer.button == 1)
+    ) {
       if (this.origToolBeforeDrag == undefined) {
         this.origToolBeforeDrag = this.tools.selectedTool
         this.tools.selectedTool = Tool.Move
@@ -56,6 +60,7 @@ class MyScene extends Scene {
     } else {
       this.origDragPoint = undefined
       if (this.origToolBeforeDrag != undefined) {
+        console.log('resetting tool')
         this.tools.selectedTool = this.origToolBeforeDrag
         this.origToolBeforeDrag = undefined
       }

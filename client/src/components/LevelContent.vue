@@ -55,6 +55,7 @@ onMounted(() => {
           class="btn"
           :class="tools.selectedTool == Tool.Move ? 'btn-success' : 'btn-light'"
           data-toggle="button"
+          @click="tools.selectedTool = Tool.Move"
         >
           Move
         </button>
@@ -63,6 +64,7 @@ onMounted(() => {
           class="btn"
           :class="tools.selectedTool == Tool.Draw ? 'btn-success' : 'btn-light'"
           data-toggle="button"
+          @click="tools.selectedTool = Tool.Draw"
         >
           Draw
         </button>
@@ -71,6 +73,7 @@ onMounted(() => {
           class="btn"
           :class="tools.selectedTool == Tool.Erase ? 'btn-success' : 'btn-light'"
           data-toggle="button"
+          @click="tools.selectedTool = Tool.Erase"
         >
           Erase
         </button>
