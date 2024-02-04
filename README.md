@@ -22,7 +22,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Nicer logo + add to README
 - [x] Define a level format
 - [x] Integrate Phaser in the editor
-- [ ] Implement basic tile paining UI (proof of concept)
+- [x] Implement basic tile paining UI (proof of concept)
 - [ ] Be able to configure image source for tileset
 - [ ] Toolbar with basic tools (eraser? mover)
 - [ ] Configurable tile size
