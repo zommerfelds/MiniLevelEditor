@@ -21,14 +21,28 @@ store.$subscribe(async (mutation, state) => {
   const stateStr = JSON.stringify(state)
   console.log('Sending to server:', stateStr)
 
-  const response = await fetch(postUrl, {
+  await fetch(postUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: stateStr,
   })
-  const json = await response.text()
-  console.log(json)
 })
+
+function addLevel() {
+  store.addLevel()
+  tools.selectedLevel = store.levels.length - 1
+}
+
+function deleteLevel(index: number) {
+  store.levels.splice(index, 1)
+
+  if (tools.selectedLevel > index) {
+    tools.selectedLevel--
+  }
+  if (tools.selectedLevel >= store.levels.length) {
+    tools.selectedLevel = store.levels.length - 1
+  }
+}
 </script>
 
 <template>
@@ -43,25 +57,22 @@ store.$subscribe(async (mutation, state) => {
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
         <li v-for="(level, index) in levels" :key="index" class="nav-item">
-          <a
-            href="#"
-            class="nav-link"
+          <div
+            class="nav-link lvl-selector-row"
             :class="index == tools.selectedLevel ? 'active' : ''"
             aria-current="page"
             @click="tools.selectedLevel = index"
           >
-            <svg class="bi me-2" width="16" height="16">
-              <use xlink:href="#home"></use>
-            </svg>
-            Level {{ index + 1 }}
-          </a>
+            <a href="#" class="lvl-selector-link text-white"> Level {{ index + 1 }} </a>
+            <button
+              class="bi bi-trash3-fill ms-2 lvl-delete float-end"
+              @click.stop="deleteLevel(index)"
+            ></button>
+          </div>
         </li>
         <li>
-          <a href="#" class="nav-link text-white" @click="store.addLevel()">
-            <svg class="bi me-2" width="16" height="16">
-              <use xlink:href="#table"></use>
-            </svg>
-            + add level
+          <a href="#" class="nav-link text-white" @click="addLevel()">
+            <i class="bi bi-plus-square me-2"></i> Add level
           </a>
         </li>
       </ul>
@@ -74,4 +85,19 @@ store.$subscribe(async (mutation, state) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.lvl-selector-link {
+  text-decoration: none;
+}
+
+.lvl-selector-row {
+  cursor: pointer;
+}
+
+.lvl-delete {
+  background: none repeat scroll 0 0 transparent;
+  border: medium none;
+  border-spacing: 0;
+  color: #ffffff;
+}
+</style>

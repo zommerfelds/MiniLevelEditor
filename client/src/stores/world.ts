@@ -7,7 +7,7 @@ export const useWorldStore = defineStore('world', () => {
   const levels = ref<any[]>([])
 
   function addLevel() {
-    levels.value.push(defaultLevel)
+    levels.value.push(JSON.parse(JSON.stringify(defaultLevel)))
   }
 
   return { levels, addLevel }

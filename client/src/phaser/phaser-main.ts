@@ -24,10 +24,14 @@ class MyScene extends Scene {
   }
 
   create(): void {
+    console.log('Starting Phaser scene')
+    this.loadedLevel = this.tools.selectedLevel
+
     this.watchForLevelChanges()
 
-    console.log('Starting Phaser scene')
+    if (this.loadedLevel < 0 || this.loadedLevel >= this.store.levels.length) return
 
+    this.scale.off('resize')
     this.scale.on('resize', this.onResize, this)
 
     const level = toRaw(this.store.levels[this.loadedLevel])
@@ -54,7 +58,6 @@ class MyScene extends Scene {
   }
 
   watchForLevelChanges() {
-    this.loadedLevel = this.tools.selectedLevel
     const watchLevelSelectionStopHandle = watchEffect(() => {
       if (this.loadedLevel == this.tools.selectedLevel) return
       this.scene.restart()
