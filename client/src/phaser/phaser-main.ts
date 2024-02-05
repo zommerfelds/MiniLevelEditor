@@ -24,13 +24,7 @@ class MyScene extends Scene {
   }
 
   create(): void {
-    this.loadedLevel = this.tools.selectedLevel
-    const stopHandle = watchEffect(() => {
-      if (this.loadedLevel == this.tools.selectedLevel) return
-
-      this.scene.restart()
-    })
-    this.events.once('destroy', stopHandle) // Make sure that the watch is removed when hot reloaded
+    this.watchForLevelChanges()
 
     console.log('Starting Phaser scene')
 
@@ -57,6 +51,18 @@ class MyScene extends Scene {
     }
     this.oldDisplayWidth = this.renderer.width
     this.oldDisplayHeight = this.renderer.height
+  }
+
+  watchForLevelChanges() {
+    this.loadedLevel = this.tools.selectedLevel
+    const watchLevelSelectionStopHandle = watchEffect(() => {
+      if (this.loadedLevel == this.tools.selectedLevel) return
+      this.scene.restart()
+    })
+
+    this.events.off('destroy') // Remove existing destroy handlers (may happen if the scene is restarted).
+    this.events.once('destroy', watchLevelSelectionStopHandle) // Remove watch when Phaser is fully destroyed (e.g. hot reload).
+    this.events.once('shutdown', watchLevelSelectionStopHandle) // Remove watch when the scene is restarted.
   }
 
   onResize(gameSize: { width: number; height: number }): void {

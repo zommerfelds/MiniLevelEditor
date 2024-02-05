@@ -34,6 +34,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Make JSON output git diff friendly
 - [ ] Paint multiple tiles at the same time
 - [ ] More tools (e.g. eraser, move tile(s), selection)
+- [ ] Undo and redo
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
 
