@@ -23,6 +23,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Define a level format
 - [x] Integrate Phaser in the editor
 - [x] Implement basic tile paining UI (proof of concept)
+- [ ] BUG: start with a small window, then increase (view is black)
 - [ ] Be able to configure project (tileset image(s), tile size, etc)
 - [ ] Tile picker
 - [ ] Layers
@@ -35,6 +36,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Paint multiple tiles at the same time
 - [ ] More tools (e.g. eraser, move tile(s), selection)
 - [ ] Undo and redo
+- [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
 
