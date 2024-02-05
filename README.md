@@ -23,8 +23,8 @@ On the browser, open `http://localhost:5173/`
 - [x] Define a level format
 - [x] Integrate Phaser in the editor
 - [x] Implement basic tile paining UI (proof of concept)
-- [ ] Be able to configure project (tileset image, tile size, etc)
-- [ ] Toolbar with basic tools (eraser? mover)
+- [ ] Be able to configure project (tileset image(s), tile size, etc)
+- [ ] Tile picker
 - [ ] Layers
 - [ ] Define the auto-mapping model
 - [ ] Allow to define tile properties
@@ -33,6 +33,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Add a demo link
 - [x] Make JSON output git diff friendly
 - [ ] Paint multiple tiles at the same time
+- [ ] More tools (e.g. eraser, move tile(s), selection)
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
 
