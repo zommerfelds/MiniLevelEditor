@@ -1,27 +1,9 @@
 <script setup lang="ts">
-import { useWorldStore } from '@/stores/world'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { launch } from '@/phaser/phaser-main'
 import { useToolsStore, Tool } from '@/stores/tools'
 
-const props = defineProps<{ level: number }>()
-const store = useWorldStore()
 const tools = useToolsStore()
-
-const message = computed({
-  get() {
-    return JSON.stringify(store.levels[props.level])
-  },
-  set(val) {
-    let parsed = undefined
-    try {
-      parsed = JSON.parse(val)
-    } catch (err) {
-      return
-    }
-    store.levels[props.level] = parsed
-  },
-})
 
 onMounted(() => {
   const phaserInstance = launch('phaser-game')

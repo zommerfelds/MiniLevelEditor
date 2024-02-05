@@ -1,7 +1,7 @@
 import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import Phaser, { Scene } from 'phaser'
-import { toRaw } from 'vue'
+import { toRaw, watchEffect } from 'vue'
 
 class MyScene extends Scene {
   origDragPoint?: Phaser.Math.Vector2 = undefined
@@ -13,6 +13,7 @@ class MyScene extends Scene {
   tiles: Array<Array<Phaser.GameObjects.Image>> = []
   oldDisplayWidth: number = 1
   oldDisplayHeight: number = 1
+  loadedLevel = -1
 
   constructor() {
     super({ key: 'MyScene' })
@@ -23,11 +24,19 @@ class MyScene extends Scene {
   }
 
   create(): void {
+    this.loadedLevel = this.tools.selectedLevel
+    const stopHandle = watchEffect(() => {
+      if (this.loadedLevel == this.tools.selectedLevel) return
+
+      this.scene.restart()
+    })
+    this.events.once('destroy', stopHandle) // Make sure that the watch is removed when hot reloaded
+
     console.log('Starting Phaser scene')
 
     this.scale.on('resize', this.onResize, this)
 
-    const level = toRaw(this.store.levels[0])
+    const level = toRaw(this.store.levels[this.loadedLevel])
     const width = level.width
     const height = level.height
 
@@ -115,17 +124,18 @@ class MyScene extends Scene {
 
     if (
       tilePos.x < 0 ||
-      tilePos.x >= this.store.levels[0].width ||
+      tilePos.x >= this.store.levels[this.tools.selectedLevel].width ||
       tilePos.y < 0 ||
-      tilePos.y >= this.store.levels[0].height
+      tilePos.y >= this.store.levels[this.tools.selectedLevel].height
     )
       return
 
     const tileId = this.tools.selectedTile - 1
     if (this.tiles[tilePos.x][tilePos.y].frame.name != String(tileId)) {
       this.tiles[tilePos.x][tilePos.y].setFrame(tileId)
-      this.store.levels[0].layers[0].data[tilePos.x + tilePos.y * this.store.levels[0].width] =
-        tileId
+      this.store.levels[this.tools.selectedLevel].layers[0].data[
+        tilePos.x + tilePos.y * this.store.levels[this.tools.selectedLevel].width
+      ] = tileId
     }
   }
 

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import LevelContent from './components/LevelContent.vue'
+import LevelContent from '@/components/LevelContent.vue'
 import { useWorldStore } from '@/stores/world'
-import { ref, computed } from 'vue'
+import { useToolsStore } from '@/stores/tools'
+import { computed } from 'vue'
 
 const store = useWorldStore()
 const levels = computed(() => store.levels)
-const currentLevel = ref(0)
+const tools = useToolsStore()
 
 const getUrl = '/api/get'
 fetch(getUrl).then(async (response) => {
@@ -45,9 +46,9 @@ store.$subscribe(async (mutation, state) => {
           <a
             href="#"
             class="nav-link"
-            :class="index == currentLevel ? 'active' : ''"
+            :class="index == tools.selectedLevel ? 'active' : ''"
             aria-current="page"
-            @click="currentLevel = index"
+            @click="tools.selectedLevel = index"
           >
             <svg class="bi me-2" width="16" height="16">
               <use xlink:href="#home"></use>
@@ -68,7 +69,7 @@ store.$subscribe(async (mutation, state) => {
 
     <!-- min-width fix: https://stackoverflow.com/a/66689926/3810493 -->
     <div class="flex-grow-1" style="min-width: 0">
-      <LevelContent :level="currentLevel" />
+      <LevelContent />
     </div>
   </div>
 </template>
