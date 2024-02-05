@@ -4,7 +4,7 @@ A small tile-based level editor that runs in the browser. This is useful for gam
 
 ## ⚠️ Work in progress ⚠️
 
-This tool is not implemented yet. Feel free to open an issue if you are interested to say hello :)
+This tool is not implemented yet. Feel free to [open an "issue"](https://github.com/zommerfelds/MiniLevelEditor/issues/new) if you are interested in saying hello! 🙂
 
 [Personal notes](https://docs.google.com/document/d/1PNKyq5fczIWapZl0H0cRPSAIOZsfjAB2MmLjjtfKcmM/edit#heading=h.4z0ttusyscsq)
 
