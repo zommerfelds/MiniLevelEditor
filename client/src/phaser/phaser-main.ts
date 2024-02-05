@@ -11,6 +11,8 @@ class MyScene extends Scene {
   tileWidth: number = 16
   tileHeight: number = 16
   tiles: Array<Array<Phaser.GameObjects.Image>> = []
+  oldDisplayWidth: number = 1
+  oldDisplayHeight: number = 1
 
   constructor() {
     super({ key: 'MyScene' })
@@ -23,8 +25,9 @@ class MyScene extends Scene {
   create(): void {
     console.log('Starting Phaser scene')
 
+    this.scale.on('resize', this.onResize, this)
+
     const level = toRaw(this.store.levels[0])
-    console.log(level)
     const width = level.width
     const height = level.height
 
@@ -43,6 +46,20 @@ class MyScene extends Scene {
         this.tiles[x][y] = img
       }
     }
+    this.oldDisplayWidth = this.renderer.width
+    this.oldDisplayHeight = this.renderer.height
+  }
+
+  onResize(gameSize: { width: number; height: number }): void {
+    // Fix camera movement after resizing
+    this.cameras.main.scrollX +=
+      (1 - 1 / this.cameras.main.zoom) * (this.oldDisplayWidth - gameSize.width) * 0.5
+
+    this.cameras.main.scrollY +=
+      (1 - 1 / this.cameras.main.zoom) * (this.oldDisplayHeight - gameSize.height) * 0.5
+
+    this.oldDisplayWidth = gameSize.width
+    this.oldDisplayHeight = gameSize.height
   }
 
   update(): void {
@@ -54,7 +71,6 @@ class MyScene extends Scene {
       this.game.input.activePointer.isDown &&
       this.game.input.activePointer.downElement == this.game.canvas
 
-    // TODO: confirm this logic works when I have an actual mouse
     if (mouseDown && this.game.input.activePointer.button == 1) {
       if (this.origToolBeforeDrag == undefined) {
         this.origToolBeforeDrag = this.tools.selectedTool
