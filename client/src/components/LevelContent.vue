@@ -61,8 +61,7 @@ onMounted(() => {
         </button>
       </div>
     </div>
-    <!--textarea class="span6 w-100 text-white bg-dark p-3" v-model="message"></textarea-->
-    <div id="phaser-game" class="w-100" style="overflow: hidden"></div>
+    <div id="phaser-game" class="w-100" style="overflow: hidden" @contextmenu.prevent=""></div>
   </div>
 </template>
 

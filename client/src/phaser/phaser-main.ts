@@ -88,6 +88,11 @@ class MyScene extends Scene {
   }
 
   handleMouse(): void {
+    if (this.game.input.activePointer.button == 2) {
+      // Right mouse button not supported yet.
+      // TODO: do something with the right click, as it's currently suppressed in LevelContent.vue
+      return
+    }
     const mouseDown =
       this.game.input.activePointer.isDown &&
       this.game.input.activePointer.downElement == this.game.canvas
