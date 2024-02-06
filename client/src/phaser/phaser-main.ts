@@ -69,7 +69,10 @@ class MyScene extends Scene {
   }
 
   onResize(gameSize: { width: number; height: number }): void {
-    // Fix camera movement after resizing
+    // Fix render size and camera movement after resizing.
+    this.renderer.resize(gameSize.width, gameSize.height)
+    this.cameras.main.width = gameSize.width
+    this.cameras.main.height = gameSize.height
     this.cameras.main.scrollX +=
       (1 - 1 / this.cameras.main.zoom) * (this.oldDisplayWidth - gameSize.width) * 0.5
 

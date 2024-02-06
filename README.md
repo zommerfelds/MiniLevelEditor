@@ -23,7 +23,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Define a level format
 - [x] Integrate Phaser in the editor
 - [x] Implement basic tile paining UI (proof of concept)
-- [ ] BUG: start with a small window, then increase (view is black)
+- [x] Make Phaser canvas fully resizeable
 - [ ] Be able to configure project (tileset image(s), tile size, etc)
 - [ ] Tile picker
 - [ ] Layers
