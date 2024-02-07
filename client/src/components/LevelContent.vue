@@ -39,7 +39,7 @@ onMounted(() => {
           data-toggle="button"
           @click="tools.selectedTool = Tool.Move"
         >
-          Move
+          <i class="bi bi-eye-fill"></i>
         </button>
         <button
           type="button"
@@ -48,17 +48,14 @@ onMounted(() => {
           data-toggle="button"
           @click="tools.selectedTool = Tool.Draw"
         >
-          Draw
+          <i class="bi bi-pencil-fill"></i>
         </button>
-        <button
-          type="button"
-          class="btn"
-          :class="tools.selectedTool == Tool.Erase ? 'btn-success' : 'btn-light'"
-          data-toggle="button"
-          @click="tools.selectedTool = Tool.Erase"
-        >
-          Erase
-        </button>
+        <!--
+          <i class="bi bi-cursor-fill"></i><i class="bi bi-hand-index"></i>
+          <i class="bi bi-eraser-fill"></i>
+          <i class="bi bi-arrows-move"></i>
+          <i class="bi bi-bounding-box-circles"></i>
+        -->
       </div>
     </div>
     <div id="phaser-game" class="w-100" style="overflow: hidden" @contextmenu.prevent=""></div>
