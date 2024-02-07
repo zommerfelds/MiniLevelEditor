@@ -11,8 +11,11 @@ class MyScene extends Scene {
   tileWidth: number = 16
   tileHeight: number = 16
   tiles: Array<Array<Phaser.GameObjects.Image>> = []
-  oldDisplayWidth: number = 1
-  oldDisplayHeight: number = 1
+  oldDisplayWidth: number = -1
+  oldScrollX: number = -1
+  oldScrollY: number = -1
+  oldZoom: number = -1
+  oldDisplayHeight: number = -1
   loadedLevel = -1
 
   constructor() {
@@ -38,8 +41,15 @@ class MyScene extends Scene {
     const width = level.width
     const height = level.height
 
-    this.cameras.main.setZoom(5)
-    this.cameras.main.centerOn((width * 16) / 2, (height * 16) / 2)
+    if (this.oldScrollX == -1) {
+      this.cameras.main.setZoom(5)
+      this.cameras.main.centerOn((width * 16) / 2, (height * 16) / 2)
+    } else {
+      // This is a level reload, keep same camera properties.
+      this.cameras.main.scrollX = this.oldScrollX
+      this.cameras.main.scrollY = this.oldScrollY
+      this.cameras.main.zoom = this.oldZoom
+    }
 
     this.input.on('wheel', (_pointer: any, _gameObjects: any, _deltaX: any, deltaY: number) => {
       this.cameras.main.zoom *= 1 - deltaY * 0.001
@@ -69,6 +79,7 @@ class MyScene extends Scene {
   }
 
   onResize(gameSize: { width: number; height: number }): void {
+    console.log('onResize')
     // Fix render size and camera movement after resizing.
     this.renderer.resize(gameSize.width, gameSize.height)
     this.cameras.main.width = gameSize.width
@@ -85,6 +96,10 @@ class MyScene extends Scene {
 
   update(): void {
     this.handleMouse()
+
+    this.oldScrollX = this.cameras.main.scrollX
+    this.oldScrollY = this.cameras.main.scrollY
+    this.oldZoom = this.cameras.main.zoom
   }
 
   handleMouse(): void {
@@ -106,7 +121,6 @@ class MyScene extends Scene {
     if (!mouseDown) {
       this.origDragPoint = undefined
       if (this.origToolBeforeDrag != undefined) {
-        console.log('resetting tool')
         this.tools.selectedTool = this.origToolBeforeDrag
         this.origToolBeforeDrag = undefined
       }
