@@ -1,24 +1,26 @@
 <script setup lang="ts">
 import LevelContent from '@/components/LevelContent.vue'
+import SettingsModal from '@/components/SettingsModal.vue'
+import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore } from '@/stores/world'
 import { useToolsStore } from '@/stores/tools'
 import { computed } from 'vue'
 
 const store = useWorldStore()
-const levels = computed(() => store.levels)
+const levels = computed(() => store.data.levels)
 const tools = useToolsStore()
 
 const getUrl = '/api/get'
 fetch(getUrl).then(async (response) => {
   const json = await response.json()
   console.log('Loaded from server:', JSON.stringify(json))
-  store.levels = json.levels
+  store.data = json
 })
 
 const postUrl = '/api/post'
 
 store.$subscribe(async (mutation, state) => {
-  const stateStr = JSON.stringify(state)
+  const stateStr = JSON.stringify(state.data)
   console.log('Sending to server:', stateStr)
 
   await fetch(postUrl, {
@@ -30,17 +32,17 @@ store.$subscribe(async (mutation, state) => {
 
 function addLevel() {
   store.addLevel()
-  tools.selectedLevel = store.levels.length - 1
+  tools.selectedLevel = store.data.levels.length - 1
 }
 
 function deleteLevel(index: number) {
-  store.levels.splice(index, 1)
+  store.data.levels.splice(index, 1)
 
   if (tools.selectedLevel > index) {
     tools.selectedLevel--
   }
-  if (tools.selectedLevel >= store.levels.length) {
-    tools.selectedLevel = store.levels.length - 1
+  if (tools.selectedLevel >= store.data.levels.length) {
+    tools.selectedLevel = store.data.levels.length - 1
   }
 }
 </script>
@@ -51,9 +53,12 @@ function deleteLevel(index: number) {
       class="border-end border-secondary d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
       style="width: 280px"
     >
-      <a href="/" class="align-items-center">
-        <img class="pixelart" src="@/assets/logo.png" width="240" />
-      </a>
+      <div class="container">
+        <div class="row align-items-center">
+          <img class="col-10 pixelart ps-0" src="@/assets/logo.png" />
+          <SettingsModalEntryPoint />
+        </div>
+      </div>
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
         <li v-for="(level, index) in levels" :key="index" class="nav-item">
@@ -83,6 +88,8 @@ function deleteLevel(index: number) {
       <LevelContent />
     </div>
   </div>
+
+  <SettingsModal />
 </template>
 
 <style scoped>

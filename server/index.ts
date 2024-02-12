@@ -15,14 +15,18 @@ if (filePath === undefined) {
 
 async function main() {
   const defaultData = {
-    levels: [defaultLevel]
+    config: {
+      gridWidth: 16,
+      gridHeight: 16,
+    },
+    levels: [defaultLevel],
   }
   try {
-    await fsPromises.writeFile(filePath,  JSON.stringify(defaultData), { flag: 'wx' })
+    await fsPromises.writeFile(filePath, JSON.stringify(defaultData), { flag: 'wx' })
     console.info(`Created empty file ${filePath}`)
-  } catch (err) { 
+  } catch (err) {
     // Ignore errors writing the default file, as it may exist already.
-   }
+  }
 
   const fileJsonStr = await fsPromises.readFile(filePath, 'utf8')
   console.info(`Loaded data from ${filePath}`)
