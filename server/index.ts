@@ -16,8 +16,8 @@ if (filePath === undefined) {
 async function main() {
   const defaultData = {
     config: {
-      gridWidth: 16,
-      gridHeight: 16,
+      gridCellWidth: 16,
+      gridCellHeight: 16,
     },
     levels: [defaultLevel],
   }

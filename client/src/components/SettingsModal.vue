@@ -5,12 +5,12 @@ import { useWorldStore } from '@/stores/world'
 
 const worldStore = useWorldStore()
 
-let gridWidth = ref(16)
-let gridHeight = ref(16)
+let gridCellWidth = ref(16)
+let gridCellHeight = ref(16)
 
 function onSaveSettings() {
-  worldStore.data.config.gridWidth = gridWidth.value
-  worldStore.data.config.gridHeight = gridHeight.value
+  worldStore.data.config.gridCellWidth = gridCellWidth.value
+  worldStore.data.config.gridCellHeight = gridCellHeight.value
 }
 
 onMounted(() => {
@@ -20,8 +20,8 @@ onMounted(() => {
   const dialog = document.getElementById('exampleModal')!!
 
   dialog.addEventListener('show.bs.modal', () => {
-    gridWidth.value = worldStore.data.config.gridWidth
-    gridHeight.value = worldStore.data.config.gridHeight
+    gridCellWidth.value = worldStore.data.config.gridCellWidth
+    gridCellHeight.value = worldStore.data.config.gridCellHeight
   })
 })
 </script>
@@ -34,7 +34,7 @@ onMounted(() => {
     aria-labelledby="exampleModalLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">Project settings</h1>
@@ -48,15 +48,16 @@ onMounted(() => {
         <div class="modal-body">
           <div class="d-flex">
             <div class="flex-grow-1">
-              <label class="col-form-label">Grid size</label>
+              <label class="col-form-label">Grid cell size</label>
             </div>
             <div class="size-input">
-              <input type="number" class="form-control" v-model="gridWidth" />
+              <input type="number" class="form-control" v-model="gridCellWidth" />
             </div>
             <div class="p-1">x</div>
             <div class="size-input">
-              <input type="number" class="form-control" v-model="gridHeight" />
+              <input type="number" class="form-control" v-model="gridCellHeight" />
             </div>
+            <div class="p-1">px</div>
           </div>
         </div>
         <div class="modal-footer">

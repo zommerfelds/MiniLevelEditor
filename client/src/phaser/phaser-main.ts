@@ -34,15 +34,13 @@ class MyScene extends Scene {
     this.scale.on('resize', this.onResize, this)
 
     const level = toRaw(this.store.data.levels[this.tools.selectedLevel])
-    const width = level.width
-    const height = level.height
 
     if (this.oldScrollX == -1) {
       // TODO: improve camera start position (top left?)
       this.cameras.main.setZoom(5)
       this.cameras.main.centerOn(
-        (width * this.store.data.config.gridWidth) / 2,
-        (height * this.store.data.config.gridHeight) / 2
+        (level.width * this.store.data.config.gridCellWidth) / 2,
+        (level.height * this.store.data.config.gridCellHeight) / 2
       )
     } else {
       // This is a level reload, keep same camera properties.
@@ -55,21 +53,27 @@ class MyScene extends Scene {
       this.cameras.main.zoom *= 1 - deltaY * 0.001
     })
 
-    for (let x = 0; x < width; x++) {
+    for (let x = 0; x < level.width; x++) {
       this.tiles[x] = []
-      for (let y = 0; y < height; y++) {
+      for (let y = 0; y < level.height; y++) {
         const img = this.add.image(
-          x * this.store.data.config.gridWidth,
-          y * this.store.data.config.gridHeight,
+          x * this.store.data.config.gridCellWidth,
+          y * this.store.data.config.gridCellHeight,
           'tiles',
-          level.layers[0].data[x + y * width]
+          level.layers[0].data[x + y * level.width]
         )
         img.setOrigin(0, 0)
-        // TODO: find a better way to show the grid (scalable and works for tiles larger than the grid)
-        img.scale = 0.99
         this.tiles[x][y] = img
       }
     }
+
+    this.addGrid(
+      level.width,
+      level.height,
+      this.store.data.config.gridCellWidth,
+      this.store.data.config.gridCellHeight
+    )
+
     this.oldDisplayWidth = this.renderer.width
     this.oldDisplayHeight = this.renderer.height
   }
@@ -77,17 +81,17 @@ class MyScene extends Scene {
   watchForLevelChanges() {
     const watchLevelSelectionStopHandle = watch(
       [
-        computed(() => this.store.data.config.gridWidth),
-        computed(() => this.store.data.config.gridHeight),
+        computed(() => this.store.data.config.gridCellWidth),
+        computed(() => this.store.data.config.gridCellHeight),
         computed(() => this.tools.selectedLevel),
       ],
       (
-        [gridWidth, gridHeight, selectedLevel],
-        [prevGridWidth, prevGridHeight, prevSelectedLevel]
+        [gridCellWidth, gridCellHeight, selectedLevel],
+        [prevgridCellWidth, prevgridCellHeight, prevSelectedLevel]
       ) => {
         if (
-          gridWidth == prevGridWidth &&
-          gridHeight == prevGridHeight &&
+          gridCellWidth == prevgridCellWidth &&
+          gridCellHeight == prevgridCellHeight &&
           selectedLevel == prevSelectedLevel
         )
           return
@@ -114,6 +118,24 @@ class MyScene extends Scene {
 
     this.oldDisplayWidth = gameSize.width
     this.oldDisplayHeight = gameSize.height
+  }
+
+  addGrid(width, height, gridCellWidth, gridCellHeight) {
+    const graphics = this.add.graphics()
+    graphics.lineStyle(0.2, 0x000000)
+    graphics.beginPath()
+
+    for (let x = 0; x < width + 1; x++) {
+      graphics.moveTo(x * gridCellWidth, 0)
+      graphics.lineTo(x * gridCellWidth, height * gridCellHeight)
+    }
+    for (let y = 0; y < height + 1; y++) {
+      graphics.moveTo(0, y * gridCellHeight)
+      graphics.lineTo(width * gridCellWidth, y * gridCellHeight)
+    }
+
+    graphics.closePath()
+    graphics.strokePath()
   }
 
   update(): void {
@@ -193,8 +215,8 @@ class MyScene extends Scene {
 
   worldToTile(worldPos: Phaser.Math.Vector2): Phaser.Math.Vector2 {
     return new Phaser.Math.Vector2(
-      Math.floor(worldPos.x / this.store.data.config.gridWidth),
-      Math.floor(worldPos.y / this.store.data.config.gridHeight)
+      Math.floor(worldPos.x / this.store.data.config.gridCellWidth),
+      Math.floor(worldPos.y / this.store.data.config.gridCellHeight)
     )
   }
 }
