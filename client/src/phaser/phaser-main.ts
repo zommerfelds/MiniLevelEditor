@@ -14,12 +14,17 @@ class MyScene extends Scene {
   oldScrollY: number = -1
   oldZoom: number = -1
   oldDisplayHeight: number = -1
+  tileWidth = 16 // TODO: make this configurable for each tile set
+  tileHeight = 16
   constructor() {
     super({ key: 'MyScene' })
   }
 
   preload() {
-    this.load.spritesheet('tiles', 'test.png', { frameWidth: 16, frameHeight: 16 })
+    this.load.spritesheet('tiles', 'test.png', {
+      frameWidth: this.tileWidth,
+      frameHeight: this.tileHeight,
+    })
   }
 
   create(): void {
@@ -56,13 +61,14 @@ class MyScene extends Scene {
     for (let x = 0; x < level.width; x++) {
       this.tiles[x] = []
       for (let y = 0; y < level.height; y++) {
+        // Tile is aligned to the middle bottom. Consider making this configurable.
         const img = this.add.image(
-          x * this.store.data.config.gridCellWidth,
-          y * this.store.data.config.gridCellHeight,
+          (x + 0.5) * this.store.data.config.gridCellWidth,
+          (y + 1) * this.store.data.config.gridCellHeight,
           'tiles',
           level.layers[0].data[x + y * level.width]
         )
-        img.setOrigin(0, 0)
+        img.setOrigin(0.5, 1)
         this.tiles[x][y] = img
       }
     }
@@ -122,7 +128,7 @@ class MyScene extends Scene {
 
   addGrid(width, height, gridCellWidth, gridCellHeight) {
     const graphics = this.add.graphics()
-    graphics.lineStyle(0.2, 0x000000)
+    graphics.lineStyle(0.2, 0x222222)
     graphics.beginPath()
 
     for (let x = 0; x < width + 1; x++) {
