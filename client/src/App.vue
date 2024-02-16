@@ -14,6 +14,8 @@ const getUrl = '/api/get'
 fetch(getUrl).then(async (response) => {
   const json = await response.json()
   console.log('Loaded from server:', JSON.stringify(json))
+  // Simulate a loading delay:
+  // await new Promise((resolve) => setTimeout(resolve, 2000))
   store.data = json
 })
 

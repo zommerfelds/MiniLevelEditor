@@ -13,6 +13,8 @@ if (filePath === undefined) {
   console.info(`No file path argument specified, defaulting to "${filePath}"`)
 }
 
+const tilesetDir = 'test' // TODO: make configurable
+
 async function main() {
   const defaultData = {
     config: {
@@ -33,6 +35,13 @@ async function main() {
   let inMemoryData = JSON.parse(fileJsonStr)
 
   app.use(express.json())
+
+  app.use('/tilesets', express.static(tilesetDir))
+  app.get('/tileset-list', async (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'application/json')
+    const files = await fsPromises.readdir(tilesetDir)
+    res.send(JSON.stringify({ files }))
+  })
 
   app.get('/get', (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json')

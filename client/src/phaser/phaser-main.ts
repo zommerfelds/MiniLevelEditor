@@ -16,21 +16,30 @@ class MyScene extends Scene {
   oldDisplayHeight: number = -1
   tileWidth = 16 // TODO: make this configurable for each tile set
   tileHeight = 16
+  dataIsReady = false
   constructor() {
     super({ key: 'MyScene' })
   }
 
   preload() {
-    this.load.spritesheet('tiles', 'test.png', {
-      frameWidth: this.tileWidth,
-      frameHeight: this.tileHeight,
-    })
+    this.load.setPath('api/tilesets/')
+
+    this.dataIsReady = this.store.data.config != undefined
+
+    if (this.dataIsReady) {
+      const tileSetFile = this.store.data.config.tileset
+      this.load.spritesheet('tiles', tileSetFile, {
+        frameWidth: this.tileWidth,
+        frameHeight: this.tileHeight,
+      })
+    }
   }
 
   create(): void {
     console.log('Starting Phaser scene')
 
     this.watchForLevelChanges()
+    if (!this.dataIsReady) return
 
     if (this.tools.selectedLevel < 0 || this.tools.selectedLevel >= this.store.data.levels.length)
       return
@@ -87,20 +96,25 @@ class MyScene extends Scene {
   watchForLevelChanges() {
     const watchLevelSelectionStopHandle = watch(
       [
-        computed(() => this.store.data.config.gridCellWidth),
-        computed(() => this.store.data.config.gridCellHeight),
+        computed(() => this.store.data?.config?.tileset),
+        computed(() => this.store.data?.config?.gridCellWidth),
+        computed(() => this.store.data?.config?.gridCellHeight),
         computed(() => this.tools.selectedLevel),
       ],
       (
-        [gridCellWidth, gridCellHeight, selectedLevel],
-        [prevgridCellWidth, prevgridCellHeight, prevSelectedLevel]
+        [tileset, gridCellWidth, gridCellHeight, selectedLevel],
+        [prevTileset, prevgridCellWidth, prevgridCellHeight, prevSelectedLevel]
       ) => {
         if (
+          tileset == prevTileset &&
           gridCellWidth == prevgridCellWidth &&
           gridCellHeight == prevgridCellHeight &&
           selectedLevel == prevSelectedLevel
         )
           return
+        if (tileset != prevTileset) {
+          this.textures.remove('tiles')
+        }
         this.scene.restart()
       }
     )
@@ -111,7 +125,8 @@ class MyScene extends Scene {
   }
 
   onResize(gameSize: { width: number; height: number }): void {
-    console.log('onResize')
+    if (!this.dataIsReady) return
+
     // Fix render size and camera movement after resizing.
     this.renderer.resize(gameSize.width, gameSize.height)
     this.cameras.main.width = gameSize.width
@@ -126,7 +141,7 @@ class MyScene extends Scene {
     this.oldDisplayHeight = gameSize.height
   }
 
-  addGrid(width, height, gridCellWidth, gridCellHeight) {
+  addGrid(width: number, height: number, gridCellWidth: number, gridCellHeight: number) {
     const graphics = this.add.graphics()
     graphics.lineStyle(0.2, 0x222222)
     graphics.beginPath()
@@ -145,6 +160,8 @@ class MyScene extends Scene {
   }
 
   update(): void {
+    if (!this.dataIsReady) return
+
     this.handleMouse()
 
     this.oldScrollX = this.cameras.main.scrollX

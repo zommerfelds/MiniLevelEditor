@@ -5,23 +5,34 @@ import { useWorldStore } from '@/stores/world'
 
 const worldStore = useWorldStore()
 
-let gridCellWidth = ref(16)
-let gridCellHeight = ref(16)
+let gridCellWidth = ref(0)
+let gridCellHeight = ref(0)
+let tileset = ref('')
+
+let tilesetFiles = ref([])
 
 function onSaveSettings() {
   worldStore.data.config.gridCellWidth = gridCellWidth.value
   worldStore.data.config.gridCellHeight = gridCellHeight.value
+  worldStore.data.config.tileset = tileset.value
 }
 
 onMounted(() => {
   // Use this to auto-show the dialog (for development):
-  // Modal.getOrCreateInstance('#exampleModal').show()
+  // setTimeout(() => Modal.getOrCreateInstance('#exampleModal').show(), 500)
 
   const dialog = document.getElementById('exampleModal')!!
 
   dialog.addEventListener('show.bs.modal', () => {
     gridCellWidth.value = worldStore.data.config.gridCellWidth
     gridCellHeight.value = worldStore.data.config.gridCellHeight
+    tileset.value = worldStore.data.config.tileset
+
+    const getUrl = '/api/tileset-list'
+    fetch(getUrl).then(async (response) => {
+      const json = await response.json()
+      tilesetFiles.value = json.files
+    })
   })
 })
 </script>
@@ -46,7 +57,7 @@ onMounted(() => {
           ></button>
         </div>
         <div class="modal-body">
-          <div class="d-flex">
+          <div class="d-flex pb-3">
             <div class="flex-grow-1">
               <label class="col-form-label">Grid cell size</label>
             </div>
@@ -58,6 +69,26 @@ onMounted(() => {
               <input type="number" class="form-control" v-model="gridCellHeight" />
             </div>
             <div class="p-1">px</div>
+          </div>
+          <div class="d-flex pb-3">
+            <div class="flex-grow-1">
+              <label class="col-form-label">Tileset</label>
+            </div>
+            <div class="dropdown">
+              <button
+                class="btn btn-light dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {{ tileset }}
+              </button>
+              <ul class="dropdown-menu">
+                <li v-for="(file, index) in tilesetFiles" :key="index">
+                  <a class="dropdown-item" href="#" @click="tileset = file">{{ file }}</a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
