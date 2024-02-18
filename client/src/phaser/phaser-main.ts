@@ -14,8 +14,6 @@ class MyScene extends Scene {
   oldScrollY: number = -1
   oldZoom: number = -1
   oldDisplayHeight: number = -1
-  tileWidth = 16 // TODO: make this configurable for each tile set
-  tileHeight = 16
   dataIsReady = false
   constructor() {
     super({ key: 'MyScene' })
@@ -29,8 +27,8 @@ class MyScene extends Scene {
     if (this.dataIsReady) {
       const tileSetFile = this.store.data.config.tileset
       this.load.spritesheet('tiles', tileSetFile, {
-        frameWidth: this.tileWidth,
-        frameHeight: this.tileHeight,
+        frameWidth: this.store.data.config.tilesetTileWidth,
+        frameHeight: this.store.data.config.tilesetTileHeight,
       })
     }
   }
@@ -96,23 +94,19 @@ class MyScene extends Scene {
   watchForLevelChanges() {
     const watchLevelSelectionStopHandle = watch(
       [
-        computed(() => this.store.data?.config?.tileset),
-        computed(() => this.store.data?.config?.gridCellWidth),
-        computed(() => this.store.data?.config?.gridCellHeight),
+        computed(() => JSON.stringify(this.store.data?.config)),
         computed(() => this.tools.selectedLevel),
       ],
-      (
-        [tileset, gridCellWidth, gridCellHeight, selectedLevel],
-        [prevTileset, prevgridCellWidth, prevgridCellHeight, prevSelectedLevel]
-      ) => {
+      ([configStr, selectedLevel], [prevConfigStr, prevSelectedLevel]) => {
+        if (configStr == prevConfigStr && selectedLevel == prevSelectedLevel) return
+        const config = JSON.parse(configStr || '{}')
+        const prevConfig = JSON.parse(prevConfigStr || '{}')
         if (
-          tileset == prevTileset &&
-          gridCellWidth == prevgridCellWidth &&
-          gridCellHeight == prevgridCellHeight &&
-          selectedLevel == prevSelectedLevel
-        )
-          return
-        if (tileset != prevTileset) {
+          ['tileset', 'tilesetTileWidth', 'tilesetTileHeight'].some(
+            (key) => config[key] != prevConfig[key]
+          ) &&
+          this.textures.exists('tiles')
+        ) {
           this.textures.remove('tiles')
         }
         this.scene.restart()

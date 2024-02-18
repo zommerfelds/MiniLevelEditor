@@ -24,7 +24,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Integrate Phaser in the editor
 - [x] Implement basic tile paining UI (proof of concept)
 - [x] Make Phaser canvas fully resizeable
-- [ ] Be able to configure project (tileset image(s), tile size, etc)
+- [x] Be able to configure project (tileset image(s), tile size, etc)
 - [ ] Tile picker
 - [ ] Layers
 - [ ] Define the auto-mapping model

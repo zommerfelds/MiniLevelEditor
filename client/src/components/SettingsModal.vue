@@ -8,6 +8,8 @@ const worldStore = useWorldStore()
 let gridCellWidth = ref(0)
 let gridCellHeight = ref(0)
 let tileset = ref('')
+let tilesetTileWidth = ref(0)
+let tilesetTileHeight = ref(0)
 
 let tilesetFiles = ref([])
 
@@ -15,6 +17,8 @@ function onSaveSettings() {
   worldStore.data.config.gridCellWidth = gridCellWidth.value
   worldStore.data.config.gridCellHeight = gridCellHeight.value
   worldStore.data.config.tileset = tileset.value
+  worldStore.data.config.tilesetTileWidth = tilesetTileWidth.value
+  worldStore.data.config.tilesetTileHeight = tilesetTileHeight.value
 }
 
 onMounted(() => {
@@ -27,6 +31,8 @@ onMounted(() => {
     gridCellWidth.value = worldStore.data.config.gridCellWidth
     gridCellHeight.value = worldStore.data.config.gridCellHeight
     tileset.value = worldStore.data.config.tileset
+    tilesetTileWidth.value = worldStore.data.config.tilesetTileWidth
+    tilesetTileHeight.value = worldStore.data.config.tilesetTileHeight
 
     const getUrl = '/api/tileset-list'
     fetch(getUrl).then(async (response) => {
@@ -89,6 +95,19 @@ onMounted(() => {
                 </li>
               </ul>
             </div>
+          </div>
+          <div class="d-flex pb-3">
+            <div class="flex-grow-1">
+              <label class="col-form-label">Tileset tile size</label>
+            </div>
+            <div class="size-input">
+              <input type="number" class="form-control" v-model="tilesetTileWidth" />
+            </div>
+            <div class="p-1">x</div>
+            <div class="size-input">
+              <input type="number" class="form-control" v-model="tilesetTileHeight" />
+            </div>
+            <div class="p-1">px</div>
           </div>
         </div>
         <div class="modal-footer">
