@@ -20,6 +20,9 @@ async function main() {
     config: {
       gridCellWidth: 16,
       gridCellHeight: 16,
+      tileset: 'tileset1.png',
+      tilesetTileWidth: 16,
+      tilesetTileHeight: 16,
     },
     levels: [defaultLevel],
   }
