@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"npm:server-dev\" \"npm:client-dev\"",
     "client-dev-directly": "vite client",
-    "client-dev": "wait-on tcp:3000 && npm run client-dev-directly",
+    "client-dev": "wait-on -l tcp:3000 && npm run client-dev-directly",
     "client-build": "run-p client-type-check \"client-build-only {@}\" --",
     "client-preview": "vite preview client",
     "client-build-only": "vite build client",

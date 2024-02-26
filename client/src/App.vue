@@ -5,19 +5,26 @@ import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore } from '@/stores/world'
 import { useToolsStore } from '@/stores/tools'
 import { computed } from 'vue'
+import { makeDefaultData } from '../../common/defaultData'
 
 const store = useWorldStore()
 const levels = computed(() => store.data.levels)
 const tools = useToolsStore()
 
-const getUrl = '/api/get'
-fetch(getUrl).then(async (response) => {
-  const json = await response.json()
-  console.log('Loaded from server:', JSON.stringify(json))
-  // Simulate a loading delay:
-  // await new Promise((resolve) => setTimeout(resolve, 2000))
-  store.data = json
-})
+const serverlessMode = location.pathname.endsWith('/serverless')
+
+if (serverlessMode) {
+  store.data = makeDefaultData()
+} else {
+  const getUrl = '/api/get'
+  fetch(getUrl).then(async (response) => {
+    const json = await response.json()
+    console.log('Loaded from server:', JSON.stringify(json))
+    // Simulate a loading delay:
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
+    store.data = json
+  })
+}
 
 const postUrl = '/api/post'
 
@@ -62,6 +69,7 @@ function deleteLevel(index: number) {
         </div>
       </div>
       <hr />
+      <div v-if="serverlessMode" class="p-2 text-warning" style="font-weight: bold;">[WIP: Serverless mode]</div>
       <ul class="nav nav-pills flex-column mb-auto">
         <li v-for="(level, index) in levels" :key="index" class="nav-item">
           <div
