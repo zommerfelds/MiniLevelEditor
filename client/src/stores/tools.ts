@@ -11,7 +11,8 @@ export enum Tool {
 export const useToolsStore = defineStore('tools', () => {
   const selectedTool = ref(Tool.Draw)
   const selectedTile = ref(1)
+  const selectedLayer = ref(0)
   const selectedLevel = ref(0)
 
-  return { selectedTool, selectedTile, selectedLevel }
+  return { selectedTool, selectedTile, selectedLayer, selectedLevel }
 })

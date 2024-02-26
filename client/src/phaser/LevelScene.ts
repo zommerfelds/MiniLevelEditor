@@ -8,7 +8,8 @@ export class LevelScene extends Scene {
   origToolBeforeDrag?: Tool = undefined
   store = useWorldStore()
   tools = useToolsStore()
-  tiles: Array<Array<Phaser.GameObjects.Image>> = []
+  // For each layer, a 2D array with all the tiles:
+  tiles: Array<Array<Array<Phaser.GameObjects.Image>>> = []
   oldDisplayWidth: number = -1
   oldScrollX: number = -1
   oldScrollY: number = -1
@@ -65,18 +66,25 @@ export class LevelScene extends Scene {
       this.cameras.main.zoom *= 1 - deltaY * 0.001
     })
 
-    for (let x = 0; x < level.width; x++) {
-      this.tiles[x] = []
-      for (let y = 0; y < level.height; y++) {
-        // Tile is aligned to the middle bottom. Consider making this configurable.
-        const img = this.add.image(
-          (x + 0.5) * this.store.data.config.gridCellWidth,
-          (y + 1) * this.store.data.config.gridCellHeight,
-          'tiles',
-          level.layers[0].data[x + y * level.width]
-        )
-        img.setOrigin(0.5, 1)
-        this.tiles[x][y] = img
+    for (let layer = 0; layer < this.store.data.config.layers.length; layer++) {
+      this.tiles[layer] = []
+      for (let x = 0; x < level.width; x++) {
+        this.tiles[layer][x] = []
+        for (let y = 0; y < level.height; y++) {
+          const data = level.layers[layer].data[x + y * level.width]
+          const frame = this.store.data.config.tiles[data].index
+          const isEmptyTile = frame == undefined
+          const img = this.add.image(
+            // Tile is aligned to the middle bottom. Consider making this configurable.
+            (x + 0.5) * this.store.data.config.gridCellWidth,
+            (y + 1) * this.store.data.config.gridCellHeight,
+            'tiles',
+            isEmptyTile ? 0 : frame
+          )
+          img.setOrigin(0.5, 1)
+          img.visible = !isEmptyTile
+          this.tiles[layer][x][y] = img
+        }
       }
     }
 
@@ -221,12 +229,16 @@ export class LevelScene extends Scene {
     )
       return
 
-    const tileId = this.tools.selectedTile - 1
-    if (this.tiles[tilePos.x][tilePos.y].frame.name != String(tileId)) {
-      this.tiles[tilePos.x][tilePos.y].setFrame(tileId)
-      this.store.data.levels[this.tools.selectedLevel].layers[0].data[
+    const tileId = this.store.data.config.tiles[this.tools.selectedTile].index
+    const visible = (tileId != undefined)
+    const img = this.tiles[this.tools.selectedLayer][tilePos.x][tilePos.y]
+    console.log('selectedLayer:', this.tools.selectedLayer, 'tileId:', tileId, 'existing:', img.frame.name)
+    if (img.visible != visible || img.frame.name != String(tileId)) {
+      img.setFrame(tileId)
+      img.visible = visible
+      this.store.data.levels[this.tools.selectedLevel].layers[this.tools.selectedLayer].data[
         tilePos.x + tilePos.y * this.store.data.levels[this.tools.selectedLevel].width
-      ] = tileId
+      ] = this.tools.selectedTile
     }
   }
 
