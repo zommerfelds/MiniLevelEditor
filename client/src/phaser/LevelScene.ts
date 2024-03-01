@@ -21,12 +21,17 @@ export class LevelScene extends Scene {
   }
 
   preload() {
-    this.load.setPath('api/tilesets/')
-
     this.dataIsReady = this.store.data.config != undefined
 
     if (this.dataIsReady) {
-      const tileSetFile = this.store.data.config.tileset
+      let tileSetFile = ''
+
+      if (this.store.data.config.tileset == '__builtin') {
+        tileSetFile = 'built-in-tileset.png'
+      } else {
+        tileSetFile = 'api/tilesets/' + this.store.data.config.tileset
+      }
+
       this.load.spritesheet('tiles', tileSetFile, {
         frameWidth: this.store.data.config.tilesetTileWidth,
         frameHeight: this.store.data.config.tilesetTileHeight,
@@ -102,11 +107,20 @@ export class LevelScene extends Scene {
   watchForLevelChanges() {
     const watchLevelSelectionStopHandle = watch(
       [
+        computed(() => this.store.isDefaultData),
         computed(() => JSON.stringify(this.store.data?.config)),
         computed(() => this.tools.selectedLevel),
       ],
-      ([configStr, selectedLevel], [prevConfigStr, prevSelectedLevel]) => {
-        if (configStr == prevConfigStr && selectedLevel == prevSelectedLevel) return
+      (
+        [isDefaultData, configStr, selectedLevel],
+        [prevIsDefaultData, prevConfigStr, prevSelectedLevel]
+      ) => {
+        if (
+          isDefaultData == prevIsDefaultData &&
+          configStr == prevConfigStr &&
+          selectedLevel == prevSelectedLevel
+        )
+          return
         const config = JSON.parse(configStr || '{}')
         const prevConfig = JSON.parse(prevConfigStr || '{}')
         if (
@@ -230,9 +244,8 @@ export class LevelScene extends Scene {
       return
 
     const tileId = this.store.data.config.tiles[this.tools.selectedTile].index
-    const visible = (tileId != undefined)
+    const visible = tileId != undefined
     const img = this.tiles[this.tools.selectedLayer][tilePos.x][tilePos.y]
-    console.log('selectedLayer:', this.tools.selectedLayer, 'tileId:', tileId, 'existing:', img.frame.name)
     if (img.visible != visible || img.frame.name != String(tileId)) {
       img.setFrame(tileId)
       img.visible = visible

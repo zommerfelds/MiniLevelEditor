@@ -11,7 +11,7 @@ let tileset = ref('')
 let tilesetTileWidth = ref(0)
 let tilesetTileHeight = ref(0)
 
-let tilesetFiles = ref([])
+let tilesetFiles = ref<string[]>([])
 
 function onSaveSettings() {
   worldStore.data.config.gridCellWidth = gridCellWidth.value
@@ -37,7 +37,8 @@ onMounted(() => {
     const getUrl = '/api/tileset-list'
     fetch(getUrl).then(async (response) => {
       const json = await response.json()
-      tilesetFiles.value = json.files
+      // TODO: show a nicer text instead of the raw __builtin ID
+      tilesetFiles.value = ['__builtin'].concat(json.files)
     })
   })
 })

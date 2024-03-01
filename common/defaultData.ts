@@ -6,7 +6,7 @@ export function makeDefaultData() {
           "gridCellWidth": 16,
           "gridCellHeight": 16,
           // TODO: come up with a better working default tileset (see tiles below).
-          "tileset": 'tileset1.png',
+          "tileset": '__builtin',
           "tilesetTileWidth": 16,
           "tilesetTileHeight": 16,
           "layers": [{ "name": "Static" }, { "name": "Entities" }],
