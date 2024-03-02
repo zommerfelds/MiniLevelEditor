@@ -6,32 +6,40 @@ import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore } from '@/stores/world'
 import { useToolsStore } from '@/stores/tools'
 import { computed } from 'vue'
+import { makeDefaultData } from '../../common/defaultData'
 
 const store = useWorldStore()
 const levels = computed(() => store.data.levels)
 const tools = useToolsStore()
 
-const getUrl = '/api/get'
-fetch(getUrl).then(async (response) => {
-  const json = await response.json()
-  console.log('Loaded from server:', JSON.stringify(json))
-  // Simulate a loading delay:
-  // await new Promise((resolve) => setTimeout(resolve, 2000))
-  store.data = json
-})
+const serverlessMode = location.pathname.endsWith('/serverless')
 
-const postUrl = '/api/post'
-
-store.$subscribe(async (mutation, state) => {
-  const stateStr = JSON.stringify(state.data)
-  console.log('Sending to server:', stateStr)
-
-  await fetch(postUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: stateStr,
+if (serverlessMode) {
+  store.data = makeDefaultData()
+  store.isDefaultData = true
+} else {
+  const getUrl = '/api/get'
+  fetch(getUrl).then(async (response) => {
+    const json = await response.json()
+    console.log('Loaded from server:', JSON.stringify(json))
+    // Simulate a loading delay:
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
+    store.data = json
   })
-})
+
+  const postUrl = '/api/post'
+
+  store.$subscribe(async (mutation, state) => {
+    const stateStr = JSON.stringify(state.data)
+    console.log('Sending to server:', stateStr)
+
+    await fetch(postUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: stateStr,
+    })
+  })
+}
 
 function addLevel() {
   store.addLevel()
@@ -48,6 +56,15 @@ function deleteLevel(index: number) {
     tools.selectedLevel = store.data.levels.length - 1
   }
 }
+
+async function loadLevelFromDir() {
+  const dirHandle = await window.showDirectoryPicker()
+  const fileHandle = await dirHandle.getFileHandle('levels.json', {})
+  const file = await fileHandle.getFile()
+  const text = await file.text()
+  store.data = JSON.parse(text)
+  store.isDefaultData = false
+}
 </script>
 
 <template>
@@ -63,6 +80,13 @@ function deleteLevel(index: number) {
         </div>
       </div>
       <hr />
+      <div v-if="serverlessMode">
+        <div class="p-2 text-warning" style="font-weight: bold">
+          <p>[WIP: Serverless mode]</p>
+          <button class="btn btn-secondary" @click="loadLevelFromDir()">Load directory</button>
+        </div>
+        <hr />
+      </div>
       <ul class="nav nav-pills flex-column mb-auto">
         <li v-for="(level, index) in levels" :key="index" class="nav-item">
           <div

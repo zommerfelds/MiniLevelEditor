@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express'
 import { promises as fsPromises } from 'fs'
 import { format } from 'prettier'
-import defaultLevel from '../common/level-default.json'
+import { makeDefaultData } from '../common/defaultData'
 
 const app: Express = express()
 const port = 3000
@@ -16,13 +16,7 @@ if (filePath === undefined) {
 const tilesetDir = 'test' // TODO: make configurable
 
 async function main() {
-  const defaultData = {
-    config: {
-      gridCellWidth: 16,
-      gridCellHeight: 16,
-    },
-    levels: [defaultLevel],
-  }
+  const defaultData = makeDefaultData()
   try {
     await fsPromises.writeFile(filePath, JSON.stringify(defaultData), { flag: 'wx' })
     console.info(`Created empty file ${filePath}`)
