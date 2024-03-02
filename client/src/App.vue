@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import LevelContent from '@/components/LevelContent.vue'
 import SettingsModal from '@/components/SettingsModal.vue'
+import TileSelector from '@/components/TileSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore } from '@/stores/world'
 import { useToolsStore } from '@/stores/tools'
@@ -83,6 +84,8 @@ function deleteLevel(index: number) {
           </a>
         </li>
       </ul>
+      <hr />
+      <TileSelector />
     </div>
 
     <!-- min-width fix: https://stackoverflow.com/a/66689926/3810493 -->
