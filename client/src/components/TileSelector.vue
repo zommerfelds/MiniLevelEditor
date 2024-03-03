@@ -22,7 +22,7 @@ const backgroundSize = imageSize * (iconSize / tileSize)
             class="tile-icon pixelart"
             :style="'background-position: ' + iconSize * (-i + 1) + 'px 0px;'"
           ></div>
-          <span class="ps-2">Tile {{ i }}</span>
+          <span class="ps-2 align-top">Tile {{ i }}</span>
         </a>
       </div>
     </div>
