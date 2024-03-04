@@ -19,22 +19,7 @@ onMounted(() => {
   <div class="d-flex flex-column h-100">
     <div class="p-2 bg-dark text-light d-flex" v-if="world.data.config">
 
-      <!-- TODO: replace this with tile picker -->
-      <div class="p-2">Tile</div>
-      <div class="btn-group" role="group" aria-label="Basic example">
-        <button
-          v-for="(tile, index) in world.data.config.tiles"
-          :key="index"
-          type="button"
-          class="btn"
-          :class="tools.selectedTile == index ? 'btn-success' : 'btn-light'"
-          data-toggle="button"
-          @click="tools.selectedTile = index"
-        >
-          {{ tile.name }}
-        </button>
-      </div>
-      <div class="p-2 ms-3">Tool</div>
+      <div class="p-2">Tool</div>
       <div class="btn-group" role="group" aria-label="Basic example">
         <button
           type="button"

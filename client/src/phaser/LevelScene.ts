@@ -1,3 +1,4 @@
+import { TilesetUtils } from '@/logic/TilesetUtils'
 import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import Phaser, { Scene } from 'phaser'
@@ -8,6 +9,7 @@ export class LevelScene extends Scene {
   origToolBeforeDrag?: Tool = undefined
   store = useWorldStore()
   tools = useToolsStore()
+  tilesetUtils = new TilesetUtils()
   // For each layer, a 2D array with all the tiles:
   tiles: Array<Array<Array<Phaser.GameObjects.Image>>> = []
   oldDisplayWidth: number = -1
@@ -24,18 +26,8 @@ export class LevelScene extends Scene {
     this.dataIsReady = this.store.data.config != undefined
 
     if (this.dataIsReady) {
-      let tileSetFile = ''
-
-      if (this.store.data.config.tileset == '__builtin') {
-        tileSetFile = 'built-in-tileset.png'
-      } else {
-        tileSetFile = 'api/tilesets/' + this.store.data.config.tileset
-      }
-
-      this.load.spritesheet('tiles', tileSetFile, {
-        frameWidth: this.store.data.config.tilesetTileWidth,
-        frameHeight: this.store.data.config.tilesetTileHeight,
-      })
+      const tileSetFile = this.tilesetUtils.getPath()
+      this.load.atlas('tiles', tileSetFile, this.tilesetUtils.getAtlas())
     }
   }
 
@@ -77,14 +69,13 @@ export class LevelScene extends Scene {
         this.tiles[layer][x] = []
         for (let y = 0; y < level.height; y++) {
           const data = level.layers[layer].data[x + y * level.width]
-          const frame = this.store.data.config.tiles[data].index
-          const isEmptyTile = frame == undefined
+          const isEmptyTile = this.tilesetUtils.isEmptyTile(data)
           const img = this.add.image(
             // Tile is aligned to the middle bottom. Consider making this configurable.
             (x + 0.5) * this.store.data.config.gridCellWidth,
             (y + 1) * this.store.data.config.gridCellHeight,
             'tiles',
-            isEmptyTile ? 0 : frame
+            isEmptyTile ? 0 : String(data)
           )
           img.setOrigin(0.5, 1)
           img.visible = !isEmptyTile
@@ -243,8 +234,8 @@ export class LevelScene extends Scene {
     )
       return
 
-    const tileId = this.store.data.config.tiles[this.tools.selectedTile].index
-    const visible = tileId != undefined
+    const tileId = this.tools.selectedTile // selectedTile is the index in this.store.data.config.tiles
+    const visible = !this.tilesetUtils.isEmptyTile(tileId)
     const img = this.tiles[this.tools.selectedLayer][tilePos.x][tilePos.y]
     if (img.visible != visible || img.frame.name != String(tileId)) {
       img.setFrame(tileId)
