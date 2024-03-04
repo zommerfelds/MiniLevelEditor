@@ -28,12 +28,13 @@ On the browser, open `http://localhost:5173/`
 - [x] Make Phaser canvas fully resizeable
 - [x] Be able to configure project (tileset image(s), tile size, etc)
 - [x] Tile picker
-- [_] Layers (WIP, need way to add and remove layers)
+- [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Define the auto-mapping model
 - [ ] Allow to define tile properties
 - [ ] Export package so it can be run with npx
-- [_] Serverless mode + warning for when there is no server connected (WIP, add built-in tileset)
-- [ ] Add a demo link
+- [ ] [WIP] Serverless mode (TODO: be able to save)
+- [ ] Warning for when there is no server connected
+- [x] Add a demo link
 - [x] Make JSON output git diff friendly
 - [ ] Paint multiple tiles at the same time
 - [ ] More tools (e.g. eraser, move tile(s), selection)
