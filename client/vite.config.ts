@@ -1,5 +1,4 @@
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -7,6 +6,9 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   base: '/MiniLevelEditor/',
   plugins: [vue()],
+  define: {
+    __APP_MODE: JSON.stringify((process.env.VITE_APP_MODE ?? 'with_server').toUpperCase()),
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

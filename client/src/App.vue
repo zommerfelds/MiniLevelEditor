@@ -12,7 +12,7 @@ const store = useWorldStore()
 const levels = computed(() => store.data.levels)
 const tools = useToolsStore()
 
-const serverlessMode = location.pathname.endsWith('/serverless')
+const serverlessMode = __APP_MODE == 'SERVERLESS'
 
 if (serverlessMode) {
   store.data = makeDefaultData()
