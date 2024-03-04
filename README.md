@@ -25,12 +25,12 @@ On the browser, open `http://localhost:5173/`
 - [x] Implement basic tile paining UI (proof of concept)
 - [x] Make Phaser canvas fully resizeable
 - [x] Be able to configure project (tileset image(s), tile size, etc)
-- [ ] Tile picker
-- [.] Layers (WIP, need way to add and remove layers)
+- [x] Tile picker
+- [_] Layers (WIP, need way to add and remove layers)
 - [ ] Define the auto-mapping model
 - [ ] Allow to define tile properties
 - [ ] Export package so it can be run with npx
-- [.] Serverless mode + warning for when there is no server connected (WIP, add built-in tileset)
+- [_] Serverless mode + warning for when there is no server connected (WIP, add built-in tileset)
 - [ ] Add a demo link
 - [x] Make JSON output git diff friendly
 - [ ] Paint multiple tiles at the same time
@@ -43,6 +43,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
+- [ ] Fix `npm run client-type-check`
 
 ## Appendix: Notes
 
