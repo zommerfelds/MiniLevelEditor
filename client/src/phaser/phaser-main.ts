@@ -13,5 +13,8 @@ export function launch(containerId: string): Phaser.Game {
     roundPixels: false,
     parent: containerId,
     scene: [LevelScene],
+    audio: {
+      noAudio: true,
+    },
   })
 }
