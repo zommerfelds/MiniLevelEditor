@@ -29,7 +29,11 @@ function getIconStyle(tile: any) {
 <template>
   <div v-if="world.data.config">
     <div class="container" v-for="(tile, index) in world.data.config.tiles" :key="index">
-      <div class="row pb-1" @click="tools.selectedTile = index">
+      <div
+        class="row pb-1"
+        @click="tools.selectedTile = index"
+        v-if="tile.allowedLayers?.includes(tools.selectedLayer) ?? true"
+      >
         <div class="col">
           <a
             href="#"
