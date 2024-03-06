@@ -63,6 +63,7 @@ export class LevelScene extends Scene {
       this.cameras.main.zoom *= 1 - deltaY * 0.001
     })
 
+    this.tiles = []
     for (let layer = 0; layer < this.store.data.config.layers.length; layer++) {
       this.tiles[layer] = []
       for (let x = 0; x < level.width; x++) {

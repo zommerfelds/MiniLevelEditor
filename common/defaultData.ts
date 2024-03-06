@@ -1,16 +1,16 @@
-import defaultLevel from './level-default.json'
-
 export function makeDefaultData() {
+  // Ignore Prettier to keep JSON compatible
+  // prettier-ignore
   return {
-    config: {
-      gridCellWidth: 16,
-      gridCellHeight: 16,
+    "config": {
+      "gridCellWidth": 16,
+      "gridCellHeight": 16,
       // TODO: come up with a better working default tileset (see tiles below).
-      tileset: '__builtin',
-      tilesetTileWidth: 16,
-      tilesetTileHeight: 16,
-      layers: [{ name: 'Static' }, { name: 'Entities' }],
-      tiles: [
+      "tileset": '__builtin',
+      "tilesetTileWidth": 16,
+      "tilesetTileHeight": 16,
+      "layers": [{ "name": "Static" }, { "name": "Entities" }],
+      "tiles": [
         { "name": "Empty" },
         { "name": "T1", "x": 0, "y": 0 },
         { "name": "T2", "x": 16, "y": 0 },
@@ -22,6 +22,48 @@ export function makeDefaultData() {
         { "name": "Trunk", "x": 48, "y": 16 }
       ],
     },
-    levels: [defaultLevel],
+    levels: [makeDefaultLevel()],
+  }
+}
+
+export function makeDefaultLevel() {
+  // Ignore Prettier to keep JSON compatible
+  // prettier-ignore
+  return {
+    "properties": {
+      "name": "My level"
+    },
+    "width": 10,
+    "height": 10,
+    "layers": [
+      {
+        "data": [
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+        ]
+      },
+      {
+        "data": [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ]
+      }
+    ]
   }
 }
