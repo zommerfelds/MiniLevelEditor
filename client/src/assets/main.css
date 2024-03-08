@@ -10,3 +10,7 @@
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
+
+.global-toolbar-height {
+  height: 2.3em
+}

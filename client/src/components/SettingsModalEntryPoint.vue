@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { useWorldStore } from '@/stores/world'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faGear } from '@fortawesome/free-solid-svg-icons'
+
 const worldStore = useWorldStore()
 </script>
 
 <template>
   <button
     type="button"
-    class="col-2 btn btn-light"
+    class="btn btn-light"
     data-bs-toggle="modal"
     data-bs-target="#exampleModal"
     :disabled="worldStore.data.config == undefined"
   >
-    <i class="bi bi-gear"></i>
+    <FontAwesomeIcon :icon="faGear" />
   </button>
 </template>

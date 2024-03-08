@@ -7,6 +7,8 @@ import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore, serverlessMode } from '@/stores/world'
 import { useToolsStore } from '@/stores/tools'
 import { computed } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 
 const store = useWorldStore()
 const levels = computed(() => store.data.levels)
@@ -44,13 +46,18 @@ async function loadLevelFromDir() {
       class="border-end border-secondary d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
       style="width: 280px"
     >
-      <div class="container">
-        <div class="row align-items-center">
-          <img class="col-10 pixelart ps-0" src="@/assets/logo.png" />
-          <SettingsModalEntryPoint />
+      <div class="d-flex align-items-end global-toolbar-height">
+        <div class="flex-grow-1 pe-2">
+          <img
+            class="pixelart"
+            src="@/assets/logo.png"
+            style="width: 100%; vertical-align: bottom"
+          />
         </div>
+        <SettingsModalEntryPoint />
       </div>
-      <hr />
+      <!-- Note: margin should be the same as the padding of the parent, so the toolbar height matches -->
+      <hr class="mt-3" />
       <div v-if="serverlessMode">
         <div class="p-2 text-warning" style="font-weight: bold">
           <p>[WIP: Serverless mode]</p>
@@ -67,15 +74,16 @@ async function loadLevelFromDir() {
             @click="tools.selectedLevel = index"
           >
             <a href="#" class="lvl-selector-link text-white"> Level {{ index + 1 }} </a>
-            <button
-              class="bi bi-trash3-fill ms-2 lvl-delete float-end"
+            <FontAwesomeIcon
+              :icon="faTrash"
+              class="mt-1 lvl-delete float-end"
               @click.stop="deleteLevel(index)"
-            ></button>
+            />
           </div>
         </li>
         <li>
           <a href="#" class="nav-link text-white" @click="addLevel()">
-            <i class="bi bi-plus-square me-2"></i> Add level
+            <FontAwesomeIcon :icon="faSquarePlus" class="me-3" />Add level
           </a>
         </li>
       </ul>
