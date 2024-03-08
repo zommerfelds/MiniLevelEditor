@@ -46,7 +46,7 @@ async function loadLevelFromDir() {
       class="border-end border-secondary d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
       style="width: 280px"
     >
-      <div class="d-flex align-items-end global-toolbar-height">
+      <div class="d-flex align-items-center global-toolbar-height">
         <div class="flex-grow-1 pe-2">
           <img
             class="pixelart"
