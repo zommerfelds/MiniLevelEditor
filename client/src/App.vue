@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LevelContent from '@/components/LevelContent.vue'
+import Toolbar from './components/Toolbar.vue'
 import SettingsModal from '@/components/SettingsModal.vue'
 import TileSelector from '@/components/TileSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
@@ -87,7 +88,11 @@ async function loadLevelFromDir() {
       <div class="d-flex h-100 align-items-center justify-content-center" v-if="store.loadingError">
         <h1 class="text-danger">Error connecting to server</h1>
       </div>
-      <LevelContent />
+
+      <div class="d-flex flex-column h-100">
+        <Toolbar />
+        <LevelContent />
+      </div>
     </div>
   </div>
 

@@ -38,6 +38,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Define the auto-mapping model
+- [ ] Add nicer default tileset
 - [ ] Export package so it can be run with npx
 - [ ] [WIP] Serverless mode (TODO: be able to save)
 - [ ] Paint multiple tiles at the same time
