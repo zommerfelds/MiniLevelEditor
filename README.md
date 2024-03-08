@@ -46,8 +46,9 @@ On the browser, open `http://localhost:5173/`
 - [ ] Randomize drawing (maybe: way to define brushes)
 - [ ] Add warning for old version
 - [ ] Make a YouTube video
-- [ ] Optimize saving by only sending diffs
+- [ ] Optimize saving by only sending diffs and batching/throttling
 - [ ] Fix `npm run client-type-check`
+- [ ] Unit test for loading (makes sure file is not modified)
 
 ## Appendix: Notes
 
