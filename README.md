@@ -28,22 +28,23 @@ On the browser, open `http://localhost:5173/`
 - [x] Make Phaser canvas fully resizeable
 - [x] Be able to configure project (tileset image(s), tile size, etc)
 - [x] Tile picker
-- [ ] [WIP] Layers (TODO: need way to add and remove layers)
-- [ ] Define the auto-mapping model
-- [ ] Allow to define tile properties
-- [ ] Export package so it can be run with npx
-- [ ] [WIP] Serverless mode (TODO: be able to save)
-- [ ] Warning for when there is no server connected
 - [x] Add a demo link
 - [x] Make JSON output git diff friendly
+- [x] Easily increase tileset size wthout messing up project
+- [ ] Warning for when there is no server connected
+- [ ] Undo and redo
+- [ ] Tile editor (define new tiles)
+- [ ] Allow to define properties (for tiles and levels)
+- [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
+- [ ] [WIP] Layers (TODO: need way to add and remove layers)
+- [ ] Define the auto-mapping model
+- [ ] Export package so it can be run with npx
+- [ ] [WIP] Serverless mode (TODO: be able to save)
 - [ ] Paint multiple tiles at the same time
 - [ ] More tools (e.g. eraser, move tile(s), selection)
-- [ ] Undo and redo
 - [ ] Support multiple tilesets
 - [ ] Randomize drawing (maybe: way to define brushes)
 - [ ] Add warning for old version
-- [ ] Easily increase tileset size wthout messing up project
-- [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
 - [ ] Make a YouTube video
 - [ ] Optimize saving by only sending diffs
 - [ ] Fix `npm run client-type-check`
