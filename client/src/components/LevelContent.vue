@@ -18,7 +18,6 @@ onMounted(() => {
 <template>
   <div class="d-flex flex-column h-100">
     <div class="p-2 bg-dark text-light d-flex" v-if="world.data.config">
-
       <div class="p-2">Tool</div>
       <div class="btn-group" role="group" aria-label="Basic example">
         <button

@@ -1,4 +1,4 @@
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
 import { makeDefaultLevel, makeDefaultData } from '../../../common/defaultData'
 
@@ -25,8 +25,7 @@ export const useWorldStore = defineStore('world', () => {
       const getUrl = '/api/get'
       const response = await fetch(getUrl)
       if (!response.ok) {
-        loadingError.value = true
-        return
+        throw 'Could not fetch data from server'
       }
       const json = await response.json()
       console.log('Loaded from server:', JSON.stringify(json))
@@ -46,6 +45,12 @@ export const useWorldStore = defineStore('world', () => {
       })
     }
   }
+
+  // Load data asynchronously.
+  loadWorldData().catch((err: any) => {
+    loadingError.value = true
+    console.error('Loading error:', err)
+  })
 
   return { data, isDefaultData, loadingError, addLevel, loadWorldData }
 })

@@ -11,8 +11,6 @@ const store = useWorldStore()
 const levels = computed(() => store.data.levels)
 const tools = useToolsStore()
 
-store.loadWorldData()
-
 function addLevel() {
   store.addLevel()
   tools.selectedLevel = store.data.levels.length - 1
