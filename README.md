@@ -31,7 +31,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Add a demo link
 - [x] Make JSON output git diff friendly
 - [x] Easily increase tileset size wthout messing up project
-- [ ] Warning for when there is no server connected
+- [x] Warning for when there is no server connected
 - [ ] Undo and redo
 - [ ] Tile editor (define new tiles)
 - [ ] Allow to define properties (for tiles and levels)

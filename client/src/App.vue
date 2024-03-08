@@ -5,7 +5,7 @@ import TileSelector from '@/components/TileSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore } from '@/stores/world'
 import { useToolsStore } from '@/stores/tools'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { makeDefaultData } from '../../common/defaultData'
 
 const store = useWorldStore()
@@ -14,32 +14,42 @@ const tools = useToolsStore()
 
 const serverlessMode = __APP_MODE == 'SERVERLESS'
 
-if (serverlessMode) {
-  store.data = makeDefaultData()
-  store.isDefaultData = true
-} else {
-  const getUrl = '/api/get'
-  fetch(getUrl).then(async (response) => {
-    const json = await response.json()
-    console.log('Loaded from server:', JSON.stringify(json))
+let loadingError = ref(false)
+
+async function loadWorldData() {
+  if (serverlessMode) {
+    store.data = makeDefaultData()
+    store.isDefaultData = true
+  } else {
     // Simulate a loading delay:
     // await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    const getUrl = '/api/get'
+    const response = await fetch(getUrl)
+    if (!response.ok) {
+      loadingError.value = true
+      return
+    }
+    const json = await response.json()
+    console.log('Loaded from server:', JSON.stringify(json))
     store.data = json
-  })
 
-  const postUrl = '/api/post'
+    const postUrl = '/api/post'
 
-  store.$subscribe(async (mutation, state) => {
-    const stateStr = JSON.stringify(state.data)
-    console.log('Sending to server:', stateStr)
+    store.$subscribe(async (mutation, state) => {
+      const stateStr = JSON.stringify(state.data)
+      console.log('Sending to server:', stateStr)
 
-    await fetch(postUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: stateStr,
+      await fetch(postUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: stateStr,
+      })
     })
-  })
+  }
 }
+
+loadWorldData()
 
 function addLevel() {
   store.addLevel()
@@ -114,6 +124,9 @@ async function loadLevelFromDir() {
 
     <!-- min-width fix: https://stackoverflow.com/a/66689926/3810493 -->
     <div class="flex-grow-1" style="min-width: 0">
+      <div class="d-flex h-100 align-items-center justify-content-center" v-if="loadingError">
+        <h1 class="text-danger">Error connecting to server</h1>
+      </div>
       <LevelContent />
     </div>
   </div>
