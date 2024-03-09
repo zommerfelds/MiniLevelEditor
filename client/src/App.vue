@@ -6,7 +6,7 @@ import TileSelector from '@/components/TileSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore, serverlessMode } from '@/stores/world'
 import { useToolsStore } from '@/stores/tools'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -25,10 +25,18 @@ function deleteLevel(index: number) {
   if (tools.selectedLevel > index) {
     tools.selectedLevel--
   }
-  if (tools.selectedLevel >= store.data.levels.length) {
-    tools.selectedLevel = store.data.levels.length - 1
-  }
 }
+
+// If the current index is past the end, fix it. This could for example happen on undo, or deleting the last level.
+watch(
+  () => computed(() => store.data.levels?.length),
+  () => {
+    if (tools.selectedLevel >= store.data.levels.length) {
+      tools.selectedLevel = store.data.levels.length - 1
+    }
+  },
+  { deep: true }
+)
 
 async function loadLevelFromDir() {
   const dirHandle = await window.showDirectoryPicker()
@@ -79,6 +87,7 @@ async function loadLevelFromDir() {
               class="mt-1 lvl-delete float-end"
               @click.stop="deleteLevel(index)"
             />
+            <!-- TODO: fix undo when removing a level, zoom seems to be stuck. Probably undo needs to take into account level num. -->
           </div>
         </li>
         <li>

@@ -31,14 +31,14 @@ export const useWorldStore = defineStore('world', () => {
         throw 'Could not fetch data from server'
       }
       const json = await response.json()
-      console.log('Loaded from server:', JSON.stringify(json))
+      // console.log('Loaded from server:', JSON.stringify(json))
       data.value = json
 
       const postUrl = '/api/post'
 
       watchEffect(async () => {
         const stateStr = JSON.stringify(data.value)
-        console.log('Sending to server:', stateStr)
+        // console.log('Sending to server:', stateStr)
 
         await fetch(postUrl, {
           method: 'POST',

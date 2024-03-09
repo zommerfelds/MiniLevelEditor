@@ -33,6 +33,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Easily increase tileset size wthout messing up project
 - [x] Warning for when there is no server connected
 - [x] Undo and redo
+- [ ] Prevent Phaser from loading twice at startup
 - [ ] Tile editor (define new tiles)
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
