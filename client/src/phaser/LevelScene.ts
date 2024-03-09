@@ -102,15 +102,17 @@ export class LevelScene extends Scene {
         computed(() => this.store.isDefaultData),
         computed(() => JSON.stringify(this.store.data?.config)),
         computed(() => this.tools.selectedLevel),
+        computed(() => this.store.dataRevision),
       ],
       (
-        [isDefaultData, configStr, selectedLevel],
-        [prevIsDefaultData, prevConfigStr, prevSelectedLevel]
+        [isDefaultData, configStr, selectedLevel, dataRevision],
+        [prevIsDefaultData, prevConfigStr, prevSelectedLevel, prevDataRevision]
       ) => {
         if (
           isDefaultData == prevIsDefaultData &&
           configStr == prevConfigStr &&
-          selectedLevel == prevSelectedLevel
+          selectedLevel == prevSelectedLevel &&
+          dataRevision == prevDataRevision
         )
           return
         const config = JSON.parse(configStr || '{}')

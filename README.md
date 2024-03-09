@@ -32,7 +32,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Make JSON output git diff friendly
 - [x] Easily increase tileset size wthout messing up project
 - [x] Warning for when there is no server connected
-- [ ] Undo and redo
+- [x] Undo and redo
 - [ ] Tile editor (define new tiles)
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
@@ -47,7 +47,8 @@ On the browser, open `http://localhost:5173/`
 - [ ] Randomize drawing (maybe: way to define brushes)
 - [ ] Add warning for old version
 - [ ] Make a YouTube video
-- [ ] Optimize saving by only sending diffs and batching/throttling
+- [ ] Keyboard shortcuts (e.g. Ctrl-Z for undo)
+- [ ] Optimize saving by only sending diffs and batching/throttling (refDebounced?)
 - [ ] Fix `npm run client-type-check`
 - [ ] Unit test for loading (makes sure file is not modified)
 

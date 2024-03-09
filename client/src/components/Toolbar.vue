@@ -13,10 +13,22 @@ const world = useWorldStore()
     <div class="d-flex align-items-end global-toolbar-height">
       <div class="p-2">Undo</div>
       <div class="btn-group" role="group">
-        <button disabled type="button" class="btn btn-light" data-toggle="button">
+        <button
+          type="button"
+          class="btn btn-light"
+          data-toggle="button"
+          :disabled="!world.canUndo"
+          @click="world.undo"
+        >
           <FontAwesomeIcon :icon="faReply" />
         </button>
-        <button disabled type="button" class="btn btn-light" data-toggle="button">
+        <button
+          type="button"
+          class="btn btn-light"
+          data-toggle="button"
+          :disabled="!world.canRedo"
+          @click="world.redo"
+        >
           <FontAwesomeIcon :icon="faShare" />
         </button>
       </div>
