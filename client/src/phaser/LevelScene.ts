@@ -12,17 +12,19 @@ export class LevelScene extends Scene {
   tilesetUtils = new TilesetUtils()
   // For each layer, a 2D array with all the tiles:
   tiles: Array<Array<Array<Phaser.GameObjects.Image>>> = []
-  oldDisplayWidth: number = -1
-  oldScrollX: number = -1
-  oldScrollY: number = -1
-  oldZoom: number = -1
-  oldDisplayHeight: number = -1
+  oldDisplayWidth?: number
+  oldScrollX?: number
+  oldScrollY?: number
+  oldZoom?: number
+  oldDisplayHeight?: number
   dataIsReady = false
+  initializing = true
   constructor() {
     super({ key: 'MyScene' })
   }
 
   preload() {
+    this.initializing = true
     this.dataIsReady = this.store.data.config != undefined
 
     if (this.dataIsReady) {
@@ -45,7 +47,7 @@ export class LevelScene extends Scene {
 
     const level = toRaw(this.store.data.levels[this.tools.selectedLevel])
 
-    if (this.oldScrollX == -1) {
+    if (this.oldScrollX == undefined) {
       // TODO: improve camera start position (top left?)
       this.cameras.main.setZoom(5)
       this.cameras.main.centerOn(
@@ -55,8 +57,8 @@ export class LevelScene extends Scene {
     } else {
       // This is a level reload, keep same camera properties.
       this.cameras.main.scrollX = this.oldScrollX
-      this.cameras.main.scrollY = this.oldScrollY
-      this.cameras.main.zoom = this.oldZoom
+      this.cameras.main.scrollY = this.oldScrollY!
+      this.cameras.main.zoom = this.oldZoom!
     }
 
     this.input.on('wheel', (_pointer: any, _gameObjects: any, _deltaX: any, deltaY: number) => {
@@ -94,6 +96,7 @@ export class LevelScene extends Scene {
 
     this.oldDisplayWidth = this.renderer.width
     this.oldDisplayHeight = this.renderer.height
+    this.initializing = false
   }
 
   watchForLevelChanges() {
@@ -103,6 +106,7 @@ export class LevelScene extends Scene {
         computed(() => JSON.stringify(this.store.data?.config)),
         computed(() => this.tools.selectedLevel),
         computed(() => this.store.dataRevision),
+        // TODO: make sure that if the underlying level changes (even if the index is the same), that the level reloads.
       ],
       (
         [isDefaultData, configStr, selectedLevel, dataRevision],
@@ -135,17 +139,17 @@ export class LevelScene extends Scene {
   }
 
   onResize(gameSize: { width: number; height: number }): void {
-    if (!this.dataIsReady) return
+    if (this.initializing) return
 
     // Fix render size and camera movement after resizing.
     this.renderer.resize(gameSize.width, gameSize.height)
     this.cameras.main.width = gameSize.width
     this.cameras.main.height = gameSize.height
     this.cameras.main.scrollX +=
-      (1 - 1 / this.cameras.main.zoom) * (this.oldDisplayWidth - gameSize.width) * 0.5
+      (1 - 1 / this.cameras.main.zoom) * (this.oldDisplayWidth! - gameSize.width) * 0.5
 
     this.cameras.main.scrollY +=
-      (1 - 1 / this.cameras.main.zoom) * (this.oldDisplayHeight - gameSize.height) * 0.5
+      (1 - 1 / this.cameras.main.zoom) * (this.oldDisplayHeight! - gameSize.height) * 0.5
 
     this.oldDisplayWidth = gameSize.width
     this.oldDisplayHeight = gameSize.height
@@ -170,7 +174,7 @@ export class LevelScene extends Scene {
   }
 
   update(): void {
-    if (!this.dataIsReady) return
+    if (this.initializing) return
 
     this.handleMouse()
 
