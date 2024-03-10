@@ -3,48 +3,19 @@ import LevelContent from '@/components/LevelContent.vue'
 import Toolbar from './components/Toolbar.vue'
 import SettingsModal from '@/components/SettingsModal.vue'
 import TileSelector from '@/components/TileSelector.vue'
+import LevelSelector from './components/LevelSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore, serverlessMode } from '@/stores/world'
-import { useToolsStore } from '@/stores/tools'
-import { computed, watch } from 'vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 
-const store = useWorldStore()
-const levels = computed(() => store.data.levels)
-const tools = useToolsStore()
-
-function addLevel() {
-  store.addLevel()
-  tools.selectedLevel = store.data.levels.length - 1
-}
-
-function deleteLevel(index: number) {
-  store.data.levels.splice(index, 1)
-
-  if (tools.selectedLevel > index) {
-    tools.selectedLevel--
-  }
-}
-
-// If the current index is past the end, fix it. This could for example happen on undo, or deleting the last level.
-watch(
-  () => computed(() => store.data.levels?.length),
-  () => {
-    if (tools.selectedLevel >= store.data.levels.length) {
-      tools.selectedLevel = store.data.levels.length - 1
-    }
-  },
-  { deep: true }
-)
+const world = useWorldStore()
 
 async function loadLevelFromDir() {
   const dirHandle = await window.showDirectoryPicker()
   const fileHandle = await dirHandle.getFileHandle('levels.json', {})
   const file = await fileHandle.getFile()
   const text = await file.text()
-  store.data = JSON.parse(text)
-  store.isDefaultData = false
+  world.data = JSON.parse(text)
+  world.isDefaultData = false
 }
 </script>
 
@@ -73,36 +44,14 @@ async function loadLevelFromDir() {
         </div>
         <hr />
       </div>
-      <ul class="nav nav-pills flex-column mb-auto">
-        <li v-for="(level, index) in levels" :key="index" class="nav-item">
-          <div
-            class="nav-link lvl-selector-row"
-            :class="index == tools.selectedLevel ? 'active' : ''"
-            aria-current="page"
-            @click="tools.selectedLevel = index"
-          >
-            <a href="#" class="lvl-selector-link text-white"> Level {{ index + 1 }} </a>
-            <FontAwesomeIcon
-              :icon="faTrash"
-              class="mt-1 lvl-delete float-end"
-              @click.stop="deleteLevel(index)"
-            />
-            <!-- TODO: fix undo when removing a level, zoom seems to be stuck. Probably undo needs to take into account level num. -->
-          </div>
-        </li>
-        <li>
-          <a href="#" class="nav-link text-white" @click="addLevel()">
-            <FontAwesomeIcon :icon="faSquarePlus" class="me-3" />Add level
-          </a>
-        </li>
-      </ul>
+      <LevelSelector />
       <hr />
       <TileSelector />
     </div>
 
     <!-- min-width fix: https://stackoverflow.com/a/66689926/3810493 -->
     <div class="flex-grow-1" style="min-width: 0">
-      <div class="d-flex h-100 align-items-center justify-content-center" v-if="store.loadingError">
+      <div class="d-flex h-100 align-items-center justify-content-center" v-if="world.loadingError">
         <h1 class="text-danger">Error connecting to server</h1>
       </div>
 
@@ -115,20 +64,3 @@ async function loadLevelFromDir() {
 
   <SettingsModal />
 </template>
-
-<style scoped>
-.lvl-selector-link {
-  text-decoration: none;
-}
-
-.lvl-selector-row {
-  cursor: pointer;
-}
-
-.lvl-delete {
-  background: none repeat scroll 0 0 transparent;
-  border: medium none;
-  border-spacing: 0;
-  color: #ffffff;
-}
-</style>
