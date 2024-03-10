@@ -34,13 +34,13 @@ export class LevelScene extends Scene {
   }
 
   create(): void {
-    console.log('Starting Phaser scene')
-
     this.watchForLevelChanges()
     if (!this.dataIsReady) return
 
     if (this.tools.selectedLevel < 0 || this.tools.selectedLevel >= this.store.data.levels.length)
       return
+
+    console.log('Loading Phaser scene')
 
     this.scale.off('resize')
     this.scale.on('resize', this.onResize, this)
