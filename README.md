@@ -33,7 +33,6 @@ On the browser, open `http://localhost:5173/`
 - [x] Easily increase tileset size wthout messing up project
 - [x] Warning for when there is no server connected
 - [x] Undo and redo
-- [ ] Bug: Level doesn't update if you delete the current level
 - [ ] Tile editor (define new tiles)
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)

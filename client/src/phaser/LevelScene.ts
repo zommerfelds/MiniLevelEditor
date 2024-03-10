@@ -102,11 +102,14 @@ export class LevelScene extends Scene {
   watchForLevelChanges() {
     const watchLevelSelectionStopHandle = watch(
       [
+        // Reload when the user loaded a file and is no longer using default data:
         computed(() => this.store.isDefaultData),
-        computed(() => JSON.stringify(this.store.data?.config)),
-        computed(() => this.tools.selectedLevel),
+        // Reload if the config changed (e.g. tile size):
+        computed(() => JSON.stringify(this.store.data.config)),
+        // Reference to current level should stay the same (note that the index can stay but the underlying level can change):
+        computed(() => this.store.data.levels?.at(this.tools.selectedLevel)),
+        // Reload if the revision changed without us knowing (e.g. undo):
         computed(() => this.store.dataRevision),
-        // TODO: make sure that if the underlying level changes (even if the index is the same), that the level reloads.
       ],
       (
         [isDefaultData, configStr, selectedLevel, dataRevision],
