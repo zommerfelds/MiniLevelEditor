@@ -3,6 +3,9 @@ import { useToolsStore } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import { TilesetUtils } from '@/logic/TilesetUtils'
 import { watch } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faPen } from '@fortawesome/free-solid-svg-icons'
+import TilesModal from '@/components/TilesModal.vue'
 
 const tools = useToolsStore()
 const world = useWorldStore()
@@ -63,14 +66,28 @@ watch(
 </script>
 
 <template>
-  <div v-if="world.data.config">
-    <div class="container" v-for="(tile, index) in world.data.config.tiles" :key="index">
-      <div
-        class="row pb-1"
-        @click="tools.selectedTile = index"
-        v-if="isTileAllowedInSelectedLayer(tile)"
-      >
-        <div class="col">
+  <div class="container">
+    <div class="row pb-2">
+      <div class="col pt-2">
+        <b>Tiles</b>
+      </div>
+      <div class="col p-0">
+        <button
+          class="btn btn-secondary float-end"
+          data-bs-toggle="modal"
+          data-bs-target="#tilesModal"
+        >
+          <FontAwesomeIcon :icon="faPen" />
+        </button>
+      </div>
+    </div>
+    <div v-if="world.data.config">
+      <div class="row" v-for="(tile, index) in world.data.config.tiles" :key="index">
+        <div
+          class="col pt-1"
+          @click="tools.selectedTile = index"
+          v-if="isTileAllowedInSelectedLayer(tile)"
+        >
           <a
             href="#"
             class="tile-selector"
@@ -83,6 +100,8 @@ watch(
       </div>
     </div>
   </div>
+
+  <TilesModal />
 </template>
 
 <style scoped>

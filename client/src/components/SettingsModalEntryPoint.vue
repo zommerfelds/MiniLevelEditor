@@ -11,7 +11,7 @@ const worldStore = useWorldStore()
     type="button"
     class="btn btn-light"
     data-bs-toggle="modal"
-    data-bs-target="#exampleModal"
+    data-bs-target="#settingsModal"
     :disabled="worldStore.data.config == undefined"
   >
     <FontAwesomeIcon :icon="faGear" />

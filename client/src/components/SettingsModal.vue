@@ -23,9 +23,9 @@ function onSaveSettings() {
 
 onMounted(() => {
   // Use this to auto-show the dialog (for development):
-  // setTimeout(() => Modal.getOrCreateInstance('#exampleModal').show(), 500)
+  // setTimeout(() => Modal.getOrCreateInstance('#settingsModal').show(), 500)
 
-  const dialog = document.getElementById('exampleModal')!!
+  const dialog = document.getElementById('settingsModal')!!
 
   dialog.addEventListener('show.bs.modal', () => {
     gridCellWidth.value = worldStore.data.config.gridCellWidth
@@ -47,15 +47,15 @@ onMounted(() => {
 <template>
   <div
     class="modal fade text-black"
-    id="exampleModal"
+    id="settingsModal"
     tabindex="-1"
-    aria-labelledby="exampleModalLabel"
+    aria-labelledby="settingsModalLabel"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Project settings</h1>
+          <h1 class="modal-title fs-5" id="settingsModalLabel">Project settings</h1>
           <button
             type="button"
             class="btn-close"
