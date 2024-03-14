@@ -1,6 +1,6 @@
 import { ref, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
-import { makeDefaultLevel, makeDefaultData } from '../../../common/defaultData'
+import { makeDefaultLevel, makeDefaultData } from '@common/defaultData'
 import { useRefHistory } from '@vueuse/core'
 
 export const serverlessMode = __APP_MODE == 'SERVERLESS'
@@ -67,6 +67,10 @@ export const useWorldStore = defineStore('world', () => {
     dataRevision.value++
   }
 
+  function updateRevision() {
+    dataRevision.value++
+  }
+
   return {
     data,
     isDefaultData,
@@ -74,6 +78,7 @@ export const useWorldStore = defineStore('world', () => {
     canUndo: dataHistory.canUndo,
     canRedo: dataHistory.canRedo,
     dataRevision, // Is incremented when the data is updated outside the the content editor.
+    updateRevision,
     undo,
     redo,
     addLevel,
