@@ -125,7 +125,7 @@ export class LevelScene extends Scene {
         const config = JSON.parse(configStr || '{}')
         const prevConfig = JSON.parse(prevConfigStr || '{}')
         if (
-          ['tileset', 'tilesetTileWidth', 'tilesetTileHeight'].some(
+          ['tileset', 'tilesetTileWidth', 'tilesetTileHeight', 'tiles'].some(
             (key) => config[key] != prevConfig[key]
           ) &&
           this.textures.exists('tiles')

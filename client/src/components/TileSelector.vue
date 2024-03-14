@@ -10,24 +10,8 @@ import TilesModal from '@/components/TilesModal.vue'
 const tools = useToolsStore()
 const world = useWorldStore()
 
-const tileSize = 16
-const imageSize = 64
 const iconSize = 22
-const backgroundSize = imageSize * (iconSize / tileSize)
-
 const tilesetUtils = new TilesetUtils()
-
-function getIconStyle(tile: any) {
-  if (tile.x == undefined) {
-    return { 'background-color': 'black' }
-  }
-  return {
-    'background-position':
-      iconSize * (-tile.x / tileSize) + 'px ' + iconSize * (-tile.y / tileSize) + 'px',
-    'background-image': 'url("' + tilesetUtils.getPath() + '")',
-    'background-size': backgroundSize + 'px',
-  }
-}
 
 function isTileAllowedInSelectedLayer(tile: any): boolean {
   return tile?.allowedLayers?.includes(tools.selectedLayer) ?? true
@@ -93,7 +77,10 @@ watch(
             class="tile-selector"
             :class="tools.selectedTile == index ? 'tile-selected' : ''"
           >
-            <div class="tile-icon pixelart" :style="getIconStyle(tile)"></div>
+            <div
+              class="tile-icon pixelart"
+              :style="tilesetUtils.getIconStyle(tile, iconSize)"
+            ></div>
             <span class="ps-2 align-top">{{ tile.name }}</span>
           </a>
         </div>
@@ -116,7 +103,5 @@ watch(
 
 .tile-icon {
   display: inline-block;
-  width: v-bind(iconSize + 'px');
-  height: v-bind(iconSize + 'px');
 }
 </style>

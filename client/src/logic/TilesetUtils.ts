@@ -29,7 +29,41 @@ export class TilesetUtils {
     }
   }
 
-  isEmptyTile(tileIndex:number): boolean {
+  isEmptyTile(tileIndex: number): boolean {
     return this.store.data.config.tiles[tileIndex].x == undefined
+  }
+
+  setEmpty(tile: any) {
+    delete tile.x
+    delete tile.y
+  }
+
+  setFromTileset(tile: any, x: number, y: number) {
+    tile.x = x
+    tile.y = y
+  }
+
+  getIconStyle(tile: any, iconSize: number) {
+    const imageWidth = 64 // TODO: don't hardcode
+    const backgroundSize = imageWidth * (iconSize / this.store.data.config.tilesetTileWidth)
+
+    const style = {
+      width: iconSize + 'px',
+      height: iconSize + 'px',
+    }
+
+    if (tile.x == undefined) {
+      return { ...style, 'background-color': 'black' }
+    }
+    return {
+      ...style,
+      'background-position':
+        iconSize * (-tile.x / this.store.data.config.tilesetTileWidth) +
+        'px ' +
+        iconSize * (-tile.y / this.store.data.config.tilesetTileHeight) +
+        'px',
+      'background-image': 'url("' + this.getPath() + '")',
+      'background-size': backgroundSize + 'px',
+    }
   }
 }
