@@ -30,7 +30,7 @@ export class TilesetUtils {
   }
 
   isEmptyTile(tileIndex: number): boolean {
-    return this.store.data.config.tiles[tileIndex].x == undefined
+    return this.store.data.config.tiles[tileIndex]?.x == undefined
   }
 
   setEmpty(tile: any) {

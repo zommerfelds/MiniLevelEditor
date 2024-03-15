@@ -36,6 +36,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Tile editor (define new tiles)
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
+- [ ] Add warning banner for when data doesns't match the schema (e.g. tile was deleted)
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset

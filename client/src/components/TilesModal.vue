@@ -1,11 +1,25 @@
 <script setup lang="ts">
 import { useWorldStore } from '@/stores/world'
 import { TilesetUtils } from '@/logic/TilesetUtils'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 
 const world = useWorldStore()
 
 const iconSize = 30
 const tilesetUtils = new TilesetUtils()
+
+function addTile() {
+  const newTile = { name: '' }
+  world.data.config.tiles.push(newTile)
+
+  const dialogBody = document.getElementById('tilesModalBody')!!
+  setTimeout(() => dialogBody.scrollTo({ top: dialogBody.scrollHeight, behavior: 'smooth' }), 0)
+}
+
+function deleteTile(index: number) {
+  world.data.config.tiles.splice(index, 1)
+}
 </script>
 
 <template>
@@ -27,13 +41,13 @@ const tilesetUtils = new TilesetUtils()
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body pb-4">
+        <div id="tilesModalBody" class="modal-body pb-4 my-modal-body">
           <!-- TODO: handle overflow (small window) -->
           <div class="row header pb-3">
             <div class="col-6 ps-3">Name</div>
             <div class="col-6 ps-3">Source</div>
           </div>
-          <div v-if="world.data.config">
+          <template v-if="world.data.config">
             <div class="row pb-1" v-for="(tile, index) in world.data.config.tiles" :key="index">
               <div class="col-6 d-flex">
                 <input type="text" class="form-control" v-model="tile.name" />
@@ -52,7 +66,7 @@ const tilesetUtils = new TilesetUtils()
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {{ tilesetUtils.isEmptyTile(index) ? 'From tileset' : 'Empty' }}
+                    {{ tilesetUtils.isEmptyTile(index) ? 'Empty' : 'From tileset' }}
                   </button>
                   <ul class="dropdown-menu">
                     <li>
@@ -77,13 +91,23 @@ const tilesetUtils = new TilesetUtils()
                     <input type="number" class="form-control" v-model="tile.x" />
                   </div>
                   <div class="p-1">y:</div>
-                  <div class="size-input">
+                  <div class="size-input me-2">
                     <input type="number" class="form-control" v-model="tile.y" />
                   </div>
                 </template>
+                <button class="btn btn-sm btn-secondary ms-auto" @click="deleteTile(index)">
+                  <FontAwesomeIcon :icon="faTrash" class="" />
+                </button>
               </div>
             </div>
-          </div>
+            <div class="row pt-2">
+              <div class="col">
+                <button class="btn btn-sm btn-secondary" @click="addTile()">
+                  <FontAwesomeIcon :icon="faSquarePlus" class="me-3" />Add tile
+                </button>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -91,6 +115,10 @@ const tilesetUtils = new TilesetUtils()
 </template>
 
 <style scoped>
+.my-modal-body {
+  height: 80vh;
+  overflow-y: auto;
+}
 .size-input {
   width: 5em;
 }
