@@ -5,22 +5,22 @@ export class TilesetUtils {
   store = useWorldStore()
 
   getPath(): string {
-    if (this.store.data.config?.tileset == undefined) return ''
+    if (this.store.data.config?.tileset === undefined) return ''
 
-    if (this.store.data.config.tileset == '__builtin') {
+    if (this.store.data.config.tileset === '__builtin') {
       return 'built-in-tileset.png'
     }
     return 'api/tilesets/' + this.store.data.config.tileset
   }
 
   getAtlas(): object {
-    if (this.store.data.config?.tiles == undefined) return {}
+    if (this.store.data.config?.tiles === undefined) return {}
 
     // Format example: https://github.com/phaserjs/examples/blob/master/public/src/loader/texture%20atlas%20json/load%20atlas%20with%20local%20json.js
     return {
       frames: this.store.data.config.tiles
         .map((tile: Tile, index: number) => ({ tile, index }))
-        .filter(({ tile }: { tile: Tile }) => tile.x != undefined)
+        .filter(({ tile }: { tile: Tile }) => tile.x !== undefined)
         .map(({ tile, index }: { tile: Tile; index: number }) => ({
           filename: String(index),
           rotated: false,
@@ -31,12 +31,12 @@ export class TilesetUtils {
   }
 
   isEmptyTileIndex(tileIndex?: number): boolean {
-    if (tileIndex == undefined) return true
+    if (tileIndex === undefined) return true
     const tile = this.store.data.config.tiles[tileIndex]
     return tile ? this.isEmptyTile(tile) : true
   }
   isEmptyTile(tile: Tile): boolean {
-    return tile.x == undefined
+    return tile.x === undefined
   }
 
   setEmpty(tile: Tile) {
@@ -58,7 +58,7 @@ export class TilesetUtils {
       height: iconSize + 'px',
     }
 
-    if (tile.x == undefined || tile.y == undefined) {
+    if (tile.x === undefined || tile.y === undefined) {
       return { ...style, 'background-color': 'black' }
     }
     return {
