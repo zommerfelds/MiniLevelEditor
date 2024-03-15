@@ -6,6 +6,7 @@ import { watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import TilesModal from '@/components/TilesModal.vue'
+import type { Tile } from '@common/dataTypes'
 
 const tools = useToolsStore()
 const world = useWorldStore()
@@ -13,7 +14,7 @@ const world = useWorldStore()
 const iconSize = 22
 const tilesetUtils = new TilesetUtils()
 
-function isTileAllowedInSelectedLayer(tile: any): boolean {
+function isTileAllowedInSelectedLayer(tile?: Tile): boolean {
   return tile?.allowedLayers?.includes(tools.selectedLayer) ?? true
 }
 
@@ -32,11 +33,9 @@ watch(
     // Make sure that the current selected tile is allowed in this layer.
     if (isTileIndexAllowedInSelectedLayer(tools.selectedTile)) return
 
-    if (
-      tools.lastSelectedTilePerLayer[tools.selectedLayer] != undefined &&
-      isTileIndexAllowedInSelectedLayer(tools.lastSelectedTilePerLayer[tools.selectedLayer])
-    ) {
-      tools.selectedTile = tools.lastSelectedTilePerLayer[tools.selectedLayer]
+    const lastSelectedTile = tools.lastSelectedTilePerLayer[tools.selectedLayer]
+    if (lastSelectedTile != undefined && isTileIndexAllowedInSelectedLayer(lastSelectedTile)) {
+      tools.selectedTile = lastSelectedTile
       return
     }
     for (let i = 0; i < world.data.config?.tiles.length; i++) {

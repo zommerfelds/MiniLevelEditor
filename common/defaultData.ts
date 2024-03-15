@@ -1,4 +1,6 @@
-export function makeDefaultData() {
+import type { WorldData } from './dataTypes'
+
+export function makeDefaultData(): WorldData {
   // Ignore Prettier to keep JSON compatible
   // prettier-ignore
   return {

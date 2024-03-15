@@ -1,4 +1,5 @@
 import { useWorldStore } from '@/stores/world'
+import type { Tile } from '@common/dataTypes'
 
 export class TilesetUtils {
   store = useWorldStore()
@@ -18,9 +19,9 @@ export class TilesetUtils {
     // Format example: https://github.com/phaserjs/examples/blob/master/public/src/loader/texture%20atlas%20json/load%20atlas%20with%20local%20json.js
     return {
       frames: this.store.data.config.tiles
-        .map((tile: any, index: number) => ({ tile, index }))
-        .filter(({ tile }: { tile: any }) => tile.x != undefined)
-        .map(({ tile, index }: { tile: any; index: number }) => ({
+        .map((tile: Tile, index: number) => ({ tile, index }))
+        .filter(({ tile }: { tile: Tile }) => tile.x != undefined)
+        .map(({ tile, index }: { tile: Tile; index: number }) => ({
           filename: String(index),
           rotated: false,
           trimmed: false,
@@ -29,21 +30,26 @@ export class TilesetUtils {
     }
   }
 
-  isEmptyTile(tileIndex: number): boolean {
-    return this.store.data.config.tiles[tileIndex]?.x == undefined
+  isEmptyTileIndex(tileIndex?: number): boolean {
+    if (tileIndex == undefined) return true
+    const tile = this.store.data.config.tiles[tileIndex]
+    return tile ? this.isEmptyTile(tile) : true
+  }
+  isEmptyTile(tile: Tile): boolean {
+    return tile.x == undefined
   }
 
-  setEmpty(tile: any) {
+  setEmpty(tile: Tile) {
     delete tile.x
     delete tile.y
   }
 
-  setFromTileset(tile: any, x: number, y: number) {
+  setFromTileset(tile: Tile, x: number, y: number) {
     tile.x = x
     tile.y = y
   }
 
-  getIconStyle(tile: any, iconSize: number) {
+  getIconStyle(tile: Tile, iconSize: number) {
     const imageWidth = 64 // TODO: don't hardcode
     const backgroundSize = imageWidth * (iconSize / this.store.data.config.tilesetTileWidth)
 
@@ -52,7 +58,7 @@ export class TilesetUtils {
       height: iconSize + 'px',
     }
 
-    if (tile.x == undefined) {
+    if (tile.x == undefined || tile.y == undefined) {
       return { ...style, 'background-color': 'black' }
     }
     return {

@@ -2,13 +2,14 @@ import { ref, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
 import { makeDefaultLevel, makeDefaultData } from '@common/defaultData'
 import { useRefHistory } from '@vueuse/core'
+import type { WorldData } from '@common/dataTypes'
 
 export const serverlessMode = __APP_MODE == 'SERVERLESS'
 
 // Local storage for all level data.
 export const useWorldStore = defineStore('world', () => {
-  const data = ref<any>({})
-  const isDefaultData = ref(false)
+  const data = ref<WorldData>(makeDefaultData())
+  const isDefaultData = ref(true)
   const loadingError = ref(false)
   const dataHistory = useRefHistory(data, { deep: true })
   const dataRevision = ref(0)
@@ -18,10 +19,7 @@ export const useWorldStore = defineStore('world', () => {
   }
 
   async function loadWorldData() {
-    if (serverlessMode) {
-      data.value = makeDefaultData()
-      isDefaultData.value = true
-    } else {
+    if (!serverlessMode) {
       // Simulate a loading delay:
       // await new Promise((resolve) => setTimeout(resolve, 2000))
 
@@ -33,6 +31,7 @@ export const useWorldStore = defineStore('world', () => {
       const json = await response.json()
       // console.log('Loaded from server:', JSON.stringify(json))
       data.value = json
+      isDefaultData.value = false
 
       const postUrl = '/api/post'
 

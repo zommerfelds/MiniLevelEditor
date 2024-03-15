@@ -10,6 +10,7 @@
       "@common/*": ["./common/*"],
       "@/*": ["./client/src/*"]
     },
-    "types": ["@types/wicg-file-system-access"]
+    "types": ["@types/wicg-file-system-access"],
+    "noUncheckedIndexedAccess": true
   }
 }
