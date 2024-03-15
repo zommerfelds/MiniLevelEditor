@@ -27,7 +27,7 @@ export class LevelScene extends Scene {
 
   preload() {
     this.initializing = true
-    this.dataIsReady = this.store.data.config != undefined
+    this.dataIsReady = this.store.data.config !== undefined
 
     if (this.dataIsReady) {
       const tileSetFile = this.tilesetUtils.getPath()
@@ -43,14 +43,14 @@ export class LevelScene extends Scene {
       return
 
     this.level = toRaw(this.store.data.levels[this.tools.selectedLevel])
-    if (this.level == undefined) return
+    if (this.level === undefined) return
 
     console.log('Loading Phaser scene')
 
     this.scale.off('resize')
     this.scale.on('resize', this.onResize, this)
 
-    if (this.oldScrollX == undefined) {
+    if (this.oldScrollX === undefined) {
       // TODO: improve camera start position (top left?)
       this.cameras.main.setZoom(5)
       this.cameras.main.centerOn(
@@ -119,17 +119,17 @@ export class LevelScene extends Scene {
         [prevIsDefaultData, prevConfigStr, prevSelectedLevel, prevDataRevision]
       ) => {
         if (
-          isDefaultData == prevIsDefaultData &&
-          configStr == prevConfigStr &&
-          selectedLevel == prevSelectedLevel &&
-          dataRevision == prevDataRevision
+          isDefaultData === prevIsDefaultData &&
+          configStr === prevConfigStr &&
+          selectedLevel === prevSelectedLevel &&
+          dataRevision === prevDataRevision
         )
           return
         const config = JSON.parse(configStr || '{}')
         const prevConfig = JSON.parse(prevConfigStr || '{}')
         if (
           ['tileset', 'tilesetTileWidth', 'tilesetTileHeight', 'tiles'].some(
-            (key) => config[key] != prevConfig[key]
+            (key) => config[key] !== prevConfig[key]
           ) &&
           this.textures.exists('tiles')
         ) {
@@ -190,23 +190,23 @@ export class LevelScene extends Scene {
   }
 
   handleMouse(): void {
-    if (this.game.input.activePointer.button == 1) {
+    if (this.game.input.activePointer.button === 1) {
       // Middle mouse button not supported yet.
       return
     }
     const mouseDown =
       this.game.input.activePointer.isDown &&
-      this.game.input.activePointer.downElement == this.game.canvas
+      this.game.input.activePointer.downElement === this.game.canvas
 
-    if (mouseDown && this.game.input.activePointer.button == 2) {
-      if (this.origToolBeforeDrag == undefined) {
+    if (mouseDown && this.game.input.activePointer.button === 2) {
+      if (this.origToolBeforeDrag === undefined) {
         this.origToolBeforeDrag = this.tools.selectedTool
         this.tools.selectedTool = Tool.Move
       }
     }
     if (!mouseDown) {
       this.origDragPoint = undefined
-      if (this.origToolBeforeDrag != undefined) {
+      if (this.origToolBeforeDrag !== undefined) {
         this.tools.selectedTool = this.origToolBeforeDrag
         this.origToolBeforeDrag = undefined
       }
@@ -253,7 +253,7 @@ export class LevelScene extends Scene {
     const tileId = this.tools.selectedTile // selectedTile is the index in this.store.data.config.tiles
     const visible = !this.tilesetUtils.isEmptyTileIndex(tileId)
     const img = this.tiles[this.tools.selectedLayer]?.[tilePos.x]?.[tilePos.y]
-    if (img != undefined && (img.visible != visible || img.frame.name != String(tileId))) {
+    if (img !== undefined && (img.visible !== visible || img.frame.name !== String(tileId))) {
       img.setFrame(tileId)
       img.visible = visible
       currentLayer.data[tilePos.x + tilePos.y * this.level.width] = this.tools.selectedTile

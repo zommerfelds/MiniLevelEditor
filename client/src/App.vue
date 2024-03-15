@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import LevelContent from '@/components/LevelContent.vue'
-import Toolbar from './components/Toolbar.vue'
+import TopToolbar from './components/TopToolbar.vue'
 import SettingsModal from '@/components/SettingsModal.vue'
 import TileSelector from '@/components/TileSelector.vue'
 import LevelSelector from './components/LevelSelector.vue'
@@ -56,7 +56,7 @@ async function loadLevelFromDir() {
       </div>
 
       <div class="d-flex flex-column h-100">
-        <Toolbar />
+        <TopToolbar />
         <LevelContent />
       </div>
     </div>
