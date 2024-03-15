@@ -4,7 +4,7 @@ import { makeDefaultLevel, makeDefaultData } from '@common/defaultData'
 import { useRefHistory } from '@vueuse/core'
 import type { WorldData } from '@common/dataTypes'
 
-export const serverlessMode = __APP_MODE == 'SERVERLESS'
+export const serverlessMode = __APP_MODE === 'SERVERLESS'
 
 // Local storage for all level data.
 export const useWorldStore = defineStore('world', () => {

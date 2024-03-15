@@ -1,14 +1,16 @@
+import { LevelUtils } from '@/logic/LevelUtils'
 import { TilesetUtils } from '@/logic/TilesetUtils'
 import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import type { Level } from '@common/dataTypes'
 import Phaser, { Scene } from 'phaser'
-import { toRaw, watch, computed } from 'vue'
+import { watch, computed } from 'vue'
 
 export class LevelScene extends Scene {
   origDragPoint?: Phaser.Math.Vector2 = undefined
   origToolBeforeDrag?: Tool = undefined
-  store = useWorldStore()
+  levelUtils = new LevelUtils()
+  world = useWorldStore()
   tools = useToolsStore()
   tilesetUtils = new TilesetUtils()
   // For each layer, a 2D array with all the tiles:
@@ -27,7 +29,7 @@ export class LevelScene extends Scene {
 
   preload() {
     this.initializing = true
-    this.dataIsReady = this.store.data.config !== undefined
+    this.dataIsReady = this.world.data.config !== undefined
 
     if (this.dataIsReady) {
       const tileSetFile = this.tilesetUtils.getPath()
@@ -39,10 +41,10 @@ export class LevelScene extends Scene {
     this.watchForLevelChanges()
     if (!this.dataIsReady) return
 
-    if (this.tools.selectedLevel < 0 || this.tools.selectedLevel >= this.store.data.levels.length)
+    if (this.tools.selectedLevel < 0 || this.tools.selectedLevel >= this.world.data.levels.length)
       return
 
-    this.level = toRaw(this.store.data.levels[this.tools.selectedLevel])
+    this.level = this.world.data.levels[this.tools.selectedLevel]
     if (this.level === undefined) return
 
     console.log('Loading Phaser scene')
@@ -54,8 +56,8 @@ export class LevelScene extends Scene {
       // TODO: improve camera start position (top left?)
       this.cameras.main.setZoom(5)
       this.cameras.main.centerOn(
-        (this.level.width * this.store.data.config.gridCellWidth) / 2,
-        (this.level.height * this.store.data.config.gridCellHeight) / 2
+        (this.level.width * this.world.data.config.gridCellWidth) / 2,
+        (this.level.height * this.world.data.config.gridCellHeight) / 2
       )
     } else {
       // This is a level reload, keep same camera properties.
@@ -69,17 +71,17 @@ export class LevelScene extends Scene {
     })
 
     this.tiles = []
-    for (let layer = 0; layer < this.store.data.config.layers.length; layer++) {
+    for (let layer = 0; layer < this.world.data.config.layers.length; layer++) {
       this.tiles[layer] = []
       for (let x = 0; x < this.level.width; x++) {
         this.tiles[layer]![x] = []
         for (let y = 0; y < this.level.height; y++) {
-          const data = this.level.layers[layer]!.data[x + y * this.level.width]
+          const data = this.levelUtils.getTileIdAt(this.level, x, y, layer)
           const isEmptyTile = this.tilesetUtils.isEmptyTileIndex(data)
           const img = this.add.image(
             // Tile is aligned to the middle bottom. Consider making this configurable.
-            (x + 0.5) * this.store.data.config.gridCellWidth,
-            (y + 1) * this.store.data.config.gridCellHeight,
+            (x + 0.5) * this.world.data.config.gridCellWidth,
+            (y + 1) * this.world.data.config.gridCellHeight,
             'tiles',
             isEmptyTile ? 0 : String(data)
           )
@@ -93,8 +95,8 @@ export class LevelScene extends Scene {
     this.addGrid(
       this.level.width,
       this.level.height,
-      this.store.data.config.gridCellWidth,
-      this.store.data.config.gridCellHeight
+      this.world.data.config.gridCellWidth,
+      this.world.data.config.gridCellHeight
     )
 
     this.oldDisplayWidth = this.renderer.width
@@ -106,13 +108,13 @@ export class LevelScene extends Scene {
     const watchLevelSelectionStopHandle = watch(
       [
         // Reload when the user loaded a file and is no longer using default data:
-        computed(() => this.store.isDefaultData),
+        computed(() => this.world.isDefaultData),
         // Reload if the config changed (e.g. tile size):
-        computed(() => JSON.stringify(this.store.data.config)),
+        computed(() => JSON.stringify(this.world.data.config)),
         // Reference to current level should stay the same (note that the index can stay but the underlying level can change):
-        computed(() => this.store.data.levels?.[this.tools.selectedLevel]),
+        computed(() => this.world.data.levels?.[this.tools.selectedLevel]),
         // Reload if the revision changed without us knowing (e.g. undo):
-        computed(() => this.store.dataRevision),
+        computed(() => this.world.dataRevision),
       ],
       (
         [isDefaultData, configStr, selectedLevel, dataRevision],
@@ -250,7 +252,7 @@ export class LevelScene extends Scene {
     )
       return
 
-    const tileId = this.tools.selectedTile // selectedTile is the index in this.store.data.config.tiles
+    const tileId = this.tools.selectedTile // selectedTile is the index in this.world.data.config.tiles
     const visible = !this.tilesetUtils.isEmptyTileIndex(tileId)
     const img = this.tiles[this.tools.selectedLayer]?.[tilePos.x]?.[tilePos.y]
     if (img !== undefined && (img.visible !== visible || img.frame.name !== String(tileId))) {
@@ -262,8 +264,8 @@ export class LevelScene extends Scene {
 
   worldToTile(worldPos: Phaser.Math.Vector2): Phaser.Math.Vector2 {
     return new Phaser.Math.Vector2(
-      Math.floor(worldPos.x / this.store.data.config.gridCellWidth),
-      Math.floor(worldPos.y / this.store.data.config.gridCellHeight)
+      Math.floor(worldPos.x / this.world.data.config.gridCellWidth),
+      Math.floor(worldPos.y / this.world.data.config.gridCellHeight)
     )
   }
 }

@@ -2,7 +2,13 @@
 import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faReply, faShare, faPen, faArrowPointer } from '@fortawesome/free-solid-svg-icons'
+import {
+  faReply,
+  faShare,
+  faPen,
+  faArrowPointer,
+  faTriangleExclamation,
+} from '@fortawesome/free-solid-svg-icons'
 
 const tools = useToolsStore()
 const world = useWorldStore()
@@ -72,4 +78,19 @@ const world = useWorldStore()
       </div>
     </div>
   </div>
+  <div>
+    <div
+      class="p-2 bg-warning warning-bar border-bottom border-end border-secondary"
+      v-if="tools.warningMessage"
+    >
+      <FontAwesomeIcon :icon="faTriangleExclamation" class="me-2" />
+      {{ tools.warningMessage }}
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.warning-bar {
+  position: fixed;
+}
+</style>

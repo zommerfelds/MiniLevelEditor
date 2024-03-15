@@ -33,14 +33,16 @@ On the browser, open `http://localhost:5173/`
 - [x] Easily increase tileset size wthout messing up project
 - [x] Warning for when there is no server connected
 - [x] Undo and redo
-- [ ] Tile editor (define new tiles)
+- [x] Tile editor (define new tiles)
+- [x] Add warning banner for when data doesns't match the schema (e.g. tile was deleted)
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
-- [ ] Add warning banner for when data doesns't match the schema (e.g. tile was deleted)
+
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset
 - [ ] Export package so it can be run with npx
+- [ ] Better way of defining new tiles (pick from image instead of x/y, auto-add all)
 - [ ] [WIP] Serverless mode (TODO: be able to save)
 - [ ] Paint multiple tiles at the same time
 - [ ] More tools (e.g. eraser, move tile(s), selection)

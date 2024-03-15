@@ -6,6 +6,7 @@ import TileSelector from '@/components/TileSelector.vue'
 import LevelSelector from './components/LevelSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore, serverlessMode } from '@/stores/world'
+import { LevelChecker } from './logic/LevelChecker'
 
 const world = useWorldStore()
 
@@ -17,6 +18,8 @@ async function loadLevelFromDir() {
   world.data = JSON.parse(text)
   world.isDefaultData = false
 }
+
+new LevelChecker().watch()
 </script>
 
 <template>
