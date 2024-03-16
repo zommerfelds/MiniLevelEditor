@@ -3,6 +3,8 @@ import { useWorldStore } from '@/stores/world'
 import { TilesetUtils } from '@/logic/TilesetUtils'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
+import type { Tile, UserDefinedTypeName } from '@common/dataTypes'
+import { ref } from 'vue'
 
 const world = useWorldStore()
 
@@ -20,6 +22,14 @@ function addTile() {
 function deleteTile(index: number) {
   world.data.config.tileset.splice(index, 1)
 }
+
+const allTileTypesName: UserDefinedTypeName = 'All types'
+let selectedTileTypeName = ref(allTileTypesName)
+
+function filterTileset(tileset: Tile[]) {
+  if (selectedTileTypeName.value === allTileTypesName) return tileset
+  return tileset.filter((t) => t.types.includes(selectedTileTypeName.value))
+}
 </script>
 
 <template>
@@ -31,24 +41,52 @@ function deleteTile(index: number) {
     aria-hidden="true"
   >
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="tilesModalLabel">Tiles</h1>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div id="tilesModalBody" class="modal-body pb-4 my-modal-body">
-          <!-- TODO: handle overflow (small window) -->
-          <div class="row header pb-3">
-            <div class="col-6 ps-3">Name</div>
-            <div class="col-6 ps-3">Source</div>
+      <template v-if="world.data.config">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="tilesModalLabel">Tiles</h1>
+
+            <div class="dropdown ms-3">
+              <button
+                class="btn btn-light dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {{ selectedTileTypeName }}
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="#" @click="selectedTileTypeName = allTileTypesName"
+                    >{{ allTileTypesName }}
+                  </a>
+                </li>
+                <li v-for="(tileType, index) in world.data.config.tileTypes" :key="index">
+                  <a class="dropdown-item" href="#" @click="selectedTileTypeName = tileType.name">
+                    {{ tileType.name }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
-          <template v-if="world.data.config">
-            <div class="row pb-1" v-for="(tile, index) in world.data.config.tileset" :key="index">
+          <div id="tilesModalBody" class="modal-body pb-4 my-modal-body">
+            <!-- TODO: create a dropdown vue element (refactor) -->
+            <div class="row header pb-3">
+              <div class="col-6 ps-3">Name</div>
+              <div class="col-6 ps-3">Source</div>
+            </div>
+            <div
+              class="row pb-1"
+              v-for="(tile, index) in filterTileset(world.data.config.tileset)"
+              :key="index"
+            >
               <div class="col-6 d-flex">
                 <input type="text" class="form-control" v-model="tile.name" />
               </div>
@@ -107,9 +145,9 @@ function deleteTile(index: number) {
                 </button>
               </div>
             </div>
-          </template>
+          </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
