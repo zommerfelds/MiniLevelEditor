@@ -15,11 +15,13 @@ const iconSize = 22
 const tilesetUtils = new TilesetUtils()
 
 function isTileAllowedInSelectedLayer(tile?: Tile): boolean {
-  return tile?.allowedLayers?.includes(tools.selectedLayer) ?? true
+  const allowedTypes = world.data.config.layers[tools.selectedLayer]?.allowedTypes
+  if (allowedTypes === undefined) return true
+  return tile?.types.find((type) => allowedTypes.includes(type)) !== undefined
 }
 
 function isTileIndexAllowedInSelectedLayer(tileIndex: number): boolean {
-  return isTileAllowedInSelectedLayer(world.data.config?.tiles[tileIndex])
+  return isTileAllowedInSelectedLayer(world.data.config?.tileset[tileIndex])
 }
 
 watch(
@@ -34,11 +36,11 @@ watch(
     if (isTileIndexAllowedInSelectedLayer(tools.selectedTile)) return
 
     const lastSelectedTile = tools.lastSelectedTilePerLayer[tools.selectedLayer]
-    if (lastSelectedTile != undefined && isTileIndexAllowedInSelectedLayer(lastSelectedTile)) {
+    if (lastSelectedTile !== undefined && isTileIndexAllowedInSelectedLayer(lastSelectedTile)) {
       tools.selectedTile = lastSelectedTile
       return
     }
-    for (let i = 0; i < world.data.config?.tiles.length; i++) {
+    for (let i = 0; i < world.data.config?.tileset.length; i++) {
       if (isTileIndexAllowedInSelectedLayer(i)) {
         tools.selectedTile = i
         break
@@ -65,7 +67,7 @@ watch(
       </div>
     </div>
     <div v-if="world.data.config">
-      <div class="row" v-for="(tile, index) in world.data.config.tiles" :key="index">
+      <div class="row" v-for="(tile, index) in world.data.config.tileset" :key="index">
         <div
           class="col pt-1"
           @click="tools.selectedTile = index"

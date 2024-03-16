@@ -7,7 +7,7 @@ const worldStore = useWorldStore()
 
 let gridCellWidth = ref(0)
 let gridCellHeight = ref(0)
-let tileset = ref('')
+let tilesetImage = ref('')
 let tilesetTileWidth = ref(0)
 let tilesetTileHeight = ref(0)
 
@@ -16,7 +16,7 @@ let tilesetFiles = ref<string[]>([])
 function onSaveSettings() {
   worldStore.data.config.gridCellWidth = gridCellWidth.value
   worldStore.data.config.gridCellHeight = gridCellHeight.value
-  worldStore.data.config.tileset = tileset.value
+  worldStore.data.config.tilesetImage = tilesetImage.value
   worldStore.data.config.tilesetTileWidth = tilesetTileWidth.value
   worldStore.data.config.tilesetTileHeight = tilesetTileHeight.value
 }
@@ -30,7 +30,7 @@ onMounted(() => {
   dialog.addEventListener('show.bs.modal', () => {
     gridCellWidth.value = worldStore.data.config.gridCellWidth
     gridCellHeight.value = worldStore.data.config.gridCellHeight
-    tileset.value = worldStore.data.config.tileset
+    tilesetImage.value = worldStore.data.config.tilesetImage
     tilesetTileWidth.value = worldStore.data.config.tilesetTileWidth
     tilesetTileHeight.value = worldStore.data.config.tilesetTileHeight
 
@@ -88,11 +88,11 @@ onMounted(() => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                {{ tileset }}
+                {{ tilesetImage }}
               </button>
               <ul class="dropdown-menu">
                 <li v-for="(file, index) in tilesetFiles" :key="index">
-                  <a class="dropdown-item" href="#" @click="tileset = file">{{ file }}</a>
+                  <a class="dropdown-item" href="#" @click="tilesetImage = file">{{ file }}</a>
                 </li>
               </ul>
             </div>

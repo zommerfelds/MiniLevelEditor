@@ -10,15 +10,15 @@ const iconSize = 30
 const tilesetUtils = new TilesetUtils()
 
 function addTile() {
-  const newTile = { name: '' }
-  world.data.config.tiles.push(newTile)
+  const newTile = { name: '', types: [] }
+  world.data.config.tileset.push(newTile)
 
   const dialogBody = document.getElementById('tilesModalBody')!!
   setTimeout(() => dialogBody.scrollTo({ top: dialogBody.scrollHeight, behavior: 'smooth' }), 0)
 }
 
 function deleteTile(index: number) {
-  world.data.config.tiles.splice(index, 1)
+  world.data.config.tileset.splice(index, 1)
 }
 </script>
 
@@ -48,7 +48,7 @@ function deleteTile(index: number) {
             <div class="col-6 ps-3">Source</div>
           </div>
           <template v-if="world.data.config">
-            <div class="row pb-1" v-for="(tile, index) in world.data.config.tiles" :key="index">
+            <div class="row pb-1" v-for="(tile, index) in world.data.config.tileset" :key="index">
               <div class="col-6 d-flex">
                 <input type="text" class="form-control" v-model="tile.name" />
               </div>
@@ -66,7 +66,7 @@ function deleteTile(index: number) {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {{ tilesetUtils.isEmptyTile(index) ? 'Empty' : 'From tileset' }}
+                    {{ tilesetUtils.isEmptyTileIndex(index) ? 'Empty' : 'From tileset' }}
                   </button>
                   <ul class="dropdown-menu">
                     <li>

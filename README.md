@@ -37,7 +37,6 @@ On the browser, open `http://localhost:5173/`
 - [x] Add warning banner for when data doesns't match the schema (e.g. tile was deleted)
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
-
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset
@@ -54,6 +53,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Optimize saving by only sending diffs and batching/throttling (refDebounced?)
 - [ ] Fix `npm run client-type-check`
 - [ ] Unit test for loading (makes sure file is not modified)
+- [ ] Check validity of levels.json file (e.g. using https://github.com/gristlabs/ts-interface-checker)
 
 ## Appendix: Notes
 

@@ -35,7 +35,7 @@ export class LevelChecker {
     const level = this.world.data.levels[levelIndex]!
     for (const [layerIndex, layer] of level.layers.entries()) {
       for (const [tileIndex, tileId] of layer.data.entries()) {
-        if (this.world.data.config.tiles[tileId] === undefined) {
+        if (tileId !== -1 && this.world.data.config.tileset[tileId] === undefined) {
           const pos = this.levelUtils.indexToPos(level, tileIndex)
           this.tools.warningMessage = `Found invalid tile ID ${tileId} (level ${levelIndex + 1}, layer ${layerIndex + 1}, position ${pos.x}/${pos.y}).`
           return true
