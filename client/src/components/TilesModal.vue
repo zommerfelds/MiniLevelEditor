@@ -23,7 +23,7 @@ function deleteTile(index: number) {
   world.data.config.tileset.splice(index, 1)
 }
 
-const allTileTypesName: UserDefinedTypeName = 'All types'
+const allTileTypesName: UserDefinedTypeName = 'Show all types'
 let selectedTileTypeName = ref(allTileTypesName)
 
 function filterTileset(tileset: Tile[]) {
@@ -74,42 +74,41 @@ let currentTab = ref('Tiles')
             <!-- TODO: create a dropdown vue element (refactor) -->
 
             <template v-if="currentTab === 'Tiles'">
-              <div class="row"></div>
+              <div class="row mb-2">
+                <div class="dropdown">
+                  <button
+                    class="btn btn-light dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {{ selectedTileTypeName }}
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a
+                        class="dropdown-item"
+                        href="#"
+                        @click="selectedTileTypeName = allTileTypesName"
+                        >{{ allTileTypesName }}
+                      </a>
+                    </li>
+                    <li v-for="(tileType, index) in world.data.config.tileTypes" :key="index">
+                      <a
+                        class="dropdown-item"
+                        href="#"
+                        @click="selectedTileTypeName = tileType.name"
+                      >
+                        {{ tileType.name }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
               <div class="row header pb-3">
                 <div class="col-3 ps-3">Name</div>
                 <div class="col-3 ps-3">Type(s)</div>
-                <div class="col-4 ps-3">Source</div>
-                <div class="col-2">
-                  <div class="dropdown float-end">
-                    <button
-                      class="btn btn-light dropdown-toggle"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {{ selectedTileTypeName }}
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li>
-                        <a
-                          class="dropdown-item"
-                          href="#"
-                          @click="selectedTileTypeName = allTileTypesName"
-                          >{{ allTileTypesName }}
-                        </a>
-                      </li>
-                      <li v-for="(tileType, index) in world.data.config.tileTypes" :key="index">
-                        <a
-                          class="dropdown-item"
-                          href="#"
-                          @click="selectedTileTypeName = tileType.name"
-                        >
-                          {{ tileType.name }}
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                <div class="col-6 ps-3">Source</div>
               </div>
               <div
                 class="row pb-1"
