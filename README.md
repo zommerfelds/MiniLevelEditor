@@ -38,6 +38,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
+- [ ] Refactor: separate vue element for dropdown
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset
 - [ ] Export package so it can be run with npx
