@@ -123,4 +123,7 @@ function filterTileset(tileset: Tile[]) {
 .size-input {
   width: 5em;
 }
+.header {
+  font-weight: bold;
+}
 </style>

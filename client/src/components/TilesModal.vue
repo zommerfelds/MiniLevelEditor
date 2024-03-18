@@ -51,13 +51,4 @@ let currentTab = ref('Tiles')
   height: 80vh;
   overflow-y: auto;
 }
-.size-input {
-  width: 5em;
-}
-.header {
-  font-weight: bold;
-}
-.header-offset {
-  width: 12.5em;
-}
 </style>
