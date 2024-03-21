@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid'
+
 export function makeDefaultData() {
   // Ignore Prettier to keep JSON compatible
   // prettier-ignore
@@ -30,6 +32,7 @@ export function makeDefaultLevel() {
   // Ignore Prettier to keep JSON compatible
   // prettier-ignore
   return {
+    "id": uuidv4(),
     "properties": {
       "name": "My level"
     },

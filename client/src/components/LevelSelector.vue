@@ -3,7 +3,8 @@ import { useToolsStore } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import { computed, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faSquarePlus, faBars } from '@fortawesome/free-solid-svg-icons'
+import draggable from 'vuedraggable'
 
 const tools = useToolsStore()
 const world = useWorldStore()
@@ -36,22 +37,28 @@ watch(
 
 <template>
   <ul class="nav nav-pills flex-column mb-auto">
-    <li v-for="(level, index) in levels" :key="index" class="nav-item">
-      <div
-        class="nav-link lvl-selector-row"
-        :class="index == tools.selectedLevel ? 'active' : ''"
-        aria-current="page"
-        @click="tools.selectedLevel = index"
-      >
-        <a href="#" class="lvl-selector-link text-white"> Level {{ index + 1 }} </a>
-        <FontAwesomeIcon
-          :icon="faTrash"
-          class="mt-1 lvl-delete float-end"
-          @click.stop="deleteLevel(index)"
-        />
-        <!-- TODO: fix undo when removing a level, zoom seems to be stuck. Probably undo needs to take into account level num. -->
-      </div>
-    </li>
+    <!--li v-for="(level, index) in levels" :key="index" class="nav-item"-->
+    <draggable :list="levels" handle=".handle" item-key="id">
+      <template #item="{ level, index }">
+        <li class="nav-item">
+          <div
+            class="nav-link lvl-selector-row"
+            :class="index == tools.selectedLevel ? 'active' : ''"
+            aria-current="page"
+            @click="tools.selectedLevel = index"
+          >
+            <FontAwesomeIcon :icon="faBars" class="me-3 draghandle" />
+            <a href="#" class="lvl-selector-link text-white"> {{ level.id }} ({{ index + 1 }}) </a>
+            <FontAwesomeIcon
+              :icon="faTrash"
+              class="mt-1 lvl-delete float-end"
+              @click.stop="deleteLevel(index)"
+            />
+            <!-- TODO: fix undo when removing a level, zoom seems to be stuck. Probably undo needs to take into account level num. -->
+          </div>
+        </li>
+      </template>
+    </draggable>
     <li>
       <a href="#" class="nav-link text-white" @click="addLevel()">
         <FontAwesomeIcon :icon="faSquarePlus" class="me-3" />Add level
