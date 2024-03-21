@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import TilesModalTilesTab from '@/components/TilesModalTilesTab.vue'
+import TilesModalTypesTab from '@/components/TilesModalTypesTab.vue'
+
+let currentTab = ref('Tiles')
 </script>
 
 <template>
@@ -9,10 +14,22 @@
     aria-labelledby="tilesModalLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="tilesModalLabel">Tiles</h1>
+          <ul class="nav nav-pills nav-fill">
+            <li class="nav-item me-1" v-for="(tab, index) in ['Tiles', 'Types']" v-bind:key="index">
+              <a
+                class="nav-link"
+                :class="currentTab === tab ? 'active' : ''"
+                aria-current="page"
+                href="#"
+                @click="currentTab = tab"
+              >
+                {{ tab }}
+              </a>
+            </li>
+          </ul>
           <button
             type="button"
             class="btn-close"
@@ -20,19 +37,9 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">
-          <div>TODO</div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-dismiss="modal"
-            @click="onSaveSettings"
-          >
-            Save changes
-          </button>
+        <div id="tilesModalBody" class="modal-body pb-4 my-modal-body">
+          <TilesModalTilesTab v-if="currentTab === 'Tiles'" />
+          <TilesModalTypesTab v-if="currentTab === 'Types'" />
         </div>
       </div>
     </div>
@@ -40,4 +47,8 @@
 </template>
 
 <style scoped>
+.my-modal-body {
+  height: 80vh;
+  overflow-y: auto;
+}
 </style>

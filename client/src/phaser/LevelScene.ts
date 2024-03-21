@@ -1,13 +1,16 @@
+import { LevelUtils } from '@/logic/LevelUtils'
 import { TilesetUtils } from '@/logic/TilesetUtils'
 import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
+import type { Level } from '@common/dataTypes'
 import Phaser, { Scene } from 'phaser'
-import { toRaw, watch, computed } from 'vue'
+import { watch, computed } from 'vue'
 
 export class LevelScene extends Scene {
   origDragPoint?: Phaser.Math.Vector2 = undefined
   origToolBeforeDrag?: Tool = undefined
-  store = useWorldStore()
+  levelUtils = new LevelUtils()
+  world = useWorldStore()
   tools = useToolsStore()
   tilesetUtils = new TilesetUtils()
   // For each layer, a 2D array with all the tiles:
@@ -19,13 +22,14 @@ export class LevelScene extends Scene {
   oldDisplayHeight?: number
   dataIsReady = false
   initializing = true
+  level?: Level
   constructor() {
     super({ key: 'MyScene' })
   }
 
   preload() {
     this.initializing = true
-    this.dataIsReady = this.store.data.config != undefined
+    this.dataIsReady = this.world.data.config !== undefined
 
     if (this.dataIsReady) {
       const tileSetFile = this.tilesetUtils.getPath()
@@ -37,22 +41,23 @@ export class LevelScene extends Scene {
     this.watchForLevelChanges()
     if (!this.dataIsReady) return
 
-    if (this.tools.selectedLevel < 0 || this.tools.selectedLevel >= this.store.data.levels.length)
+    if (this.tools.selectedLevel < 0 || this.tools.selectedLevel >= this.world.data.levels.length)
       return
+
+    this.level = this.world.data.levels[this.tools.selectedLevel]
+    if (this.level === undefined) return
 
     console.log('Loading Phaser scene')
 
     this.scale.off('resize')
     this.scale.on('resize', this.onResize, this)
 
-    const level = toRaw(this.store.data.levels[this.tools.selectedLevel])
-
-    if (this.oldScrollX == undefined) {
+    if (this.oldScrollX === undefined) {
       // TODO: improve camera start position (top left?)
       this.cameras.main.setZoom(5)
       this.cameras.main.centerOn(
-        (level.width * this.store.data.config.gridCellWidth) / 2,
-        (level.height * this.store.data.config.gridCellHeight) / 2
+        (this.level.width * this.world.data.config.gridCellWidth) / 2,
+        (this.level.height * this.world.data.config.gridCellHeight) / 2
       )
     } else {
       // This is a level reload, keep same camera properties.
@@ -66,32 +71,32 @@ export class LevelScene extends Scene {
     })
 
     this.tiles = []
-    for (let layer = 0; layer < this.store.data.config.layers.length; layer++) {
+    for (let layer = 0; layer < this.world.data.config.layers.length; layer++) {
       this.tiles[layer] = []
-      for (let x = 0; x < level.width; x++) {
-        this.tiles[layer][x] = []
-        for (let y = 0; y < level.height; y++) {
-          const data = level.layers[layer].data[x + y * level.width]
-          const isEmptyTile = this.tilesetUtils.isEmptyTile(data)
+      for (let x = 0; x < this.level.width; x++) {
+        this.tiles[layer]![x] = []
+        for (let y = 0; y < this.level.height; y++) {
+          const data = this.levelUtils.getTileIdAt(this.level, x, y, layer)
+          const isEmptyTile = this.tilesetUtils.isEmptyTileIndex(data)
           const img = this.add.image(
             // Tile is aligned to the middle bottom. Consider making this configurable.
-            (x + 0.5) * this.store.data.config.gridCellWidth,
-            (y + 1) * this.store.data.config.gridCellHeight,
+            (x + 0.5) * this.world.data.config.gridCellWidth,
+            (y + 1) * this.world.data.config.gridCellHeight,
             'tiles',
             isEmptyTile ? 0 : String(data)
           )
           img.setOrigin(0.5, 1)
           img.visible = !isEmptyTile
-          this.tiles[layer][x][y] = img
+          this.tiles[layer]![x]![y] = img
         }
       }
     }
 
     this.addGrid(
-      level.width,
-      level.height,
-      this.store.data.config.gridCellWidth,
-      this.store.data.config.gridCellHeight
+      this.level.width,
+      this.level.height,
+      this.world.data.config.gridCellWidth,
+      this.world.data.config.gridCellHeight
     )
 
     this.oldDisplayWidth = this.renderer.width
@@ -103,30 +108,30 @@ export class LevelScene extends Scene {
     const watchLevelSelectionStopHandle = watch(
       [
         // Reload when the user loaded a file and is no longer using default data:
-        computed(() => this.store.isDefaultData),
+        computed(() => this.world.isDefaultData),
         // Reload if the config changed (e.g. tile size):
-        computed(() => JSON.stringify(this.store.data.config)),
+        computed(() => JSON.stringify(this.world.data.config)),
         // Reference to current level should stay the same (note that the index can stay but the underlying level can change):
-        computed(() => this.store.data.levels?.at(this.tools.selectedLevel)),
+        computed(() => this.world.data.levels?.[this.tools.selectedLevel]),
         // Reload if the revision changed without us knowing (e.g. undo):
-        computed(() => this.store.dataRevision),
+        computed(() => this.world.dataRevision),
       ],
       (
         [isDefaultData, configStr, selectedLevel, dataRevision],
         [prevIsDefaultData, prevConfigStr, prevSelectedLevel, prevDataRevision]
       ) => {
         if (
-          isDefaultData == prevIsDefaultData &&
-          configStr == prevConfigStr &&
-          selectedLevel == prevSelectedLevel &&
-          dataRevision == prevDataRevision
+          isDefaultData === prevIsDefaultData &&
+          configStr === prevConfigStr &&
+          selectedLevel === prevSelectedLevel &&
+          dataRevision === prevDataRevision
         )
           return
         const config = JSON.parse(configStr || '{}')
         const prevConfig = JSON.parse(prevConfigStr || '{}')
         if (
-          ['tileset', 'tilesetTileWidth', 'tilesetTileHeight'].some(
-            (key) => config[key] != prevConfig[key]
+          ['tileset', 'tilesetTileWidth', 'tilesetTileHeight', 'tiles'].some(
+            (key) => config[key] !== prevConfig[key]
           ) &&
           this.textures.exists('tiles')
         ) {
@@ -187,23 +192,23 @@ export class LevelScene extends Scene {
   }
 
   handleMouse(): void {
-    if (this.game.input.activePointer.button == 1) {
+    if (this.game.input.activePointer.button === 1) {
       // Middle mouse button not supported yet.
       return
     }
     const mouseDown =
       this.game.input.activePointer.isDown &&
-      this.game.input.activePointer.downElement == this.game.canvas
+      this.game.input.activePointer.downElement === this.game.canvas
 
-    if (mouseDown && this.game.input.activePointer.button == 2) {
-      if (this.origToolBeforeDrag == undefined) {
+    if (mouseDown && this.game.input.activePointer.button === 2) {
+      if (this.origToolBeforeDrag === undefined) {
         this.origToolBeforeDrag = this.tools.selectedTool
         this.tools.selectedTool = Tool.Move
       }
     }
     if (!mouseDown) {
       this.origDragPoint = undefined
-      if (this.origToolBeforeDrag != undefined) {
+      if (this.origToolBeforeDrag !== undefined) {
         this.tools.selectedTool = this.origToolBeforeDrag
         this.origToolBeforeDrag = undefined
       }
@@ -236,30 +241,31 @@ export class LevelScene extends Scene {
     )
     const tilePos = this.worldToTile(worldPos)
 
+    const currentLayer = this.level?.layers[this.tools.selectedLayer]
     if (
+      this.level === undefined ||
+      currentLayer === undefined ||
       tilePos.x < 0 ||
-      tilePos.x >= this.store.data.levels[this.tools.selectedLevel].width ||
+      tilePos.x >= this.level.width ||
       tilePos.y < 0 ||
-      tilePos.y >= this.store.data.levels[this.tools.selectedLevel].height
+      tilePos.y >= this.level.height
     )
       return
 
-    const tileId = this.tools.selectedTile // selectedTile is the index in this.store.data.config.tiles
-    const visible = !this.tilesetUtils.isEmptyTile(tileId)
-    const img = this.tiles[this.tools.selectedLayer][tilePos.x][tilePos.y]
-    if (img.visible != visible || img.frame.name != String(tileId)) {
+    const tileId = this.tools.selectedTile // selectedTile is the index in this.world.data.config.tiles
+    const visible = !this.tilesetUtils.isEmptyTileIndex(tileId)
+    const img = this.tiles[this.tools.selectedLayer]?.[tilePos.x]?.[tilePos.y]
+    if (img !== undefined && (img.visible !== visible || img.frame.name !== String(tileId))) {
       img.setFrame(tileId)
       img.visible = visible
-      this.store.data.levels[this.tools.selectedLevel].layers[this.tools.selectedLayer].data[
-        tilePos.x + tilePos.y * this.store.data.levels[this.tools.selectedLevel].width
-      ] = this.tools.selectedTile
+      currentLayer.data[tilePos.x + tilePos.y * this.level.width] = this.tools.selectedTile
     }
   }
 
   worldToTile(worldPos: Phaser.Math.Vector2): Phaser.Math.Vector2 {
     return new Phaser.Math.Vector2(
-      Math.floor(worldPos.x / this.store.data.config.gridCellWidth),
-      Math.floor(worldPos.y / this.store.data.config.gridCellHeight)
+      Math.floor(worldPos.x / this.world.data.config.gridCellWidth),
+      Math.floor(worldPos.y / this.world.data.config.gridCellHeight)
     )
   }
 }

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import LevelContent from '@/components/LevelContent.vue'
-import Toolbar from './components/Toolbar.vue'
+import TopToolbar from '@/components/TopToolbar.vue'
 import SettingsModal from '@/components/SettingsModal.vue'
 import TileSelector from '@/components/TileSelector.vue'
-import LevelSelector from './components/LevelSelector.vue'
+import LevelSelector from '@/components/LevelSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore, serverlessMode } from '@/stores/world'
+import { LevelChecker } from '@/logic/LevelChecker'
 
 const world = useWorldStore()
 
@@ -17,6 +18,8 @@ async function loadLevelFromDir() {
   world.data = JSON.parse(text)
   world.isDefaultData = false
 }
+
+new LevelChecker().watch()
 </script>
 
 <template>
@@ -56,7 +59,7 @@ async function loadLevelFromDir() {
       </div>
 
       <div class="d-flex flex-column h-100">
-        <Toolbar />
+        <TopToolbar />
         <LevelContent />
       </div>
     </div>

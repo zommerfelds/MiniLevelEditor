@@ -14,6 +14,14 @@ export const useToolsStore = defineStore('tools', () => {
   const lastSelectedTilePerLayer = ref<number[]>([1])
   const selectedLayer = ref(0)
   const selectedLevel = ref(0)
+  const warningMessage = ref<string | undefined>(undefined)
 
-  return { selectedTool, selectedTile, lastSelectedTilePerLayer, selectedLayer, selectedLevel }
+  return {
+    selectedTool,
+    selectedTile,
+    lastSelectedTilePerLayer,
+    selectedLayer,
+    selectedLevel,
+    warningMessage,
+  }
 })

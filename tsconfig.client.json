@@ -1,14 +1,16 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "client/src/**/*", "client/src/**/*.vue"],
+  "include": ["env.d.ts", "client/src/**/*", "client/src/**/*.vue", "common/**/*"],
   "exclude": ["client/src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
+      "@common/*": ["./common/*"],
       "@/*": ["./client/src/*"]
     },
-    "types": ["@types/wicg-file-system-access"]
+    "types": ["@types/wicg-file-system-access"],
+    "noUncheckedIndexedAccess": true
   }
 }
