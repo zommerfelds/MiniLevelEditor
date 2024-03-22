@@ -35,8 +35,8 @@ On the browser, open `http://localhost:5173/`
 - [x] Undo and redo
 - [x] Tile editor (define new tiles)
 - [x] Add warning banner for when data doesns't match the schema (e.g. tile was deleted)
+- [x] Level reordering
 - [ ] Allow to define properties (for tiles and levels)
-- [ ] Level reordering (try: https://vueschool.io/articles/vuejs-tutorials/how-do-i-drag-and-drop-in-vue/)
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Refactor: separate vue element for dropdown
 - [ ] Define the auto-mapping model
