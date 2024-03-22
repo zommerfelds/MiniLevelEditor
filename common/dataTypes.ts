@@ -57,6 +57,7 @@ export type Config = {
 }
 
 export type Level = {
+  name: string
   properties: { [key: string]: string }
   width: number
   height: number

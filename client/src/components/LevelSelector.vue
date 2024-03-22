@@ -3,13 +3,11 @@ import { useToolsStore } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import { computed, watch } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTrash, faSquarePlus, faBars } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import draggable from 'vuedraggable'
 
 const tools = useToolsStore()
 const world = useWorldStore()
-
-const levels = computed(() => world.data.levels)
 
 function addLevel() {
   world.addLevel()
@@ -33,13 +31,31 @@ watch(
   },
   { deep: true }
 )
+
+function onDragChange(ev: { moved?: { oldIndex: number; newIndex: number } }) {
+  // https://github.com/SortableJS/Vue.Draggable.next?tab=readme-ov-file#events
+  if (ev.moved === undefined) return
+
+  if (ev.moved.oldIndex === tools.selectedLevel) {
+    tools.selectedLevel = ev.moved.newIndex
+  } else if (ev.moved.oldIndex > tools.selectedLevel && ev.moved.newIndex <= tools.selectedLevel) {
+    tools.selectedLevel++
+  } else if (ev.moved.oldIndex < tools.selectedLevel && ev.moved.newIndex >= tools.selectedLevel) {
+    tools.selectedLevel--
+  }
+}
 </script>
 
 <template>
-  <ul class="nav nav-pills flex-column mb-auto">
-    <!--li v-for="(level, index) in levels" :key="index" class="nav-item"-->
-    <draggable :list="levels" handle=".handle" item-key="id">
-      <template #item="{ level, index }">
+  <ul class="nav nav-pills flex-column mb-auto user-select-none">
+    <draggable
+      :list="world.data.levels"
+      item-key="id"
+      @change="onDragChange"
+      ghost-class="drag-ghost"
+      drag-class="drag-active"
+    >
+      <template #item="{ element, index }">
         <li class="nav-item">
           <div
             class="nav-link lvl-selector-row"
@@ -47,8 +63,9 @@ watch(
             aria-current="page"
             @click="tools.selectedLevel = index"
           >
-            <FontAwesomeIcon :icon="faBars" class="me-3 draghandle" />
-            <a href="#" class="lvl-selector-link text-white"> {{ level.id }} ({{ index + 1 }}) </a>
+            <a href="#" class="lvl-selector-link text-white">
+              [{{ index + 1 }}] {{ element?.name }}
+            </a>
             <FontAwesomeIcon
               :icon="faTrash"
               class="mt-1 lvl-delete float-end"
@@ -81,5 +98,13 @@ watch(
   border: medium none;
   border-spacing: 0;
   color: #ffffff;
+}
+
+.drag-ghost {
+  opacity: 0.5;
+}
+.drag-active {
+  background-color: rgb(72, 72, 72);
+  border-radius: 0.4em;
 }
 </style>

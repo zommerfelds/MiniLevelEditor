@@ -40,11 +40,11 @@ export function makeDefaultData(): WorldData {
 }
 
 export function makeDefaultLevel() {
+  const id = uuidv4()
   return {
-    id: uuidv4(),
-    properties: {
-      name: 'My level',
-    },
+    id,
+    name: 'Level ' + id.substring(0, 5).toUpperCase(),
+    properties: {},
     width: 10,
     height: 10,
     layers: [
