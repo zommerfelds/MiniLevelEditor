@@ -13,11 +13,11 @@ export function makeDefaultData(): WorldData {
       tileTypes: [
         {
           name: 'Static',
-          properties: [{ key: 'isWall', type: 'Bool', default: true, optional: false }],
+          properties: [{ key: 'isWall', type: 'Bool', defaultBool: true, optional: false }],
         },
         {
           name: 'Entity',
-          properties: [{ key: 'health', type: 'Float', default: 1, optional: false }],
+          properties: [{ key: 'health', type: 'Float', defaultFloat: 1, optional: false }],
         },
       ],
       layers: [
