@@ -10,27 +10,30 @@ export type PropertySchema = PropertySchemaEntry[]
 export type PropertySchemaEntry = {
   key: string
   optional: boolean
+  type: PropertySchemaTypeName
 } & (PropertyBoolean | PropertyInt | PropertyFloat | PropertyString | PropertyPosition)
+
+export type PropertySchemaTypeName = 'Bool' | 'Int' | 'Float' | 'String' | 'Position'
 
 export type PropertyBoolean = {
   type: 'Bool'
-  default: boolean
+  defaultBool: boolean
 }
 export type PropertyInt = {
   type: 'Int'
-  default: number
+  defaultInt: number
 }
 export type PropertyFloat = {
   type: 'Float'
-  default: number
+  defaultFloat: number
 }
 export type PropertyString = {
   type: 'String'
-  default: string
+  defaultString: string
 }
 export type PropertyPosition = {
   type: 'Position'
-  default: { x: number; y: number }
+  defaultPosition: { x: number; y: number }
 }
 
 export type UserDefinedTypeName = string
