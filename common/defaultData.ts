@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid'
 import type { WorldData } from './dataTypes'
 
 export function makeDefaultData(): WorldData {
@@ -39,10 +40,11 @@ export function makeDefaultData(): WorldData {
 }
 
 export function makeDefaultLevel() {
+  const id = uuidv4()
   return {
-    properties: {
-      name: 'My level',
-    },
+    id,
+    name: 'Level ' + id.substring(0, 5).toUpperCase(),
+    properties: {},
     width: 10,
     height: 10,
     layers: [
