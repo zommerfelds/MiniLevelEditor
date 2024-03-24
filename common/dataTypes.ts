@@ -3,7 +3,10 @@ export type Tile = {
   x?: number
   y?: number
   types: UserDefinedTypeName[]
+  properties: { [key: string]: boolean | number | string | Position }
 }
+
+export type Position = { x: number; y: number }
 
 export type PropertySchema = PropertySchemaEntry[]
 
@@ -33,7 +36,7 @@ export type PropertyString = {
 }
 export type PropertyPosition = {
   type: 'Position'
-  defaultPosition: { x: number; y: number }
+  defaultPosition: Position
 }
 
 export type UserDefinedTypeName = string

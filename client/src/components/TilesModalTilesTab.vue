@@ -2,9 +2,19 @@
 import { useWorldStore } from '@/stores/world'
 import { TilesetUtils } from '@/logic/TilesetUtils'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
-import type { Tile, UserDefinedTypeName } from '@common/dataTypes'
-import { ref } from 'vue'
+import { faTrash, faSquarePlus, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons'
+import type { Position, PropertySchema, Tile, UserDefinedTypeName } from '@common/dataTypes'
+import { ref, onMounted, computed } from 'vue'
+import { Tooltip } from 'bootstrap'
+
+onMounted(() => {
+  // TOOD: this might not be compatible with tooltips in other elements
+  new Tooltip(document.body, {
+    selector: "[data-bs-toggle='tooltip']",
+    delay: { show: 500, hide: 100 },
+    trigger: 'hover',
+  })
+})
 
 const world = useWorldStore()
 
@@ -12,7 +22,7 @@ const iconSize = 30
 const tilesetUtils = new TilesetUtils()
 
 function addTile() {
-  const newTile = { name: '', types: [] }
+  const newTile = { name: '', types: [], properties: {} }
   world.data.config.tileset.push(newTile)
 
   const dialogBody = document.getElementById('tilesModalBody')!!
@@ -30,6 +40,16 @@ function filterTileset(tileset: Tile[]) {
   if (selectedTileTypeName.value === allTileTypesName) return tileset
   return tileset.filter((t) => t.types.includes(selectedTileTypeName.value))
 }
+
+let showPropertiesForIndex = ref(-1)
+
+const typeMap = computed(() => {
+  const map: { [key: UserDefinedTypeName]: PropertySchema } = {}
+  for (const type of world.data.config.tileTypes) {
+    map[type.name] = type.properties
+  }
+  return map
+})
 </script>
 
 <template v-if="world.data.config">
@@ -62,54 +82,143 @@ function filterTileset(tileset: Tile[]) {
     <div class="col-3 ps-3">Type(s)</div>
     <div class="col-6 ps-3">Source</div>
   </div>
-  <div
-    class="row pb-1"
-    v-for="(tile, index) in filterTileset(world.data.config.tileset)"
-    :key="index"
-  >
-    <div class="col-3">
-      <input type="text" class="form-control" v-model="tile.name" />
-    </div>
-    <div class="col-3 pt-1 ps-3">{{ tile.types.join(', ') }}</div>
-    <div class="col-6 d-flex">
-      <div class="pe-2 pt-1">
-        <div class="tile-icon pixelart" :style="tilesetUtils.getIconStyle(tile, iconSize)"></div>
+  <template v-for="(tile, index) in filterTileset(world.data.config.tileset)" :key="index">
+    <div class="row pb-1">
+      <div class="col-3">
+        <input type="text" class="form-control" v-model="tile.name" />
       </div>
-      <div class="dropdown">
+      <div class="col-2 pt-1 ps-3">{{ tile.types.join(', ') }}</div>
+      <div class="col-7 d-flex">
+        <div class="pe-2 pt-1">
+          <div class="tile-icon pixelart" :style="tilesetUtils.getIconStyle(tile, iconSize)"></div>
+        </div>
+        <div class="dropdown">
+          <button
+            class="btn btn-light dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ tilesetUtils.isEmptyTileIndex(index) ? 'Empty' : 'From tileset' }}
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="#" @click="tilesetUtils.setEmpty(tile)"> Empty </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#" @click="tilesetUtils.setFromTileset(tile, 0, 0)">
+                From tileset
+              </a>
+            </li>
+          </ul>
+        </div>
+        <template v-if="tile.x != undefined">
+          <div class="p-1 ps-3">x:</div>
+          <div class="size-input">
+            <input type="number" class="form-control" v-model="tile.x" />
+          </div>
+          <div class="p-1">y:</div>
+          <div class="size-input me-2">
+            <input type="number" class="form-control" v-model="tile.y" />
+          </div>
+        </template>
         <button
-          class="btn btn-light dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
+          class="btn btn-sm btn-secondary ms-auto me-1"
+          @click="
+            showPropertiesForIndex === index
+              ? (showPropertiesForIndex = -1)
+              : (showPropertiesForIndex = index)
+          "
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          data-bs-delay='{"show":2000, "hide":1000}'
+          title="Show/hide properties"
         >
-          {{ tilesetUtils.isEmptyTileIndex(index) ? 'Empty' : 'From tileset' }}
+          <FontAwesomeIcon
+            :icon="showPropertiesForIndex === index ? faAnglesUp : faAnglesDown"
+            class=""
+          />
         </button>
-        <ul class="dropdown-menu">
-          <li>
-            <a class="dropdown-item" href="#" @click="tilesetUtils.setEmpty(tile)"> Empty </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#" @click="tilesetUtils.setFromTileset(tile, 0, 0)">
-              From tileset
-            </a>
-          </li>
-        </ul>
+        <button class="btn btn-sm btn-secondary ms-auto" @click="deleteTile(index)">
+          <FontAwesomeIcon :icon="faTrash" class="" />
+        </button>
       </div>
-      <template v-if="tile.x != undefined">
-        <div class="p-1 ps-3">x:</div>
-        <div class="size-input">
-          <input type="number" class="form-control" v-model="tile.x" />
-        </div>
-        <div class="p-1">y:</div>
-        <div class="size-input me-2">
-          <input type="number" class="form-control" v-model="tile.y" />
-        </div>
-      </template>
-      <button class="btn btn-sm btn-secondary ms-auto" @click="deleteTile(index)">
-        <FontAwesomeIcon :icon="faTrash" class="" />
-      </button>
     </div>
-  </div>
+    <div class="row pb-3" v-if="index === showPropertiesForIndex">
+      <template v-for="(typeName, index3) in tile.types" :key="index3">
+        <div class="row">
+          <div class="col-1"></div>
+          <div class="col p-2">
+            <b>"{{ typeName }}" properties</b>
+          </div>
+        </div>
+        <template v-for="(schema, index4) in typeMap[typeName]" :key="index4">
+          <div class="row">
+            <div class="col-1"></div>
+            <div class="col-1 p-2">{{ schema.key }}</div>
+            <div class="col-3">
+              <template v-if="schema.type === 'String'">
+                <input type="text" class="form-control" v-model="tile.properties[schema.key]" />
+              </template>
+              <template v-if="schema.type === 'Int'">
+                <input
+                  type="number"
+                  class="form-control"
+                  step="1"
+                  v-model="tile.properties[schema.key]"
+                />
+              </template>
+              <template v-if="schema.type === 'Float'">
+                <input type="number" class="form-control" v-model="tile.properties[schema.key]" />
+              </template>
+              <template v-if="schema.type === 'Bool'">
+                <div class="dropdown">
+                  <button
+                    class="btn btn-light dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {{ tile.properties[schema.key] }}
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="#" @click="tile.properties[schema.key] = true"
+                        >true</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#" @click="tile.properties[schema.key] = false"
+                        >false</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </template>
+              <template v-if="schema.type === 'Position'">
+                <div class="row">
+                  <div class="col p-0 pe-1">
+                    <input
+                      type="number"
+                      class="form-control"
+                      v-model="(tile.properties[schema.key] as Position).x"
+                    />
+                  </div>
+                  <div class="col p-0">
+                    <input
+                      type="number"
+                      class="form-control"
+                      v-model="(tile.properties[schema.key] as Position).y"
+                    />
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </template>
+    </div>
+  </template>
   <div class="row pt-2">
     <div class="col">
       <button class="btn btn-sm btn-secondary" @click="addTile()">

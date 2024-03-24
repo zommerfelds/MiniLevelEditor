@@ -11,6 +11,7 @@ export function makeDefaultData(): WorldData {
       tilesetTileWidth: 16,
       tilesetTileHeight: 16,
       tileTypes: [
+        // TODO: consider making 'name' the key of an object instead of an array.
         {
           name: 'Static',
           properties: [{ key: 'isWall', type: 'Bool', defaultBool: true, optional: false }],
@@ -25,14 +26,14 @@ export function makeDefaultData(): WorldData {
         { name: 'Entities', allowedTypes: ['Entity'] },
       ],
       tileset: [
-        { name: 'T1', x: 0, y: 0, types: ['Static'] },
-        { name: 'T2', x: 16, y: 0, types: ['Static'] },
-        { name: 'T3', x: 32, y: 0, types: ['Static'] },
-        { name: 'T4', x: 48, y: 0, types: ['Static'] },
-        { name: 'Player', x: 0, y: 16, types: ['Entity'] },
-        { name: 'Bush1', x: 16, y: 16, types: ['Entity'] },
-        { name: 'Bush2', x: 32, y: 16, types: ['Entity'] },
-        { name: 'Trunk', x: 48, y: 16, types: ['Entity'] },
+        { name: 'T1', x: 0, y: 0, types: ['Static'], properties: { isWall: false } },
+        { name: 'T2', x: 16, y: 0, types: ['Static'], properties: { isWall: false } },
+        { name: 'T3', x: 32, y: 0, types: ['Static'], properties: { isWall: false } },
+        { name: 'T4', x: 48, y: 0, types: ['Static'], properties: { isWall: false } },
+        { name: 'Player', x: 0, y: 16, types: ['Entity'], properties: { health: 10 } },
+        { name: 'Bush1', x: 16, y: 16, types: ['Entity'], properties: {} },
+        { name: 'Bush2', x: 32, y: 16, types: ['Entity'], properties: {} },
+        { name: 'Trunk', x: 48, y: 16, types: ['Entity'], properties: {} },
       ],
     },
     levels: [makeDefaultLevel()],
