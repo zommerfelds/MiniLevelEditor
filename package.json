@@ -1,9 +1,12 @@
 {
-  "name": "minileveledit",
+  "name": "minileveleditor",
   "version": "0.0.0",
   "private": true,
+  "bin": "bin.ts",
   "scripts": {
     "dev": "concurrently \"npm:server-dev\" \"npm:client-dev\"",
+    "build": "npm run server-build && npm run client-build",
+    "prod": "concurrently \"npm:server-run\" \"npm:client-preview\"",
     "client-dev-directly": "vite client",
     "client-dev": "wait-on -l tcp:3000 && npm run client-dev-directly",
     "client-dev-serverless": "cross-env VITE_APP_MODE=serverless npm run client-dev-directly",
@@ -13,10 +16,12 @@
     "type-check": "vue-tsc --build --force",
     "server-dev": "nodemon --watch server server/index.ts levels.json",
     "server-build": "tsc -p server",
+    "server-run": "node server/dist/server/index.js",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write client/src/ server/"
   },
   "dependencies": {
+    "@colors/colors": "^1.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.6",
@@ -27,6 +32,7 @@
     "phaser": "^3.70.0",
     "pinia": "^2.1.7",
     "prettier": "^3.2.4",
+    "shelljs": "^0.8.5",
     "uuid": "^9.0.1",
     "vue": "^3.3.11",
     "vuedraggable": "^4.1.0"
@@ -37,6 +43,7 @@
     "@types/bootstrap": "^5.2.10",
     "@types/express": "^4.17.21",
     "@types/node": "^18.19.3",
+    "@types/shelljs": "^0.8.15",
     "@types/uuid": "^9.0.8",
     "@types/wicg-file-system-access": "^2023.10.4",
     "@vitejs/plugin-vue": "^4.5.2",

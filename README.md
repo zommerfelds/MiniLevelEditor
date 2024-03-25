@@ -41,7 +41,7 @@ On the browser, open `http://localhost:5173/`
 - [ ] Refactor: separate vue element for dropdown
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset
-- [ ] Export package so it can be run with npx
+- [ ] [WIP] Export command and package so it can be run from other repo
 - [ ] Better way of defining new tiles (pick from image instead of x/y, auto-add all)
 - [ ] [WIP] Serverless mode (TODO: be able to save)
 - [ ] Paint multiple tiles at the same time
