@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"npm:server-dev\" \"npm:client-dev\"",
     "prepare": "npm run server-build && npm run client-build",
-    "prod": "concurrently \"npm:server-run\" \"npm:client-preview\"",
+    "prod": "concurrently -P \"npm:server-run {@}\" \"npm:client-preview\"",
     "client-dev-directly": "vite client",
     "client-dev": "wait-on -l tcp:3000 && npm run client-dev-directly",
     "client-dev-serverless": "cross-env VITE_APP_MODE=serverless npm run client-dev-directly",
