@@ -42,7 +42,7 @@ On the browser, open `http://localhost:5173/`
 - [x] Tile editor (define new tiles)
 - [x] Add warning banner for when data doesns't match the schema (e.g. tile was deleted)
 - [x] Level reordering
-- [x] Export command and package so it can be run from other repo
+- [ ] [WIP] Export command and package so it can be run from other repo (TODO: be able to have levels.json in the other repo)
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Refactor: separate vue element for dropdown
