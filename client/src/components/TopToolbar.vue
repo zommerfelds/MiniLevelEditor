@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LayersModal from '@/components/LayersModal.vue'
 import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -76,6 +77,11 @@ const world = useWorldStore()
           {{ layer.name }}
         </button>
       </div>
+      <div class="p-2">
+        <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#layersModal">
+          <FontAwesomeIcon :icon="faPen"
+        /></a>
+      </div>
     </div>
   </div>
   <div>
@@ -87,6 +93,8 @@ const world = useWorldStore()
       {{ tools.warningMessage }}
     </div>
   </div>
+
+  <LayersModal />
 </template>
 
 <style scoped>
