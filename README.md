@@ -10,7 +10,13 @@ This tool is not implemented yet. Feel free to [open an "issue"](https://github.
 
 [Personal notes](https://docs.google.com/document/d/1PNKyq5fczIWapZl0H0cRPSAIOZsfjAB2MmLjjtfKcmM/edit#heading=h.4z0ttusyscsq)
 
-## How to run
+## Using in a project
+
+`npx zommerfelds/MiniLevelEditor@latest`
+
+Note: this will build the entire package and may take some time. In the future we plan to make more efficient releases.
+
+## How to develop
 
 Run: `npm run dev`
 
@@ -36,12 +42,12 @@ On the browser, open `http://localhost:5173/`
 - [x] Tile editor (define new tiles)
 - [x] Add warning banner for when data doesns't match the schema (e.g. tile was deleted)
 - [x] Level reordering
+- [x] Export command and package so it can be run from other repo
 - [ ] Allow to define properties (for tiles and levels)
 - [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Refactor: separate vue element for dropdown
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset
-- [ ] [WIP] Export command and package so it can be run from other repo
 - [ ] Better way of defining new tiles (pick from image instead of x/y, auto-add all)
 - [ ] [WIP] Serverless mode (TODO: be able to save)
 - [ ] Paint multiple tiles at the same time
@@ -49,6 +55,8 @@ On the browser, open `http://localhost:5173/`
 - [ ] Support multiple tilesets
 - [ ] Randomize drawing (maybe: way to define brushes)
 - [ ] Add warning for old version
+- [ ] Make dependencies lightweight by only shipping the dist files (and move to devDependencies)
+- [ ] Publish to NPM
 - [ ] Make a YouTube video
 - [ ] Keyboard shortcuts (e.g. Ctrl-Z for undo)
 - [ ] Optimize saving by only sending diffs and batching/throttling (refDebounced?)
