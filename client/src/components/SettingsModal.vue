@@ -2,6 +2,7 @@
 // import { Modal } from 'bootstrap'
 import { ref, onMounted } from 'vue'
 import { useWorldStore } from '@/stores/world'
+import MyDropdown from '@/components/MyDropdown.vue'
 
 const worldStore = useWorldStore()
 
@@ -81,21 +82,8 @@ onMounted(() => {
             <div class="flex-grow-1">
               <label class="col-form-label">Tileset</label>
             </div>
-            <div class="dropdown">
-              <button
-                class="btn btn-light dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {{ tilesetImage }}
-              </button>
-              <ul class="dropdown-menu">
-                <li v-for="(file, index) in tilesetFiles" :key="index">
-                  <a class="dropdown-item" href="#" @click="tilesetImage = file">{{ file }}</a>
-                </li>
-              </ul>
-            </div>
+
+            <MyDropdown :list="tilesetFiles" v-model="tilesetImage" />
           </div>
           <div class="d-flex pb-3">
             <div class="flex-grow-1">

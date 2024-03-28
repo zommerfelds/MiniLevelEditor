@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useWorldStore } from '@/stores/world'
 import { TilesetUtils } from '@/logic/TilesetUtils'
+import MyDropdown from '@/components/MyDropdown.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faTrash, faSquarePlus, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons'
 import type { Position, PropertySchema, Tile, UserDefinedTypeName } from '@common/dataTypes'
@@ -54,28 +55,10 @@ const typeMap = computed(() => {
 
 <template v-if="world.data.config">
   <div class="row mb-2">
-    <div class="dropdown">
-      <button
-        class="btn btn-light dropdown-toggle"
-        type="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        {{ selectedTileTypeName }}
-      </button>
-      <ul class="dropdown-menu">
-        <li>
-          <a class="dropdown-item" href="#" @click="selectedTileTypeName = allTileTypesName"
-            >{{ allTileTypesName }}
-          </a>
-        </li>
-        <li v-for="(tileType, index) in world.data.config.tileTypes" :key="index">
-          <a class="dropdown-item" href="#" @click="selectedTileTypeName = tileType.name">
-            {{ tileType.name }}
-          </a>
-        </li>
-      </ul>
-    </div>
+    <MyDropdown
+      :list="[allTileTypesName].concat(world.data.config.tileTypes.map((t) => t.name))"
+      v-model="selectedTileTypeName"
+    />
   </div>
   <div class="row header pb-3">
     <div class="col-3 ps-3">Name</div>
@@ -92,26 +75,13 @@ const typeMap = computed(() => {
         <div class="pe-2 pt-1">
           <div class="tile-icon pixelart" :style="tilesetUtils.getIconStyle(tile, iconSize)"></div>
         </div>
-        <div class="dropdown">
-          <button
-            class="btn btn-light dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            {{ tilesetUtils.isEmptyTileIndex(index) ? 'Empty' : 'From tileset' }}
-          </button>
-          <ul class="dropdown-menu">
-            <li>
-              <a class="dropdown-item" href="#" @click="tilesetUtils.setEmpty(tile)"> Empty </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="#" @click="tilesetUtils.setFromTileset(tile, 0, 0)">
-                From tileset
-              </a>
-            </li>
-          </ul>
-        </div>
+        <MyDropdown
+          :list="[
+            { value: 'Empty', onclick: () => tilesetUtils.setEmpty(tile) },
+            { value: 'From tileset', onclick: () => tilesetUtils.setFromTileset(tile, 0, 0) },
+          ]"
+          :default="tilesetUtils.isEmptyTileIndex(index) ? 'Empty' : 'From tileset'"
+        />
         <template v-if="tile.x != undefined">
           <div class="p-1 ps-3">x:</div>
           <div class="size-input">
@@ -172,28 +142,7 @@ const typeMap = computed(() => {
                 <input type="number" class="form-control" v-model="tile.properties[schema.key]" />
               </template>
               <template v-if="schema.type === 'Bool'">
-                <div class="dropdown">
-                  <button
-                    class="btn btn-light dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    {{ tile.properties[schema.key] }}
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" href="#" @click="tile.properties[schema.key] = true"
-                        >true</a
-                      >
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#" @click="tile.properties[schema.key] = false"
-                        >false</a
-                      >
-                    </li>
-                  </ul>
-                </div>
+                <MyDropdown :list="[true, false]" v-model="tile.properties[schema.key]" />
               </template>
               <template v-if="schema.type === 'Position'">
                 <div class="row">

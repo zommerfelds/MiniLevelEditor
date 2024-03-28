@@ -7,6 +7,7 @@ import type {
   PropertySchemaTypeName,
   UserDefinedType,
 } from '@common/dataTypes'
+import MyDropdown from '@/components/MyDropdown.vue'
 const world = useWorldStore()
 
 function addTileType() {
@@ -96,33 +97,17 @@ function setPropType(prop: PropertySchemaEntry, type: PropertySchemaTypeName) {
             <input type="text" class="form-control" v-model="prop.key" />
           </div>
           <div class="col-3">
-            <div class="dropdown">
-              <button
-                class="btn btn-light dropdown-toggle dropdown-fill"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {{ prop.type }}
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item" href="#" @click="setPropType(prop, 'String')">String</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#" @click="setPropType(prop, 'Bool')">Bool</a>
-                </li>
-                <li><a class="dropdown-item" href="#" @click="setPropType(prop, 'Int')">Int</a></li>
-                <li>
-                  <a class="dropdown-item" href="#" @click="setPropType(prop, 'Float')">Float</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#" @click="setPropType(prop, 'Position')">
-                    Position
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <MyDropdown
+              :list="[
+                { value: 'String', onclick: () => setPropType(prop, 'String') },
+                { value: 'Bool', onclick: () => setPropType(prop, 'Bool') },
+                { value: 'Int', onclick: () => setPropType(prop, 'Int') },
+                { value: 'Float', onclick: () => setPropType(prop, 'Float') },
+                { value: 'Position', onclick: () => setPropType(prop, 'Position') },
+              ]"
+              v-model="prop.type"
+              fill-width
+            />
           </div>
           <div class="col">
             <div v-if="prop.type === 'String'">
@@ -135,24 +120,7 @@ function setPropType(prop: PropertySchemaEntry, type: PropertySchemaTypeName) {
               <input type="number" class="form-control" v-model="prop.defaultFloat" />
             </div>
             <div v-if="prop.type === 'Bool'">
-              <div class="dropdown">
-                <button
-                  class="btn btn-light dropdown-toggle dropdown-fill"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {{ prop.defaultBool }}
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" href="#" @click="prop.defaultBool = true">true</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" @click="prop.defaultBool = false">false</a>
-                  </li>
-                </ul>
-              </div>
+              <MyDropdown :list="[true, false]" v-model="prop.defaultBool" fill-width />
             </div>
             <div v-if="prop.type === 'Position'">
               <div class="row">
@@ -205,13 +173,5 @@ function setPropType(prop: PropertySchemaEntry, type: PropertySchemaTypeName) {
 <style scoped>
 .header {
   font-weight: bold;
-}
-
-.dropdown-fill {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  text-align: left;
 }
 </style>
