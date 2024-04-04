@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useWorldStore } from '@/stores/world'
 import type { LayerConfig, UserDefinedTypeName } from '@common/dataTypes'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faSquarePlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { ref } from 'vue'
 
 const world = useWorldStore()
 
@@ -31,6 +34,26 @@ function clickAllCheckbox(layer: LayerConfig) {
     layer.allowedTypes = undefined
   }
 }
+
+let layersModalBody = ref<HTMLElement | undefined>(undefined)
+
+function addLayer() {
+  const newLayer: LayerConfig = { name: 'New layer' }
+  world.data.config.layers.push(newLayer)
+
+  setTimeout(
+    () =>
+      layersModalBody.value!.scrollTo({
+        top: layersModalBody.value!.scrollHeight,
+        behavior: 'smooth',
+      }),
+    0
+  )
+}
+
+function deleteLayer(index: number) {
+  world.data.config.layers.splice(index, 1)
+}
 </script>
 
 <template>
@@ -52,7 +75,7 @@ function clickAllCheckbox(layer: LayerConfig) {
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">
+        <div ref="layersModalBody" class="modal-body my-modal-body">
           <div class="row header">
             <div class="col-5">Layer Name</div>
             <!-- TODO: add link to tile type editor -->
@@ -64,6 +87,7 @@ function clickAllCheckbox(layer: LayerConfig) {
             <div class="col" v-for="(tileType, index) in world.data.config.tileTypes" :key="index">
               {{ tileType.name }}
             </div>
+            <div class="col-1"></div>
           </div>
           <div class="row pt-3" v-for="(layer, index) in world.data.config.layers" :key="index">
             <div class="col-5">
@@ -91,6 +115,18 @@ function clickAllCheckbox(layer: LayerConfig) {
                 :disabled="layer.allowedTypes === undefined"
               />
             </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-secondary ms-auto" @click="deleteLayer(index)">
+                <FontAwesomeIcon :icon="faTrash" />
+              </button>
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col">
+              <button class="btn btn-sm btn-secondary" @click="addLayer()">
+                <FontAwesomeIcon :icon="faSquarePlus" class="me-3" />Add layer
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -101,5 +137,10 @@ function clickAllCheckbox(layer: LayerConfig) {
 <style scoped>
 .header {
   font-weight: bold;
+}
+
+.my-modal-body {
+  max-height: 80vh;
+  overflow-y: auto;
 }
 </style>

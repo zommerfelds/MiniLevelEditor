@@ -44,8 +44,8 @@ On the browser, open `http://localhost:5173/`
 - [x] Level reordering
 - [x] Export command and package so it can be run from other repo
 - [x] Allow to define properties (for tiles and levels)
+- [x] Layers
 - [ ] Build a real demo game in https://github.com/zommerfelds/MiniLevelEditor-game-demo
-- [ ] [WIP] Layers (TODO: need way to add and remove layers)
 - [ ] Refactor: separate vue element for dropdown
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset

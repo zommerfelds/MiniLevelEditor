@@ -110,7 +110,7 @@ const typeMap = computed(() => {
           />
         </button>
         <button class="btn btn-sm btn-secondary ms-auto" @click="deleteTile(index)">
-          <FontAwesomeIcon :icon="faTrash" class="" />
+          <FontAwesomeIcon :icon="faTrash" />
         </button>
       </div>
     </div>
