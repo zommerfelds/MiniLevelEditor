@@ -4,6 +4,11 @@ import { makeDefaultLevel, makeDefaultData } from '@common/defaultData'
 import { useRefHistory } from '@vueuse/core'
 import type { WorldData } from '@common/dataTypes'
 
+// Note: the below imports are only needed for serverless mode. Maybe we can avoid loading them for normal mode.
+import { format } from 'prettier/standalone'
+import * as prettierPluginBabel from 'prettier/plugins/babel'
+import * as prettierPluginEstree from 'prettier/plugins/estree'
+
 export const serverlessMode = __APP_MODE === 'SERVERLESS'
 
 // Local storage for all level data.
@@ -50,6 +55,28 @@ export const useWorldStore = defineStore('world', () => {
     setTimeout(dataHistory.clear, 0)
   }
 
+  async function loadLevelFromDir() {
+    const dirHandle = await window.showDirectoryPicker()
+    // TODO: handle 'levels.json' file not present
+    const fileHandle = await dirHandle.getFileHandle('levels.json', {})
+    const file = await fileHandle.getFile()
+    const text = await file.text()
+    data.value = JSON.parse(text)
+    isDefaultData.value = false
+
+    watchEffect(async () => {
+      const stateStr = JSON.stringify(data.value)
+      const stateStrPretty = await format(stateStr, {
+        parser: 'json',
+        plugins: [prettierPluginBabel, prettierPluginEstree],
+      })
+
+      const writable = await fileHandle.createWritable()
+      writable.write(stateStrPretty)
+      writable.close()
+    })
+  }
+
   // Load data asynchronously.
   loadWorldData().catch((err: any) => {
     loadingError.value = true
@@ -81,6 +108,6 @@ export const useWorldStore = defineStore('world', () => {
     undo,
     redo,
     addLevel,
-    loadWorldData,
+    loadLevelFromDir,
   }
 })

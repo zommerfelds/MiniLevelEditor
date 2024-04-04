@@ -10,15 +10,6 @@ import { LevelChecker } from '@/logic/LevelChecker'
 
 const world = useWorldStore()
 
-async function loadLevelFromDir() {
-  const dirHandle = await window.showDirectoryPicker()
-  const fileHandle = await dirHandle.getFileHandle('levels.json', {})
-  const file = await fileHandle.getFile()
-  const text = await file.text()
-  world.data = JSON.parse(text)
-  world.isDefaultData = false
-}
-
 new LevelChecker().watch()
 </script>
 
@@ -43,7 +34,10 @@ new LevelChecker().watch()
       <div v-if="serverlessMode">
         <div class="p-2 text-warning" style="font-weight: bold">
           <p>[WIP: Serverless mode]</p>
-          <button class="btn btn-secondary" @click="loadLevelFromDir()">Load directory</button>
+          <!-- TODO: add indication when nothing is loaded -->
+          <button class="btn btn-secondary" @click="world.loadLevelFromDir()">
+            Load directory
+          </button>
         </div>
         <hr />
       </div>

@@ -22,6 +22,8 @@ Run: `npm run dev`
 
 On the browser, open `http://localhost:5173/`
 
+To develop serverless mode, run `npm run client-dev-serverless`.
+
 ## TODO list
 
 - [x] Set up Vue project
