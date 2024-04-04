@@ -45,8 +45,8 @@ On the browser, open `http://localhost:5173/`
 - [x] Export command and package so it can be run from other repo
 - [x] Allow to define properties (for tiles and levels)
 - [x] Layers
+- [x] Refactor: separate vue element for dropdown
 - [ ] Build a real demo game in https://github.com/zommerfelds/MiniLevelEditor-game-demo
-- [ ] Refactor: separate vue element for dropdown
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset
 - [ ] Better way of defining new tiles (pick from image instead of x/y, auto-add all)
