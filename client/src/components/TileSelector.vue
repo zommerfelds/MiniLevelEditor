@@ -67,6 +67,14 @@ watch(
       </div>
     </div>
     <div v-if="world.data.config">
+      <div class="row" v-if="world.data.config.tileset.length === 0">
+        <div class="col pt-1">There are no tiles.</div>
+      </div>
+      <div class="row" v-else-if="!world.data.config.tileset.some(isTileAllowedInSelectedLayer)">
+        <div class="col pt-1">
+          No allowed tiles found for the selected layer. Check layer configuration.
+        </div>
+      </div>
       <div class="row" v-for="(tile, index) in world.data.config.tileset" :key="index">
         <div
           class="col pt-1"
