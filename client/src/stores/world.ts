@@ -34,13 +34,13 @@ export const useWorldStore = defineStore('world', () => {
       if (fileHandleOrUndefined !== undefined) {
         console.log('Found previously loaded file:', fileHandleOrUndefined)
         const perm = { mode: 'readwrite' }
-        if ((await fileHandleOrUndefined.queryPermission(perm)) !== 'granted') {
+        if ((await fileHandleOrUndefined.queryPermission(perm)) === 'granted') {
+          await loadLevelFromFileSystem(fileHandleOrUndefined)
+        } else {
           console.log('No permission to access previously accessed file')
-          return
           // NOTE: we could add a button to regrant the permission and call (needs a user click):
           // await fileHandleOrUndefined.requestPermission(perm)
         }
-        await loadLevelFromFileSystem(fileHandleOrUndefined)
       }
     } else {
       // Simulate a loading delay:
@@ -70,8 +70,8 @@ export const useWorldStore = defineStore('world', () => {
       })
     }
 
-    if (!isLoaded.value) {
-      data.value = makeDefaultData()
+        if (!isLoaded.value) {
+            data.value = makeDefaultData()
     }
 
     // Clear the history after the initial data is saved. Needs to be in timeout otherwise the history won't have been created yet.
