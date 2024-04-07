@@ -15,11 +15,11 @@ let tilesetTileHeight = ref(0)
 let tilesetFiles = ref<string[]>([])
 
 function onSaveSettings() {
-  worldStore.data.config.gridCellWidth = gridCellWidth.value
-  worldStore.data.config.gridCellHeight = gridCellHeight.value
-  worldStore.data.config.tilesetImage = tilesetImage.value
-  worldStore.data.config.tilesetTileWidth = tilesetTileWidth.value
-  worldStore.data.config.tilesetTileHeight = tilesetTileHeight.value
+  worldStore.getWorldData().config.gridCellWidth = gridCellWidth.value
+  worldStore.getWorldData().config.gridCellHeight = gridCellHeight.value
+  worldStore.getWorldData().config.tilesetImage = tilesetImage.value
+  worldStore.getWorldData().config.tilesetTileWidth = tilesetTileWidth.value
+  worldStore.getWorldData().config.tilesetTileHeight = tilesetTileHeight.value
 }
 
 onMounted(() => {
@@ -29,11 +29,11 @@ onMounted(() => {
   const dialog = document.getElementById('settingsModal')!!
 
   dialog.addEventListener('show.bs.modal', () => {
-    gridCellWidth.value = worldStore.data.config.gridCellWidth
-    gridCellHeight.value = worldStore.data.config.gridCellHeight
-    tilesetImage.value = worldStore.data.config.tilesetImage
-    tilesetTileWidth.value = worldStore.data.config.tilesetTileWidth
-    tilesetTileHeight.value = worldStore.data.config.tilesetTileHeight
+    gridCellWidth.value = worldStore.getWorldData().config.gridCellWidth
+    gridCellHeight.value = worldStore.getWorldData().config.gridCellHeight
+    tilesetImage.value = worldStore.getWorldData().config.tilesetImage
+    tilesetTileWidth.value = worldStore.getWorldData().config.tilesetTileWidth
+    tilesetTileHeight.value = worldStore.getWorldData().config.tilesetTileHeight
 
     const getUrl = '/api/tileset-list'
     fetch(getUrl).then(async (response) => {

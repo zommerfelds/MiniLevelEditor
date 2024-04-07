@@ -16,7 +16,7 @@ const world = useWorldStore()
 </script>
 
 <template>
-  <div class="p-3 bg-dark text-light border-bottom border-secondary" v-if="world.data.config">
+  <div class="p-3 bg-dark text-light border-bottom border-secondary" v-if="world.isLoaded">
     <div class="d-flex align-items-end global-toolbar-height">
       <div class="p-2">Undo</div>
       <div class="btn-group" role="group">
@@ -66,7 +66,7 @@ const world = useWorldStore()
       <div class="p-2 ms-3">Layer</div>
       <div class="btn-group" role="group">
         <button
-          v-for="(layer, index) in world.data.config.layers"
+          v-for="(layer, index) in world.getWorldData().config.layers"
           :key="index"
           type="button"
           class="btn"

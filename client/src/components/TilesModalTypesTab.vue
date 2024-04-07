@@ -12,14 +12,14 @@ const world = useWorldStore()
 
 function addTileType() {
   const newType: UserDefinedType = { name: '', properties: [] }
-  world.data.config.tileTypes.push(newType)
+  world.getWorldData().config.tileTypes.push(newType)
 
   const dialogBody = document.getElementById('tilesModalBody')!!
   setTimeout(() => dialogBody.scrollTo({ top: dialogBody.scrollHeight, behavior: 'smooth' }), 0)
 }
 
 function deleteTileType(index: number) {
-  world.data.config.tileTypes.splice(index, 1)
+  world.getWorldData().config.tileTypes.splice(index, 1)
 }
 
 function addTileTypeProp(tileType: UserDefinedType) {
@@ -85,7 +85,7 @@ function setPropType(prop: PropertySchemaEntry, type: PropertySchemaTypeName) {
       </div>
     </div>
   </div>
-  <template v-for="(tileType, index) in world.data.config.tileTypes" :key="index">
+  <template v-for="(tileType, index) in world.getWorldData().config.tileTypes" :key="index">
     <div class="row ps-1 pe-1 pt-2"><hr /></div>
     <div class="row pb-1">
       <div class="col-3">

@@ -39,7 +39,7 @@ let layersModalBody = ref<HTMLElement | undefined>(undefined)
 
 function addLayer() {
   const newLayer: LayerConfig = { name: 'New layer' }
-  world.data.config.layers.push(newLayer)
+  world.getWorldData().config.layers.push(newLayer)
 
   setTimeout(
     () =>
@@ -52,7 +52,7 @@ function addLayer() {
 }
 
 function deleteLayer(index: number) {
-  world.data.config.layers.splice(index, 1)
+  world.getWorldData().config.layers.splice(index, 1)
 }
 </script>
 
@@ -63,6 +63,7 @@ function deleteLayer(index: number) {
     tabindex="-1"
     aria-labelledby="layersModalLabel"
     aria-hidden="true"
+    v-if="world.isLoaded"
   >
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
@@ -84,12 +85,20 @@ function deleteLayer(index: number) {
           <div class="row pt-2">
             <div class="col-5"></div>
             <div class="col">All</div>
-            <div class="col" v-for="(tileType, index) in world.data.config.tileTypes" :key="index">
+            <div
+              class="col"
+              v-for="(tileType, index) in world.getWorldData().config.tileTypes"
+              :key="index"
+            >
               {{ tileType.name }}
             </div>
             <div class="col-1"></div>
           </div>
-          <div class="row pt-3" v-for="(layer, index) in world.data.config.layers" :key="index">
+          <div
+            class="row pt-3"
+            v-for="(layer, index) in world.getWorldData().config.layers"
+            :key="index"
+          >
             <div class="col-5">
               <input type="text" class="form-control" v-model="layer.name" />
             </div>
@@ -104,7 +113,7 @@ function deleteLayer(index: number) {
             </div>
             <div
               class="col"
-              v-for="(tileType, index2) in world.data.config.tileTypes"
+              v-for="(tileType, index2) in world.getWorldData().config.tileTypes"
               :key="index2"
             >
               <input

@@ -1,8 +1,9 @@
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
 import { makeDefaultLevel, makeDefaultData } from '@common/defaultData'
 import { useRefHistory } from '@vueuse/core'
-import type { WorldData } from '@common/dataTypes'
+import type { LoadingWorldData, WorldData } from '@common/dataTypes'
+import { get, set } from 'idb-keyval'
 
 // Note: the below imports are only needed for serverless mode. Maybe we can avoid loading them for normal mode.
 import { format } from 'prettier/standalone'
@@ -11,20 +12,37 @@ import * as prettierPluginEstree from 'prettier/plugins/estree'
 
 export const serverlessMode = __APP_MODE === 'SERVERLESS'
 
+const levelsFileIdbKey = 'levelsFileHandleKey'
+
 // Local storage for all level data.
 export const useWorldStore = defineStore('world', () => {
-  const data = ref<WorldData>(makeDefaultData())
+  const data = ref<WorldData | LoadingWorldData>({})
   const isDefaultData = ref(true)
   const loadingError = ref(false)
   const dataHistory = useRefHistory(data, { deep: true })
   const dataRevision = ref(0)
 
+  const isLoaded = computed(() => (data.value as any)['config'] !== undefined)
+
   function addLevel() {
-    data.value.levels.push(makeDefaultLevel())
+    ;(data.value as WorldData).levels.push(makeDefaultLevel())
   }
 
   async function loadWorldData() {
-    if (!serverlessMode) {
+    if (serverlessMode) {
+      const fileHandleOrUndefined = await get(levelsFileIdbKey)
+      if (fileHandleOrUndefined !== undefined) {
+        console.log('Found previously loaded file:', fileHandleOrUndefined)
+        const perm = { mode: 'readwrite' }
+        if ((await fileHandleOrUndefined.queryPermission(perm)) !== 'granted') {
+          console.log('No permission to access previously accessed file')
+          return
+          // NOTE: we could add a button to regrant the permission and call (needs a user click):
+          // await fileHandleOrUndefined.requestPermission(perm)
+        }
+        await loadLevelFromFileSystem(fileHandleOrUndefined)
+      }
+    } else {
       // Simulate a loading delay:
       // await new Promise((resolve) => setTimeout(resolve, 2000))
 
@@ -51,14 +69,16 @@ export const useWorldStore = defineStore('world', () => {
         })
       })
     }
+
+    if (!isLoaded.value) {
+      data.value = makeDefaultData()
+    }
+
     // Clear the history after the initial data is saved. Needs to be in timeout otherwise the history won't have been created yet.
     setTimeout(dataHistory.clear, 0)
   }
 
-  async function loadLevelFromDir() {
-    const dirHandle = await window.showDirectoryPicker()
-    // TODO: handle 'levels.json' file not present
-    const fileHandle = await dirHandle.getFileHandle('levels.json', {})
+  async function loadLevelFromFileSystem(fileHandle: FileSystemFileHandle) {
     const file = await fileHandle.getFile()
     const text = await file.text()
     data.value = JSON.parse(text)
@@ -75,6 +95,14 @@ export const useWorldStore = defineStore('world', () => {
       writable.write(stateStrPretty)
       writable.close()
     })
+  }
+
+  async function showDirPickerAndLoadLevel() {
+    const dirHandle = await window.showDirectoryPicker()
+    // TODO: handle 'levels.json' file not present
+    const fileHandle = await dirHandle.getFileHandle('levels.json', {})
+    await set(levelsFileIdbKey, fileHandle)
+    loadLevelFromFileSystem(fileHandle)
   }
 
   // Load data asynchronously.
@@ -97,8 +125,15 @@ export const useWorldStore = defineStore('world', () => {
     dataRevision.value++
   }
 
+  function getWorldData(): WorldData {
+    if (!isLoaded.value) throw 'Invalid state: world data accessed before isLoaded is true'
+    return data.value as WorldData
+  }
+
   return {
+    isLoaded,
     data,
+    getWorldData,
     isDefaultData,
     loadingError,
     canUndo: dataHistory.canUndo,
@@ -108,6 +143,6 @@ export const useWorldStore = defineStore('world', () => {
     undo,
     redo,
     addLevel,
-    loadLevelFromDir,
+    showDirPickerAndLoadLevel,
   }
 })

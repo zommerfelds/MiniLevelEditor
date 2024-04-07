@@ -11,11 +11,11 @@ const world = useWorldStore()
 
 function addLevel() {
   world.addLevel()
-  tools.selectedLevel = world.data.levels.length - 1
+  tools.selectedLevel = world.getWorldData().levels.length - 1
 }
 
 function deleteLevel(index: number) {
-  world.data.levels.splice(index, 1)
+  world.getWorldData().levels.splice(index, 1)
 
   if (tools.selectedLevel > index) {
     tools.selectedLevel--
@@ -23,10 +23,10 @@ function deleteLevel(index: number) {
 }
 // If the current index is past the end, fix it. This could for example happen on undo, or deleting the last level.
 watch(
-  () => computed(() => world.data.levels?.length),
+  () => computed(() => (world.isLoaded ? world.getWorldData().levels?.length : -1)),
   () => {
-    if (tools.selectedLevel >= world.data.levels.length) {
-      tools.selectedLevel = world.data.levels.length - 1
+    if (tools.selectedLevel >= world.getWorldData().levels.length) {
+      tools.selectedLevel = world.getWorldData().levels.length - 1
     }
   },
   { deep: true }
@@ -47,41 +47,43 @@ function onDragChange(ev: { moved?: { oldIndex: number; newIndex: number } }) {
 </script>
 
 <template>
-  <ul class="nav nav-pills flex-column mb-auto user-select-none">
-    <draggable
-      :list="world.data.levels"
-      item-key="id"
-      @change="onDragChange"
-      ghost-class="drag-ghost"
-      drag-class="drag-active"
-    >
-      <template #item="{ element, index }">
-        <li class="nav-item">
-          <div
-            class="nav-link lvl-selector-row"
-            :class="index == tools.selectedLevel ? 'active' : ''"
-            aria-current="page"
-            @click="tools.selectedLevel = index"
-          >
-            <a href="#" class="lvl-selector-link text-white">
-              [{{ index + 1 }}] {{ element?.name }}
-            </a>
-            <FontAwesomeIcon
-              :icon="faTrash"
-              class="mt-1 lvl-delete float-end"
-              @click.stop="deleteLevel(index)"
-            />
-            <!-- TODO: fix undo when removing a level, zoom seems to be stuck. Probably undo needs to take into account level num. -->
-          </div>
-        </li>
-      </template>
-    </draggable>
-    <li>
-      <a href="#" class="nav-link text-white" @click="addLevel()">
-        <FontAwesomeIcon :icon="faSquarePlus" class="me-3" />Add level
-      </a>
-    </li>
-  </ul>
+  <template v-if="world.isLoaded">
+    <ul class="nav nav-pills flex-column mb-auto user-select-none">
+      <draggable
+        :list="world.getWorldData().levels"
+        item-key="id"
+        @change="onDragChange"
+        ghost-class="drag-ghost"
+        drag-class="drag-active"
+      >
+        <template #item="{ element, index }">
+          <li class="nav-item">
+            <div
+              class="nav-link lvl-selector-row"
+              :class="index == tools.selectedLevel ? 'active' : ''"
+              aria-current="page"
+              @click="tools.selectedLevel = index"
+            >
+              <a href="#" class="lvl-selector-link text-white">
+                [{{ index + 1 }}] {{ element?.name }}
+              </a>
+              <FontAwesomeIcon
+                :icon="faTrash"
+                class="mt-1 lvl-delete float-end"
+                @click.stop="deleteLevel(index)"
+              />
+              <!-- TODO: fix undo when removing a level, zoom seems to be stuck. Probably undo needs to take into account level num. -->
+            </div>
+          </li>
+        </template>
+      </draggable>
+      <li>
+        <a href="#" class="nav-link text-white" @click="addLevel()">
+          <FontAwesomeIcon :icon="faSquarePlus" class="me-3" />Add level
+        </a>
+      </li>
+    </ul>
+  </template>
 </template>
 
 <style scoped>

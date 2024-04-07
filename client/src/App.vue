@@ -35,7 +35,7 @@ new LevelChecker().watch()
         <div class="p-2 text-warning" style="font-weight: bold">
           <p>[WIP: Serverless mode]</p>
           <!-- TODO: add indication when nothing is loaded -->
-          <button class="btn btn-secondary" @click="world.loadLevelFromDir()">
+          <button class="btn btn-secondary" @click="world.showDirPickerAndLoadLevel()">
             Load directory
           </button>
         </div>

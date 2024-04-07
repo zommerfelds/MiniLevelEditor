@@ -15,13 +15,13 @@ const iconSize = 22
 const tilesetUtils = new TilesetUtils()
 
 function isTileAllowedInSelectedLayer(tile?: Tile): boolean {
-  const allowedTypes = world.data.config.layers[tools.selectedLayer]?.allowedTypes
+  const allowedTypes = world.getWorldData().config.layers[tools.selectedLayer]?.allowedTypes
   if (allowedTypes === undefined) return true
   return tile?.types.find((type) => allowedTypes.includes(type)) !== undefined
 }
 
 function isTileIndexAllowedInSelectedLayer(tileIndex: number): boolean {
-  return isTileAllowedInSelectedLayer(world.data.config?.tileset[tileIndex])
+  return isTileAllowedInSelectedLayer(world.getWorldData().config.tileset[tileIndex])
 }
 
 watch(
@@ -40,7 +40,7 @@ watch(
       tools.selectedTile = lastSelectedTile
       return
     }
-    for (let i = 0; i < world.data.config?.tileset.length; i++) {
+    for (let i = 0; i < world.getWorldData().config.tileset.length; i++) {
       if (isTileIndexAllowedInSelectedLayer(i)) {
         tools.selectedTile = i
         break
@@ -66,16 +66,19 @@ watch(
         </button>
       </div>
     </div>
-    <div v-if="world.data.config">
-      <div class="row" v-if="world.data.config.tileset.length === 0">
+    <div v-if="world.isLoaded">
+      <div class="row" v-if="world.getWorldData().config.tileset.length === 0">
         <div class="col pt-1">There are no tiles.</div>
       </div>
-      <div class="row" v-else-if="!world.data.config.tileset.some(isTileAllowedInSelectedLayer)">
+      <div
+        class="row"
+        v-else-if="!world.getWorldData().config.tileset.some(isTileAllowedInSelectedLayer)"
+      >
         <div class="col pt-1">
           No allowed tiles found for the selected layer. Check layer configuration.
         </div>
       </div>
-      <div class="row" v-for="(tile, index) in world.data.config.tileset" :key="index">
+      <div class="row" v-for="(tile, index) in world.getWorldData().config.tileset" :key="index">
         <div
           class="col pt-1"
           @click="tools.selectedTile = index"

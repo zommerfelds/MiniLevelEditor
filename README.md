@@ -49,10 +49,10 @@ To develop serverless mode, run `npm run client-dev-serverless`.
 - [x] Layers
 - [x] Refactor: separate vue element for dropdown
 - [ ] Build a real demo game in https://github.com/zommerfelds/MiniLevelEditor-game-demo
+- [ ] [WIP] Serverless mode (TODO: provide a way to change the saved location and indicate the state)
 - [ ] Define the auto-mapping model
 - [ ] Add nicer default tileset
 - [ ] Better way of defining new tiles (pick from image instead of x/y, auto-add all)
-- [ ] [WIP] Serverless mode (TODO: be able to save)
 - [ ] Paint multiple tiles at the same time
 - [ ] More tools (e.g. eraser, move tile(s), selection)
 - [ ] Support multiple tilesets

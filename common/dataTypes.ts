@@ -70,6 +70,8 @@ export type Level = {
   layers: { data: number[] }[]
 }
 
+export type LoadingWorldData = {}
+
 export type WorldData = {
   config: Config
   levels: Level[]
