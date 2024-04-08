@@ -36,8 +36,16 @@ export const useWorldStore = defineStore('world', () => {
         console.log('Found previously loaded file:', fileHandleOrUndefined)
         const perm = { mode: 'readwrite' }
         if ((await fileHandleOrUndefined.queryPermission(perm)) === 'granted') {
-          await loadLevelFromFileSystem(fileHandleOrUndefined)
-          await watchLevelChangesAndSaveToDisk(fileHandleOrUndefined)
+          let success = false
+          try {
+            await loadLevelFromFileSystem(fileHandleOrUndefined)
+            success = true
+          } catch (err) {
+            console.warn('Could not load previously loaded file:', err)
+          }
+          if (success) {
+            await watchLevelChangesAndSaveToDisk(fileHandleOrUndefined)
+          }
         } else {
           console.log('No permission to access previously accessed file')
           // NOTE: we could add a button to regrant the permission and call (needs a user click):
