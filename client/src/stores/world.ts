@@ -17,7 +17,8 @@ const levelsFileIdbKey = 'levelsFileHandleKey'
 // Local storage for all level data.
 export const useWorldStore = defineStore('world', () => {
   const data = ref<WorldData | LoadingWorldData>({})
-  const isDefaultData = ref(true)
+  const isDefaultData = ref(true) // TODO: is this really needed?
+  const syncingToDisk = ref(false) // Whether or not the level is being auto-synced to the filesystem API
   const loadingError = ref(false)
   const dataHistory = useRefHistory(data, { deep: true })
   const dataRevision = ref(0)
@@ -36,6 +37,7 @@ export const useWorldStore = defineStore('world', () => {
         const perm = { mode: 'readwrite' }
         if ((await fileHandleOrUndefined.queryPermission(perm)) === 'granted') {
           await loadLevelFromFileSystem(fileHandleOrUndefined)
+          await watchLevelChangesAndSaveToDisk(fileHandleOrUndefined)
         } else {
           console.log('No permission to access previously accessed file')
           // NOTE: we could add a button to regrant the permission and call (needs a user click):
@@ -70,8 +72,8 @@ export const useWorldStore = defineStore('world', () => {
       })
     }
 
-        if (!isLoaded.value) {
-            data.value = makeDefaultData()
+    if (!isLoaded.value) {
+      data.value = makeDefaultData()
     }
 
     // Clear the history after the initial data is saved. Needs to be in timeout otherwise the history won't have been created yet.
@@ -83,7 +85,9 @@ export const useWorldStore = defineStore('world', () => {
     const text = await file.text()
     data.value = JSON.parse(text)
     isDefaultData.value = false
+  }
 
+  async function watchLevelChangesAndSaveToDisk(fileHandle: FileSystemFileHandle) {
     watchEffect(async () => {
       const stateStr = JSON.stringify(data.value)
       const stateStrPretty = await format(stateStr, {
@@ -92,17 +96,21 @@ export const useWorldStore = defineStore('world', () => {
       })
 
       const writable = await fileHandle.createWritable()
-      writable.write(stateStrPretty)
-      writable.close()
+      await writable.write(stateStrPretty)
+      await writable.close()
+      syncingToDisk.value = true
     })
   }
 
-  async function showDirPickerAndLoadLevel() {
+  async function showDirPickerAndSyncLevel(loadFirst: boolean) {
     const dirHandle = await window.showDirectoryPicker()
-    // TODO: handle 'levels.json' file not present
-    const fileHandle = await dirHandle.getFileHandle('levels.json', {})
+    // TODO: warn user if a file will be overwritten
+    const fileHandle = await dirHandle.getFileHandle('levels.json', { create: true })
     await set(levelsFileIdbKey, fileHandle)
-    loadLevelFromFileSystem(fileHandle)
+    if (loadFirst) {
+      await loadLevelFromFileSystem(fileHandle)
+    }
+    await watchLevelChangesAndSaveToDisk(fileHandle)
   }
 
   // Load data asynchronously.
@@ -139,10 +147,11 @@ export const useWorldStore = defineStore('world', () => {
     canUndo: dataHistory.canUndo,
     canRedo: dataHistory.canRedo,
     dataRevision, // Is incremented when the data is updated outside the the content editor.
+    syncingToDisk,
     updateRevision,
     undo,
     redo,
     addLevel,
-    showDirPickerAndLoadLevel,
+    showDirPickerAndSyncLevel,
   }
 })

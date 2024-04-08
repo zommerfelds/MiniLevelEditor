@@ -31,16 +31,21 @@ new LevelChecker().watch()
       </div>
       <!-- Note: margin should be the same as the padding of the parent, so the toolbar height matches -->
       <hr class="mt-3" />
-      <div v-if="serverlessMode">
-        <div class="p-2 text-warning" style="font-weight: bold">
-          <p>[WIP: Serverless mode]</p>
-          <!-- TODO: add indication when nothing is loaded -->
-          <button class="btn btn-secondary" @click="world.showDirPickerAndLoadLevel()">
-            Load directory
-          </button>
+      <template v-if="serverlessMode">
+        <div class="p-0 text-warning" style="font-weight: bold">
+          <div class="pb-1 ps-1">Serverless mode</div>
+          <div class="pb-1 ps-1" v-if="world.syncingToDisk">[changes are auto-saved]</div>
+          <div class="pt-1">
+            <button class="btn btn-secondary" @click="world.showDirPickerAndSyncLevel(true)">
+              Load
+            </button>
+            <button class="ms-1 btn btn-secondary" @click="world.showDirPickerAndSyncLevel(false)">
+              Save <span v-if="world.syncingToDisk">as</span>
+            </button>
+          </div>
         </div>
         <hr />
-      </div>
+      </template>
       <LevelSelector />
       <hr />
       <TileSelector />
