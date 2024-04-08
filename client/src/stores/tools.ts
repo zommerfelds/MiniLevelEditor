@@ -10,7 +10,7 @@ export enum Tool {
 // Local storage for all level data.
 export const useToolsStore = defineStore('tools', () => {
   const selectedTool = ref(Tool.Draw)
-  const selectedTile = ref(1)
+  const selectedTile = ref(0)
   const lastSelectedTilePerLayer = ref<number[]>([1])
   const selectedLayer = ref(0)
   const selectedLevel = ref(0)
