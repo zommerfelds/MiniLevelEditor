@@ -4,18 +4,7 @@ import type { Tile } from '@common/dataTypes'
 export class TilesetUtils {
   world = useWorldStore()
 
-  getPath(): string {
-    if (this.world.getWorldData().config?.tilesetImage === undefined) return ''
-
-    if (this.world.getWorldData().config.tilesetImage === '__builtin') {
-      return 'built-in-tileset.png'
-    }
-    return 'api/tilesets/' + this.world.getWorldData().config.tilesetImage
-  }
-
   getAtlas(): object {
-    if (this.world.getWorldData().config?.tileset === undefined) return {}
-
     // Format example: https://github.com/phaserjs/examples/blob/master/public/src/loader/texture%20atlas%20json/load%20atlas%20with%20local%20json.js
     return {
       frames: this.world
@@ -70,7 +59,7 @@ export class TilesetUtils {
         'px ' +
         iconSize * (-tile.y / this.world.getWorldData().config.tilesetTileHeight) +
         'px',
-      'background-image': 'url("' + this.getPath() + '")',
+      'background-image': 'url("' + this.world.tilesetUrl + '")',
       'background-size': backgroundSize + 'px',
     }
   }

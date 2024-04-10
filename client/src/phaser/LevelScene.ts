@@ -22,22 +22,27 @@ export class LevelScene extends Scene {
   oldDisplayHeight?: number
   initializing = true
   level?: Level
+  loadedImage: string = ''
   constructor() {
     super({ key: 'MyScene' })
   }
 
   preload() {
     this.initializing = true
+    this.watchForLevelChanges()
 
-    if (this.world.isLoaded) {
-      const tileSetFile = this.tilesetUtils.getPath()
+    if (this.world.isLoaded && this.world.tilesetUrl !== '') {
+      const tileSetFile = this.world.tilesetUrl
+      if (tileSetFile !== this.loadedImage && this.textures.exists('tiles')) {
+        this.textures.remove('tiles')
+      }
+      this.loadedImage = tileSetFile
       this.load.atlas('tiles', tileSetFile, this.tilesetUtils.getAtlas())
     }
   }
 
   create(): void {
-    this.watchForLevelChanges()
-    if (!this.world.isLoaded) return
+    if (!this.world.isLoaded || this.loadedImage === '') return
 
     if (
       this.tools.selectedLevel < 0 ||
@@ -122,30 +127,10 @@ export class LevelScene extends Scene {
         ),
         // Reload if the revision changed without us knowing (e.g. undo):
         computed(() => this.world.dataRevision),
+        // The tileset URL may change later as it may need to be generated from a file on disk.
+        computed(() => this.world.tilesetUrl),
       ],
-      (
-        [isDefaultData, configStr, selectedLevel, dataRevision],
-        [prevIsDefaultData, prevConfigStr, prevSelectedLevel, prevDataRevision]
-      ) => {
-        if (
-          isDefaultData === prevIsDefaultData &&
-          configStr === prevConfigStr &&
-          selectedLevel === prevSelectedLevel &&
-          dataRevision === prevDataRevision
-        )
-          return
-        const config = JSON.parse(configStr || '{}')
-        const prevConfig = JSON.parse(prevConfigStr || '{}')
-        if (
-          ['tileset', 'tilesetTileWidth', 'tilesetTileHeight', 'tiles'].some(
-            (key) => config[key] !== prevConfig[key]
-          ) &&
-          this.textures.exists('tiles')
-        ) {
-          this.textures.remove('tiles')
-        }
-        this.scene.restart()
-      }
+      () => this.scene.restart()
     )
 
     this.events.off('destroy') // Remove existing destroy handlers (may happen if the scene is restarted).

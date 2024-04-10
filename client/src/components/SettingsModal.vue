@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { Modal } from 'bootstrap'
 import { ref, onMounted } from 'vue'
-import { serverlessMode, useWorldStore } from '@/stores/world'
+import { useWorldStore } from '@/stores/world'
 import MyDropdown from '@/components/MyDropdown.vue'
 
 const worldStore = useWorldStore()
@@ -28,24 +28,15 @@ onMounted(() => {
 
   const dialog = document.getElementById('settingsModal')!!
 
-  dialog.addEventListener('show.bs.modal', () => {
+  dialog.addEventListener('show.bs.modal', async () => {
     gridCellWidth.value = worldStore.getWorldData().config.gridCellWidth
     gridCellHeight.value = worldStore.getWorldData().config.gridCellHeight
     tilesetImage.value = worldStore.getWorldData().config.tilesetImage
     tilesetTileWidth.value = worldStore.getWorldData().config.tilesetTileWidth
     tilesetTileHeight.value = worldStore.getWorldData().config.tilesetTileHeight
 
-    if (serverlessMode) {
-      console.warn('TODO: load tilesets from disk')
-      tilesetFiles.value = ['__builtin']
-    } else {
-      const getUrl = '/api/tileset-list'
-      fetch(getUrl).then(async (response) => {
-        const json = await response.json()
-        // TODO: show a nicer text instead of the raw __builtin ID
-        tilesetFiles.value = ['__builtin'].concat(json.files)
-      })
-    }
+    // TODO: show a nicer text instead of the raw __builtin ID
+    tilesetFiles.value = await worldStore.getAvailableTilesets()
   })
 })
 </script>
