@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export enum Tool {
-  Move,
+  Pan,
   Draw,
   Erase,
 }

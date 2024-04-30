@@ -46,9 +46,9 @@ const world = useWorldStore()
         <button
           type="button"
           class="btn"
-          :class="tools.selectedTool == Tool.Move ? 'btn-success' : 'btn-light'"
+          :class="tools.selectedTool == Tool.Pan ? 'btn-success' : 'btn-light'"
           data-toggle="button"
-          @click="tools.selectedTool = Tool.Move"
+          @click="tools.selectedTool = Tool.Pan"
         >
           <FontAwesomeIcon :icon="faArrowPointer" />
         </button>

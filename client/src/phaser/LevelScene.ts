@@ -195,7 +195,7 @@ export class LevelScene extends Scene {
     if (mouseDown && this.game.input.activePointer.button === 2) {
       if (this.origToolBeforeDrag === undefined) {
         this.origToolBeforeDrag = this.tools.selectedTool
-        this.tools.selectedTool = Tool.Move
+        this.tools.selectedTool = Tool.Pan
       }
     }
     if (!mouseDown) {
@@ -207,8 +207,8 @@ export class LevelScene extends Scene {
       return
     }
     switch (this.tools.selectedTool) {
-      case Tool.Move:
-        this.move()
+      case Tool.Pan:
+        this.pan()
         break
       case Tool.Draw:
       case Tool.Erase:
@@ -217,7 +217,7 @@ export class LevelScene extends Scene {
     }
   }
 
-  move() {
+  pan() {
     if (this.origDragPoint) {
       this.cameras.main.scrollX +=
         (this.origDragPoint.x - this.game.input.activePointer.position.x) / this.cameras.main.zoom
@@ -245,7 +245,7 @@ export class LevelScene extends Scene {
     )
       return
 
-    const tileId = this.tools.selectedTool == Tool.Erase ? -1 : this.tools.selectedTile // selectedTile is the index in this.world.getWorldData().config.tiles
+    const tileId = this.tools.selectedTool === Tool.Erase ? -1 : this.tools.selectedTile // selectedTile is the index in this.world.getWorldData().config.tiles
     const visible = !this.tilesetUtils.isEmptyTileIndex(tileId)
     const img = this.tiles[this.tools.selectedLayer]?.[tilePos.x]?.[tilePos.y]
     if (img !== undefined && (img.visible !== visible || img.frame.name !== String(tileId))) {
