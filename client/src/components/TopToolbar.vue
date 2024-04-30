@@ -9,6 +9,7 @@ import {
   faPen,
   faArrowPointer,
   faTriangleExclamation,
+  faEraser,
 } from '@fortawesome/free-solid-svg-icons'
 
 const tools = useToolsStore()
@@ -59,6 +60,15 @@ const world = useWorldStore()
           @click="tools.selectedTool = Tool.Draw"
         >
           <FontAwesomeIcon :icon="faPen" />
+        </button>
+        <button
+          type="button"
+          class="btn"
+          :class="tools.selectedTool == Tool.Erase ? 'btn-success' : 'btn-light'"
+          data-toggle="button"
+          @click="tools.selectedTool = Tool.Erase"
+        >
+          <FontAwesomeIcon :icon="faEraser" />
         </button>
       </div>
 

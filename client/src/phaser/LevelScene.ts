@@ -211,6 +211,7 @@ export class LevelScene extends Scene {
         this.move()
         break
       case Tool.Draw:
+      case Tool.Erase:
         this.draw()
         break
     }
@@ -244,7 +245,7 @@ export class LevelScene extends Scene {
     )
       return
 
-    const tileId = this.tools.selectedTile // selectedTile is the index in this.world.getWorldData().config.tiles
+    const tileId = this.tools.selectedTool == Tool.Erase ? -1 : this.tools.selectedTile // selectedTile is the index in this.world.getWorldData().config.tiles
     const visible = !this.tilesetUtils.isEmptyTileIndex(tileId)
     const img = this.tiles[this.tools.selectedLayer]?.[tilePos.x]?.[tilePos.y]
     if (img !== undefined && (img.visible !== visible || img.frame.name !== String(tileId))) {

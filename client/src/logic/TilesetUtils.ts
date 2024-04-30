@@ -26,6 +26,7 @@ export class TilesetUtils {
     return tile ? this.isEmptyTile(tile) : true
   }
   isEmptyTile(tile: Tile): boolean {
+    // TODO: can you still have an empty tile?
     return tile.x === undefined
   }
 

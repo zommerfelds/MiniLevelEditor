@@ -54,7 +54,7 @@ To develop serverless mode, run `npm run client-dev-serverless`.
 - [ ] Add nicer default tileset
 - [ ] Better way of defining new tiles (pick from image instead of x/y, auto-add all)
 - [ ] Paint multiple tiles at the same time
-- [ ] More tools (e.g. eraser, move tile(s), selection)
+- [ ] [WIP] More tools (e.g. eraser, move tile(s), selection)
 - [ ] Support multiple tilesets
 - [ ] Randomize drawing (maybe: way to define brushes)
 - [ ] Add warning for old version
