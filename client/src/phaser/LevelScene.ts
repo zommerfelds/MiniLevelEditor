@@ -19,6 +19,7 @@ export class LevelScene extends Scene {
   // Used to render tiles on top of the map, e.g. for the move tool.
   overlayTile?: Phaser.GameObjects.Image
   overlayTile2?: Phaser.GameObjects.Rectangle
+  overlayTile3?: Phaser.GameObjects.Image
   oldDisplayWidth?: number
   oldScrollX?: number
   oldScrollY?: number
@@ -106,9 +107,14 @@ export class LevelScene extends Scene {
     this.overlayTile.visible = false
     this.overlayTile.alpha = 0.7
 
-    this.overlayTile2 = this.add.rectangle(0, 0, 16, 16, 0x888888, 0.6)
+    this.overlayTile2 = this.add.rectangle(0, 0, 16, 16, 0x000000, 0.6)
     this.overlayTile2.setOrigin(0.5, 1)
     this.overlayTile2.visible = false
+
+    this.overlayTile3 = this.add.image(0, 0, 'tiles')
+    this.overlayTile3.setOrigin(0.5, 1)
+    this.overlayTile3.visible = false
+    this.overlayTile3.alpha = 0.7
 
     this.addGrid(
       this.level.width,
@@ -296,29 +302,46 @@ export class LevelScene extends Scene {
       return
 
     const startTileId = currentLayer.data[startTilePos.x + startTilePos.y * this.level.width]!
+    const targetTileId = currentLayer.data[targetTilePos.x + targetTilePos.y * this.level.width]!
     if (this.tilesetUtils.isEmptyTileIndex(startTileId)) return
 
     if (doneMove) {
       this.overlayTile!.visible = false
       this.overlayTile2!.visible = false
+      this.overlayTile3!.visible = false
 
-      this.setTileId(startTilePos.x, startTilePos.y, -1)
+      if (this.tools.toolOptionMoveSwap) {
+        this.setTileId(startTilePos.x, startTilePos.y, targetTileId)
+      } else {
+        this.setTileId(startTilePos.x, startTilePos.y, -1)
+      }
       this.setTileId(targetTilePos.x, targetTilePos.y, startTileId)
     } else {
       this.overlayTile!.visible = true
-
       this.overlayTile!.setFrame(startTileId)
-
       this.overlayTile!.x =
         this.tiles[this.tools.selectedLayer]![targetTilePos.x]![targetTilePos.y]!.x
       this.overlayTile!.y =
         this.tiles[this.tools.selectedLayer]![targetTilePos.x]![targetTilePos.y]!.y
 
-      this.overlayTile2!.visible = true
-      this.overlayTile2!.x =
-        this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.x
-      this.overlayTile2!.y =
-        this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.y
+      if (this.tools.toolOptionMoveSwap && !this.tilesetUtils.isEmptyTileIndex(targetTileId)) {
+        // TODO: This black layer looks bad. Better to add transparency to the actual object. But this would require refactoring the code to separate
+        //       the tiles from the real committed data.
+        this.overlayTile2!.visible = false
+        this.overlayTile3!.visible = true
+        this.overlayTile3!.setFrame(targetTileId)
+        this.overlayTile3!.x =
+          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.x
+        this.overlayTile3!.y =
+          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.y
+      } else {
+        this.overlayTile3!.visible = false
+        this.overlayTile2!.visible = true
+        this.overlayTile2!.x =
+          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.x
+        this.overlayTile2!.y =
+          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.y
+      }
     }
   }
 

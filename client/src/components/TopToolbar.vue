@@ -83,6 +83,21 @@ const world = useWorldStore()
         </button>
       </div>
 
+      <template v-if="tools.selectedTool === Tool.Move">
+        <div class="p-2 ms-3">Tool options</div>
+        <div class="list-group list-group-horizontal">
+          <div class="list-group-item">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              v-model="tools.toolOptionMoveSwap"
+              id="toolOptionMoveSwap"
+            />
+            <label class="form-check-label ps-1" for="toolOptionMoveSwap"> Swap </label>
+          </div>
+        </div>
+      </template>
+
       <!-- TODO: replace this with a full layer UI -->
       <div class="p-2 ms-3">Layer</div>
       <div class="btn-group" role="group">

@@ -16,6 +16,7 @@ export const useToolsStore = defineStore('tools', () => {
   const selectedLayer = ref(0)
   const selectedLevel = ref(0)
   const warningMessage = ref<string | undefined>(undefined)
+  const toolOptionMoveSwap = ref(false)
 
   return {
     selectedTool,
@@ -24,5 +25,6 @@ export const useToolsStore = defineStore('tools', () => {
     selectedLayer,
     selectedLevel,
     warningMessage,
+    toolOptionMoveSwap,
   }
 })
