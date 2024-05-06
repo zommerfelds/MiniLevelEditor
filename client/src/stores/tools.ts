@@ -5,6 +5,7 @@ export enum Tool {
   Pan,
   Draw,
   Erase,
+  Move,
 }
 
 // Local storage for all level data.

@@ -7,14 +7,18 @@ import Phaser, { Scene } from 'phaser'
 import { watch, computed } from 'vue'
 
 export class LevelScene extends Scene {
-  origDragPoint?: Phaser.Math.Vector2 = undefined
+  lastDragPt?: Phaser.Math.Vector2 = undefined
   origToolBeforeDrag?: Tool = undefined
+  dragStart?: Phaser.Math.Vector2 = undefined
   levelUtils = new LevelUtils()
   world = useWorldStore()
   tools = useToolsStore()
   tilesetUtils = new TilesetUtils()
   // For each layer, a 2D array with all the tiles:
   tiles: Array<Array<Array<Phaser.GameObjects.Image>>> = []
+  // Used to render tiles on top of the map, e.g. for the move tool.
+  overlayTile?: Phaser.GameObjects.Image
+  overlayTile2?: Phaser.GameObjects.Rectangle
   oldDisplayWidth?: number
   oldScrollX?: number
   oldScrollY?: number
@@ -97,6 +101,14 @@ export class LevelScene extends Scene {
         }
       }
     }
+    this.overlayTile = this.add.image(0, 0, 'tiles')
+    this.overlayTile.setOrigin(0.5, 1)
+    this.overlayTile.visible = false
+    this.overlayTile.alpha = 0.7
+
+    this.overlayTile2 = this.add.rectangle(0, 0, 16, 16, 0x888888, 0.6)
+    this.overlayTile2.setOrigin(0.5, 1)
+    this.overlayTile2.visible = false
 
     this.addGrid(
       this.level.width,
@@ -198,14 +210,13 @@ export class LevelScene extends Scene {
         this.tools.selectedTool = Tool.Pan
       }
     }
-    if (!mouseDown) {
-      this.origDragPoint = undefined
-      if (this.origToolBeforeDrag !== undefined) {
-        this.tools.selectedTool = this.origToolBeforeDrag
-        this.origToolBeforeDrag = undefined
-      }
-      return
+    if (mouseDown && !this.dragStart) {
+      this.dragStart = this.cameras.main.getWorldPoint(
+        this.game.input.activePointer.position.x,
+        this.game.input.activePointer.position.y
+      )
     }
+    if (this.dragStart === undefined) return
     switch (this.tools.selectedTool) {
       case Tool.Pan:
         this.pan()
@@ -214,17 +225,28 @@ export class LevelScene extends Scene {
       case Tool.Erase:
         this.draw()
         break
+      case Tool.Move:
+        this.move(!mouseDown)
+        break
+    }
+    if (!mouseDown) {
+      this.dragStart = undefined
+      this.lastDragPt = undefined
+      if (this.origToolBeforeDrag !== undefined) {
+        this.tools.selectedTool = this.origToolBeforeDrag
+        this.origToolBeforeDrag = undefined
+      }
     }
   }
 
   pan() {
-    if (this.origDragPoint) {
+    if (this.lastDragPt) {
       this.cameras.main.scrollX +=
-        (this.origDragPoint.x - this.game.input.activePointer.position.x) / this.cameras.main.zoom
+        (this.lastDragPt.x - this.game.input.activePointer.position.x) / this.cameras.main.zoom
       this.cameras.main.scrollY +=
-        (this.origDragPoint.y - this.game.input.activePointer.position.y) / this.cameras.main.zoom
+        (this.lastDragPt.y - this.game.input.activePointer.position.y) / this.cameras.main.zoom
     }
-    this.origDragPoint = this.game.input.activePointer.position.clone()
+    this.lastDragPt = this.game.input.activePointer.position.clone()
   }
 
   draw() {
@@ -246,13 +268,71 @@ export class LevelScene extends Scene {
       return
 
     const tileId = this.tools.selectedTool === Tool.Erase ? -1 : this.tools.selectedTile // selectedTile is the index in this.world.getWorldData().config.tiles
-    const visible = !this.tilesetUtils.isEmptyTileIndex(tileId)
-    const img = this.tiles[this.tools.selectedLayer]?.[tilePos.x]?.[tilePos.y]
-    if (img !== undefined && (img.visible !== visible || img.frame.name !== String(tileId))) {
-      img.setFrame(tileId)
-      img.visible = visible
-      currentLayer.data[tilePos.x + tilePos.y * this.level.width] = this.tools.selectedTile
+    this.setTileId(tilePos.x, tilePos.y, tileId)
+  }
+
+  move(doneMove: boolean) {
+    const startTilePos = this.worldToTile(this.dragStart!)
+    const currentLayer = this.level?.layers[this.tools.selectedLayer]
+
+    const targetWorldPos = this.cameras.main.getWorldPoint(
+      this.game.input.activePointer.position.x,
+      this.game.input.activePointer.position.y
+    )
+    const targetTilePos = this.worldToTile(targetWorldPos)
+
+    if (
+      this.level === undefined ||
+      currentLayer === undefined ||
+      startTilePos.x < 0 ||
+      startTilePos.x >= this.level.width ||
+      startTilePos.y < 0 ||
+      startTilePos.y >= this.level.height ||
+      targetTilePos.x < 0 ||
+      targetTilePos.x >= this.level.width ||
+      targetTilePos.y < 0 ||
+      targetTilePos.y >= this.level.height
+    )
+      return
+
+    const startTileId = currentLayer.data[startTilePos.x + startTilePos.y * this.level.width]!
+    if (this.tilesetUtils.isEmptyTileIndex(startTileId)) return
+
+    if (doneMove) {
+      this.overlayTile!.visible = false
+      this.overlayTile2!.visible = false
+
+      this.setTileId(startTilePos.x, startTilePos.y, -1)
+      this.setTileId(targetTilePos.x, targetTilePos.y, startTileId)
+    } else {
+      this.overlayTile!.visible = true
+
+      this.overlayTile!.setFrame(startTileId)
+
+      this.overlayTile!.x =
+        this.tiles[this.tools.selectedLayer]![targetTilePos.x]![targetTilePos.y]!.x
+      this.overlayTile!.y =
+        this.tiles[this.tools.selectedLayer]![targetTilePos.x]![targetTilePos.y]!.y
+
+      this.overlayTile2!.visible = true
+      this.overlayTile2!.x =
+        this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.x
+      this.overlayTile2!.y =
+        this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.y
     }
+  }
+
+  setTileId(x: number, y: number, tileId: number) {
+    const currentLayer = this.level?.layers[this.tools.selectedLayer]!
+    const visible = !this.tilesetUtils.isEmptyTileIndex(tileId)
+    const img = this.tiles[this.tools.selectedLayer]?.[x]?.[y]
+    if (img !== undefined && (img.visible !== visible || img.frame.name !== String(tileId))) {
+      if (visible) {
+        img.setFrame(tileId)
+      }
+      img.visible = visible
+    }
+    currentLayer.data[x + y * this.level!.width] = tileId
   }
 
   worldToTile(worldPos: Phaser.Math.Vector2): Phaser.Math.Vector2 {

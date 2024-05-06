@@ -10,6 +10,7 @@ import {
   faArrowPointer,
   faTriangleExclamation,
   faEraser,
+  faUpDownLeftRight,
 } from '@fortawesome/free-solid-svg-icons'
 
 const tools = useToolsStore()
@@ -42,6 +43,7 @@ const world = useWorldStore()
       </div>
 
       <div class="p-2 ms-3">Tool</div>
+      <!-- TODO: add tooltip -->
       <div class="btn-group" role="group">
         <button
           type="button"
@@ -69,6 +71,15 @@ const world = useWorldStore()
           @click="tools.selectedTool = Tool.Erase"
         >
           <FontAwesomeIcon :icon="faEraser" />
+        </button>
+        <button
+          type="button"
+          class="btn"
+          :class="tools.selectedTool == Tool.Move ? 'btn-success' : 'btn-light'"
+          data-toggle="button"
+          @click="tools.selectedTool = Tool.Move"
+        >
+          <FontAwesomeIcon :icon="faUpDownLeftRight" />
         </button>
       </div>
 
