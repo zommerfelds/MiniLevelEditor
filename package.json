@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "bin": "bin.ts",
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"npm:server-dev\" \"npm:client-dev\"",
     "prepare": "npm run server-build && npm run client-build",
@@ -15,7 +16,7 @@
     "client-run": "wait-on -l tcp:3000 && vite preview client",
     "client-build-only": "vite build client",
     "type-check": "vue-tsc --build --force",
-    "server-dev": "nodemon --watch server server/index.ts levels.json",
+    "server-dev": "nodemon --ext ts --exec \"npm run server-build && npm run server-run\"",
     "server-build": "tsc -p server",
     "server-run": "node server/dist/server/index.js",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
@@ -59,7 +60,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.49.0",
     "eslint-plugin-vue": "^9.17.0",
-    "nodemon": "^3.0.3",
+    "nodemon": "^3.1.0",
     "npm-run-all2": "^6.1.1",
     "typescript": "~5.3.0",
     "vue-tsc": "^1.8.25"

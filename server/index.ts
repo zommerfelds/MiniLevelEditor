@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express'
 import { promises as fsPromises } from 'fs'
 import { format } from 'prettier'
-import { makeDefaultData } from '../common/defaultData'
+import { makeDefaultData } from '../common/defaultData.js'
 
 const app: Express = express()
 const port = 3000
@@ -25,7 +25,7 @@ async function main() {
   }
 
   const fileJsonStr = await fsPromises.readFile(filePath, 'utf8')
-  console.info(`Loaded data from ${filePath}`)
+  console.info(`Loaded data from "${filePath}"`)
   let inMemoryData = JSON.parse(fileJsonStr)
 
   app.use(express.json())

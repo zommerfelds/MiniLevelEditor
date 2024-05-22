@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import type { WorldData } from './dataTypes'
+import type { WorldData } from './dataTypes.js'
 
 export function makeDefaultData(): WorldData {
   return {
