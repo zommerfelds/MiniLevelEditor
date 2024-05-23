@@ -54,7 +54,7 @@ To develop serverless mode, run `npm run client-dev-serverless`.
 - [ ] Add nicer default tileset
 - [ ] Better way of defining new tiles (pick from image instead of x/y, auto-add all)
 - [ ] Paint multiple tiles at the same time
-- [ ] [WIP] More tools (e.g. eraser, move tile(s), selection)
+- [ ] [WIP] More basic tools (e.g. eraser, move tile(s), selection)
 - [ ] Support multiple tilesets
 - [ ] Randomize drawing (maybe: way to define brushes)
 - [ ] Add warning for old version
@@ -68,6 +68,9 @@ To develop serverless mode, run `npm run client-dev-serverless`.
 - [ ] Fix `npm run client-type-check`
 - [ ] Unit test for loading (makes sure file is not modified)
 - [ ] Check validity of levels.json file (e.g. using https://github.com/gristlabs/ts-interface-checker)
+- [ ] Fill tool
+- [ ] Copy paste
+- [ ] Change favicon
 
 ## Appendix: Notes
 
