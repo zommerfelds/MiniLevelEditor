@@ -96,8 +96,8 @@ const world = useWorldStore()
       </div>
 
       <template v-if="tools.selectedTool === Tool.Move">
-        <div class="p-2 ms-3">Tool options</div>
-        <div class="list-group list-group-horizontal">
+        <div class="p-2 ms-3 text-nowrap">Tool options</div>
+        <div class="list-group list-group-horizontal text-nowrap">
           <div class="list-group-item">
             <input
               class="form-check-input"
