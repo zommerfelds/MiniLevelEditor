@@ -11,6 +11,7 @@ import {
   faTriangleExclamation,
   faEraser,
   faUpDownLeftRight,
+  faVectorSquare,
 } from '@fortawesome/free-solid-svg-icons'
 
 const tools = useToolsStore()
@@ -80,6 +81,17 @@ const world = useWorldStore()
           @click="tools.selectedTool = Tool.Move"
         >
           <FontAwesomeIcon :icon="faUpDownLeftRight" />
+        </button>
+        <button
+          type="button"
+          class="btn"
+          :class="tools.selectedTool == Tool.Select ? 'btn-success' : 'btn-light'"
+          data-toggle="button"
+          @click="
+            (tools.selectedTool = Tool.Select), (tools.warningMessage = 'Not implemented yet')
+          "
+        >
+          <FontAwesomeIcon :icon="faVectorSquare" />
         </button>
       </div>
 
