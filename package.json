@@ -16,7 +16,7 @@
     "client-run": "wait-on -l tcp:3000 && vite preview client",
     "client-build-only": "vite build client",
     "type-check": "vue-tsc --build --force",
-    "server-dev": "nodemon --ext ts --exec \"npm run server-build && npm run server-run\"",
+    "server-dev": "nodemon --watch server --watch common --ext ts --exec \"npm run server-build && npm run server-run\"",
     "server-build": "tsc -p server",
     "server-run": "node server/dist/server/index.js",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
