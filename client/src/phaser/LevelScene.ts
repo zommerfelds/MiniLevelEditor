@@ -28,6 +28,18 @@ export class LevelScene extends Scene {
   initializing = true
   level?: Level
   loadedImage: string = ''
+  // Convenience variables to get the grid cell size
+  cellWidth = 1
+  cellHeight = 1
+  selection?: { left: number; top: number; right: number; bottom: number } = {
+    // TODO: remove these dummy values
+    left: 1,
+    top: 1,
+    right: 4,
+    bottom: 3,
+  }
+  selectionToolGraphics?: Phaser.GameObjects.Graphics
+
   constructor() {
     super({ key: 'MyScene' })
   }
@@ -63,12 +75,15 @@ export class LevelScene extends Scene {
     this.scale.off('resize')
     this.scale.on('resize', this.onResize, this)
 
+    this.cellWidth = this.world.getWorldData().config.gridCellWidth
+    this.cellHeight = this.world.getWorldData().config.gridCellHeight
+
     if (this.oldScrollX === undefined) {
       // TODO: improve camera start position (top left?)
       this.cameras.main.setZoom(5)
       this.cameras.main.centerOn(
-        (this.level.width * this.world.getWorldData().config.gridCellWidth) / 2,
-        (this.level.height * this.world.getWorldData().config.gridCellHeight) / 2
+        (this.level.width * this.cellWidth) / 2,
+        (this.level.height * this.cellHeight) / 2
       )
     } else {
       // This is a level reload, keep same camera properties.
@@ -91,8 +106,8 @@ export class LevelScene extends Scene {
           const isEmptyTile = this.tilesetUtils.isEmptyTileIndex(data)
           const img = this.add.image(
             // Tile is aligned to the middle bottom. Consider making this configurable.
-            (x + 0.5) * this.world.getWorldData().config.gridCellWidth,
-            (y + 1) * this.world.getWorldData().config.gridCellHeight,
+            (x + 0.5) * this.cellWidth,
+            (y + 1) * this.cellHeight,
             'tiles',
             isEmptyTile ? 0 : String(data)
           )
@@ -107,7 +122,7 @@ export class LevelScene extends Scene {
     this.overlayTile.visible = false
     this.overlayTile.alpha = 0.7
 
-    this.overlayTile2 = this.add.rectangle(0, 0, 16, 16, 0x000000, 0.6)
+    this.overlayTile2 = this.add.rectangle(0, 0, this.cellWidth, this.cellHeight, 0x000000, 0.6)
     this.overlayTile2.setOrigin(0.5, 1)
     this.overlayTile2.visible = false
 
@@ -116,12 +131,16 @@ export class LevelScene extends Scene {
     this.overlayTile3.visible = false
     this.overlayTile3.alpha = 0.7
 
-    this.addGrid(
-      this.level.width,
-      this.level.height,
-      this.world.getWorldData().config.gridCellWidth,
-      this.world.getWorldData().config.gridCellHeight
-    )
+    this.addGrid(this.level.width, this.level.height, this.cellWidth, this.cellHeight)
+
+    this.selectionToolGraphics = this.add.graphics()
+    this.add.tween({
+      targets: [this.selectionToolGraphics],
+      duration: 500,
+      alpha: 0.5,
+      repeat: -1,
+      yoyo: true,
+    })
 
     this.oldDisplayWidth = this.renderer.width
     this.oldDisplayHeight = this.renderer.height
@@ -234,6 +253,9 @@ export class LevelScene extends Scene {
       case Tool.Move:
         this.move(!mouseDown)
         break
+      case Tool.Select:
+        this.select()
+        break
     }
     if (!mouseDown) {
       this.dragStart = undefined
@@ -342,6 +364,21 @@ export class LevelScene extends Scene {
         this.overlayTile2!.y =
           this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.y
       }
+    }
+  }
+
+  select() {
+    // todo: add logic for computing the rectangle
+
+    if (this.selection !== undefined) {
+      this.selectionToolGraphics?.clear()
+      this.selectionToolGraphics?.lineStyle(0.5, 0xffffff)
+      this.selectionToolGraphics?.strokeRect(
+        this.selection.left * this.cellWidth + 0.5,
+        this.selection.top * this.cellHeight + 0.5,
+        (this.selection.right - this.selection.left) * this.cellWidth - 1,
+        (this.selection.bottom - this.selection.top) * this.cellHeight - 1
+      )
     }
   }
 
