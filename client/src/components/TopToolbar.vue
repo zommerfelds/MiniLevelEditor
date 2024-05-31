@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LayersModal from '@/components/LayersModal.vue'
+import TopToolbarToolButton from '@/components/TopToolbarToolButton.vue'
 import { useToolsStore, Tool } from '@/stores/tools'
 import { useWorldStore } from '@/stores/world'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -13,9 +14,19 @@ import {
   faUpDownLeftRight,
   faVectorSquare,
 } from '@fortawesome/free-solid-svg-icons'
+import { watchEffect } from 'vue'
 
 const tools = useToolsStore()
 const world = useWorldStore()
+
+watchEffect(() => {
+  const warnText = 'Selection tool not implemented yet'
+  if (tools.selectedTool === Tool.Select) {
+    tools.warningMessage = warnText
+  } else if (tools.warningMessage === warnText) {
+    tools.warningMessage = ''
+  }
+})
 </script>
 
 <template>
@@ -44,55 +55,25 @@ const world = useWorldStore()
       </div>
 
       <div class="p-2 ms-3">Tool</div>
-      <!-- TODO: add tooltip -->
       <div class="btn-group" role="group">
-        <button
-          type="button"
-          class="btn"
-          :class="tools.selectedTool == Tool.Pan ? 'btn-success' : 'btn-light'"
-          data-toggle="button"
-          @click="tools.selectedTool = Tool.Pan"
-        >
-          <FontAwesomeIcon :icon="faArrowPointer" />
-        </button>
-        <button
-          type="button"
-          class="btn"
-          :class="tools.selectedTool == Tool.Draw ? 'btn-success' : 'btn-light'"
-          data-toggle="button"
-          @click="tools.selectedTool = Tool.Draw"
-        >
-          <FontAwesomeIcon :icon="faPen" />
-        </button>
-        <button
-          type="button"
-          class="btn"
-          :class="tools.selectedTool == Tool.Erase ? 'btn-success' : 'btn-light'"
-          data-toggle="button"
-          @click="tools.selectedTool = Tool.Erase"
-        >
-          <FontAwesomeIcon :icon="faEraser" />
-        </button>
-        <button
-          type="button"
-          class="btn"
-          :class="tools.selectedTool == Tool.Move ? 'btn-success' : 'btn-light'"
-          data-toggle="button"
-          @click="tools.selectedTool = Tool.Move"
-        >
-          <FontAwesomeIcon :icon="faUpDownLeftRight" />
-        </button>
-        <button
-          type="button"
-          class="btn"
-          :class="tools.selectedTool == Tool.Select ? 'btn-success' : 'btn-light'"
-          data-toggle="button"
-          @click="
-            (tools.selectedTool = Tool.Select), (tools.warningMessage = 'Not implemented yet')
-          "
-        >
-          <FontAwesomeIcon :icon="faVectorSquare" />
-        </button>
+        <TopToolbarToolButton
+          :tool="Tool.Pan"
+          :icon="faArrowPointer"
+          tooltipText="Pan tool (drag camera)"
+        />
+
+        <TopToolbarToolButton :tool="Tool.Draw" :icon="faPen" tooltipText="Draw tool" />
+        <TopToolbarToolButton :tool="Tool.Erase" :icon="faEraser" tooltipText="Erase tool" />
+        <TopToolbarToolButton
+          :tool="Tool.Move"
+          :icon="faUpDownLeftRight"
+          tooltipText="Tile mover tool"
+        />
+        <TopToolbarToolButton
+          :tool="Tool.Select"
+          :icon="faVectorSquare"
+          tooltipText="Selection tool"
+        />
       </div>
 
       <template v-if="tools.selectedTool === Tool.Move">

@@ -5,17 +5,7 @@ import MyDropdown from '@/components/MyDropdown.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faTrash, faSquarePlus, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons'
 import type { Position, PropertySchema, Tile, UserDefinedTypeName } from '@common/dataTypes'
-import { ref, onMounted, computed } from 'vue'
-import { Tooltip } from 'bootstrap'
-
-onMounted(() => {
-  // TOOD: this might not be compatible with tooltips in other elements
-  new Tooltip(document.body, {
-    selector: "[data-bs-toggle='tooltip']",
-    delay: { show: 500, hide: 100 },
-    trigger: 'hover',
-  })
-})
+import { ref, computed } from 'vue'
 
 const world = useWorldStore()
 

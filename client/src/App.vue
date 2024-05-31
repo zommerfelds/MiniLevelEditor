@@ -7,10 +7,22 @@ import LevelSelector from '@/components/LevelSelector.vue'
 import SettingsModalEntryPoint from '@/components/SettingsModalEntryPoint.vue'
 import { useWorldStore, serverlessMode } from '@/stores/world'
 import { LevelChecker } from '@/logic/LevelChecker'
+import { onMounted } from 'vue'
+import { Tooltip } from 'bootstrap'
 
 const world = useWorldStore()
 
 new LevelChecker().watch()
+
+// Alternatively, we could initialize Tooltip for each local element like here:
+// https://stackoverflow.com/a/71658190/3810493
+onMounted(() => {
+  new Tooltip(document.body, {
+    selector: "[data-bs-toggle='tooltip']",
+    delay: { show: 500, hide: 100 },
+    trigger: 'hover',
+  })
+})
 </script>
 
 <template>

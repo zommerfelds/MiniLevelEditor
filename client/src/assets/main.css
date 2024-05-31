@@ -14,3 +14,19 @@
 .global-toolbar-height {
   height: 2.3em
 }
+
+.tooltip .tooltip-inner {
+  background-color: #0d6efd;
+}
+.tooltip[data-popper-placement="bottom"] .tooltip-arrow:before {
+  border-bottom-color: #0d6efd !important;
+}
+.tooltip[data-popper-placement="top"] .tooltip-arrow:before {
+  border-top-color: #0d6efd !important;
+}
+.tooltip[data-popper-placement="left"] .tooltip-arrow:before {
+  border-left-color: #0d6efd !important;
+}
+.tooltip[data-popper-placement="right"] .tooltip-arrow:before {
+  border-right-color: #0d6efd !important;
+}
