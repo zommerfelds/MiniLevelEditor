@@ -35,8 +35,6 @@ export class LevelScene extends Scene {
   renderedSelection?: { left: number; top: number; right: number; bottom: number }
   selectionToolGraphics?: Phaser.GameObjects.Graphics
 
-  escKey?: Phaser.Input.Keyboard.Key
-
   constructor() {
     super({ key: 'MyScene' })
   }
@@ -53,8 +51,25 @@ export class LevelScene extends Scene {
       this.loadedImage = tileSetFile
       this.load.atlas('tiles', tileSetFile, this.tilesetUtils.getAtlas())
 
-      this.escKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
+      this.setUpKeyboardHandlers()
     }
+  }
+
+  setUpKeyboardHandlers() {
+    const escKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
+    const delKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE)
+
+    escKey?.on('down', () => {
+      this.selection = undefined
+    })
+    delKey?.on('down', () => {
+      if (this.selection === undefined) return
+      for (let x = this.selection.left; x < this.selection.right; x++) {
+        for (let y = this.selection.top; y < this.selection.bottom; y++) {
+          this.setTileId(x, y, -1)
+        }
+      }
+    })
   }
 
   create(): void {
@@ -214,7 +229,7 @@ export class LevelScene extends Scene {
 
     this.handleMouse()
 
-    this.updateSelection()
+    this.renderSelection()
 
     this.oldScrollX = this.cameras.main.scrollX
     this.oldScrollY = this.cameras.main.scrollY
@@ -268,11 +283,7 @@ export class LevelScene extends Scene {
     }
   }
 
-  updateSelection() {
-    if (this.escKey?.isDown) {
-      this.selection = undefined
-    }
-
+  renderSelection() {
     if (this.selection === this.renderedSelection) return
 
     this.selectionToolGraphics?.clear()
