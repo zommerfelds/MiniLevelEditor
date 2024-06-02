@@ -31,13 +31,7 @@ export class LevelScene extends Scene {
   // Convenience variables to get the grid cell size
   cellWidth = 1
   cellHeight = 1
-  selection?: { left: number; top: number; right: number; bottom: number } = {
-    // TODO: remove these dummy values
-    left: 1,
-    top: 1,
-    right: 4,
-    bottom: 3,
-  }
+  selection?: { left: number; top: number; right: number; bottom: number }
   selectionToolGraphics?: Phaser.GameObjects.Graphics
 
   constructor() {
@@ -368,7 +362,35 @@ export class LevelScene extends Scene {
   }
 
   select() {
-    // todo: add logic for computing the rectangle
+    const startTilePos = this.worldToTile(this.dragStart!)
+    const currentLayer = this.level?.layers[this.tools.selectedLayer]
+
+    const targetWorldPos = this.cameras.main.getWorldPoint(
+      this.game.input.activePointer.position.x,
+      this.game.input.activePointer.position.y
+    )
+    const targetTilePos = this.worldToTile(targetWorldPos)
+
+    if (
+      this.level === undefined ||
+      currentLayer === undefined ||
+      startTilePos.x < 0 ||
+      startTilePos.x >= this.level.width ||
+      startTilePos.y < 0 ||
+      startTilePos.y >= this.level.height ||
+      targetTilePos.x < 0 ||
+      targetTilePos.x >= this.level.width ||
+      targetTilePos.y < 0 ||
+      targetTilePos.y >= this.level.height
+    )
+      return
+
+    this.selection = {
+      left: Math.min(startTilePos.x, targetTilePos.x),
+      right: Math.max(startTilePos.x, targetTilePos.x) + 1,
+      top: Math.min(startTilePos.y, targetTilePos.y),
+      bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
+    }
 
     if (this.selection !== undefined) {
       this.selectionToolGraphics?.clear()
