@@ -32,7 +32,10 @@ export class LevelScene extends Scene {
   cellWidth = 1
   cellHeight = 1
   selection?: { left: number; top: number; right: number; bottom: number }
+  renderedSelection?: { left: number; top: number; right: number; bottom: number }
   selectionToolGraphics?: Phaser.GameObjects.Graphics
+
+  escKey?: Phaser.Input.Keyboard.Key
 
   constructor() {
     super({ key: 'MyScene' })
@@ -49,6 +52,8 @@ export class LevelScene extends Scene {
       }
       this.loadedImage = tileSetFile
       this.load.atlas('tiles', tileSetFile, this.tilesetUtils.getAtlas())
+
+      this.escKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
     }
   }
 
@@ -209,6 +214,8 @@ export class LevelScene extends Scene {
 
     this.handleMouse()
 
+    this.updateSelection()
+
     this.oldScrollX = this.cameras.main.scrollX
     this.oldScrollY = this.cameras.main.scrollY
     this.oldZoom = this.cameras.main.zoom
@@ -259,6 +266,26 @@ export class LevelScene extends Scene {
         this.origToolBeforeDrag = undefined
       }
     }
+  }
+
+  updateSelection() {
+    if (this.escKey?.isDown) {
+      this.selection = undefined
+    }
+
+    if (this.selection === this.renderedSelection) return
+
+    this.selectionToolGraphics?.clear()
+    if (this.selection !== undefined) {
+      this.selectionToolGraphics?.lineStyle(0.5, 0xffffff)
+      this.selectionToolGraphics?.strokeRect(
+        this.selection.left * this.cellWidth + 0.5,
+        this.selection.top * this.cellHeight + 0.5,
+        (this.selection.right - this.selection.left) * this.cellWidth - 1,
+        (this.selection.bottom - this.selection.top) * this.cellHeight - 1
+      )
+    }
+    this.renderedSelection = this.selection
   }
 
   pan() {
@@ -390,17 +417,6 @@ export class LevelScene extends Scene {
       right: Math.max(startTilePos.x, targetTilePos.x) + 1,
       top: Math.min(startTilePos.y, targetTilePos.y),
       bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
-    }
-
-    if (this.selection !== undefined) {
-      this.selectionToolGraphics?.clear()
-      this.selectionToolGraphics?.lineStyle(0.5, 0xffffff)
-      this.selectionToolGraphics?.strokeRect(
-        this.selection.left * this.cellWidth + 0.5,
-        this.selection.top * this.cellHeight + 0.5,
-        (this.selection.right - this.selection.left) * this.cellWidth - 1,
-        (this.selection.bottom - this.selection.top) * this.cellHeight - 1
-      )
     }
   }
 
