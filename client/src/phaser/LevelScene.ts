@@ -89,6 +89,11 @@ export class LevelScene extends Scene {
     this.scale.off('resize')
     this.scale.on('resize', this.onResize, this)
 
+    // Lose focus when canvas is clicked. This doesn't seem to happen automatically. If we don't do this
+    // and you press delete, enter or tab, it will do weird stuff with UI elements like the tool selector.
+    this.input.off('pointerdown')
+    this.input.on('pointerdown', () => (document.activeElement as HTMLElement)?.blur())
+
     this.cellWidth = this.world.getWorldData().config.gridCellWidth
     this.cellHeight = this.world.getWorldData().config.gridCellHeight
 
