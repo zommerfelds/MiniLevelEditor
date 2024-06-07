@@ -337,6 +337,14 @@ export class LevelScene extends Scene {
   }
 
   move(doneMove: boolean) {
+    // TODO: respect the current selection (e.g. move the entire selection)
+
+    const clearOverlays = () => {
+      this.overlayTile!.visible = false
+      this.overlayTile2!.visible = false
+      this.overlayTile3!.visible = false
+    }
+
     const startTilePos = this.worldToTile(this.dragStart!)
     const currentLayer = this.level?.layers[this.tools.selectedLayer]
 
@@ -357,18 +365,17 @@ export class LevelScene extends Scene {
       targetTilePos.x >= this.level.width ||
       targetTilePos.y < 0 ||
       targetTilePos.y >= this.level.height
-    )
+    ) {
+      clearOverlays()
       return
+    }
 
     const startTileId = currentLayer.data[startTilePos.x + startTilePos.y * this.level.width]!
     const targetTileId = currentLayer.data[targetTilePos.x + targetTilePos.y * this.level.width]!
     if (this.tilesetUtils.isEmptyTileIndex(startTileId)) return
 
     if (doneMove) {
-      this.overlayTile!.visible = false
-      this.overlayTile2!.visible = false
-      this.overlayTile3!.visible = false
-
+      clearOverlays()
       if (this.tools.toolOptionMoveSwap) {
         this.setTileId(startTilePos.x, startTilePos.y, targetTileId)
       } else {
