@@ -90,6 +90,19 @@ watchEffect(() => {
           </div>
         </div>
       </template>
+      <template v-if="tools.selectedTool === Tool.Select">
+        <div class="p-2 ms-3 text-nowrap">Tool options</div>
+        <div class="btn-group" role="group">
+          <button
+            type="button"
+            class="btn btn-light"
+            data-toggle="button"
+            @click="tools.selectionToolRect = undefined"
+          >
+            Deselect all
+          </button>
+        </div>
+      </template>
 
       <!-- TODO: replace this with a full layer UI -->
       <div class="p-2 ms-3">Layer</div>

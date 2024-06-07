@@ -31,7 +31,6 @@ export class LevelScene extends Scene {
   // Convenience variables to get the grid cell size
   cellWidth = 1
   cellHeight = 1
-  selection?: { left: number; top: number; right: number; bottom: number }
   renderedSelection?: { left: number; top: number; right: number; bottom: number }
   selectionToolGraphics?: Phaser.GameObjects.Graphics
 
@@ -60,12 +59,16 @@ export class LevelScene extends Scene {
     const delKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE)
 
     escKey?.on('down', () => {
-      this.selection = undefined
+      this.tools.selectionToolRect = undefined
     })
     delKey?.on('down', () => {
-      if (this.selection === undefined) return
-      for (let x = this.selection.left; x < this.selection.right; x++) {
-        for (let y = this.selection.top; y < this.selection.bottom; y++) {
+      if (this.tools.selectionToolRect === undefined) return
+      for (let x = this.tools.selectionToolRect.left; x < this.tools.selectionToolRect.right; x++) {
+        for (
+          let y = this.tools.selectionToolRect.top;
+          y < this.tools.selectionToolRect.bottom;
+          y++
+        ) {
           this.setTileId(x, y, -1)
         }
       }
@@ -289,19 +292,21 @@ export class LevelScene extends Scene {
   }
 
   renderSelection() {
-    if (this.selection === this.renderedSelection) return
+    if (this.tools.selectionToolRect === this.renderedSelection) return
 
     this.selectionToolGraphics?.clear()
-    if (this.selection !== undefined) {
+    if (this.tools.selectionToolRect !== undefined) {
       this.selectionToolGraphics?.lineStyle(0.5, 0xffffff)
       this.selectionToolGraphics?.strokeRect(
-        this.selection.left * this.cellWidth + 0.5,
-        this.selection.top * this.cellHeight + 0.5,
-        (this.selection.right - this.selection.left) * this.cellWidth - 1,
-        (this.selection.bottom - this.selection.top) * this.cellHeight - 1
+        this.tools.selectionToolRect.left * this.cellWidth + 0.5,
+        this.tools.selectionToolRect.top * this.cellHeight + 0.5,
+        (this.tools.selectionToolRect.right - this.tools.selectionToolRect.left) * this.cellWidth -
+          1,
+        (this.tools.selectionToolRect.bottom - this.tools.selectionToolRect.top) * this.cellHeight -
+          1
       )
     }
-    this.renderedSelection = this.selection
+    this.renderedSelection = this.tools.selectionToolRect
   }
 
   pan() {
@@ -435,7 +440,7 @@ export class LevelScene extends Scene {
     )
       return
 
-    this.selection = {
+    this.tools.selectionToolRect = {
       left: Math.min(startTilePos.x, targetTilePos.x),
       right: Math.max(startTilePos.x, targetTilePos.x) + 1,
       top: Math.min(startTilePos.y, targetTilePos.y),
