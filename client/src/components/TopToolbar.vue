@@ -121,8 +121,8 @@ watchEffect(() => {
       </div>
       <div class="p-2">
         <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#layersModal">
-          <FontAwesomeIcon :icon="faPen"
-        /></a>
+          <FontAwesomeIcon :icon="faPen" />
+        </a>
       </div>
     </div>
   </div>

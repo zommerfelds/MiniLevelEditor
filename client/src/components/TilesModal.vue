@@ -14,7 +14,7 @@ let currentTab = ref('Tiles')
     aria-labelledby="tilesModalLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <ul class="nav nav-pills nav-fill">

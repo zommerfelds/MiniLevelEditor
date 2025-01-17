@@ -3,7 +3,13 @@ import { useWorldStore } from '@/stores/world'
 import { TilesetUtils } from '@/logic/TilesetUtils'
 import MyDropdown from '@/components/MyDropdown.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTrash, faSquarePlus, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons'
+import {
+  faTrash,
+  faSquarePlus,
+  faAnglesDown,
+  faAnglesUp,
+  faTimesCircle,
+} from '@fortawesome/free-solid-svg-icons'
 import type { Position, PropertySchema, Tile, UserDefinedTypeName } from '@common/dataTypes'
 import { ref, computed } from 'vue'
 
@@ -54,19 +60,80 @@ const typeMap = computed(() => {
     </div>
     <div class="row header pb-3">
       <div class="col-3 ps-3">Name</div>
-      <div class="col-3 ps-3">Type(s)</div>
-      <div class="col-6 ps-3">Source</div>
+      <div class="col-4 ps-3">Type(s)</div>
+      <div class="col-5 ps-3">Source</div>
     </div>
     <template
-      v-for="(tile, index) in filterTileset(world.getWorldData().config.tileset)"
-      :key="index"
+      v-for="(tile, tileIndex) in filterTileset(world.getWorldData().config.tileset)"
+      :key="tileIndex"
     >
       <div class="row pb-1">
         <div class="col-3">
           <input type="text" class="form-control" v-model="tile.name" />
         </div>
-        <div class="col-2 pt-1 ps-3">{{ tile.types.join(', ') }}</div>
-        <div class="col-7 d-flex">
+        <div class="col-3 pt-1 ps-3">
+          <template v-for="(type, typeIndex) in tile.types" :key="typeIndex">
+            <span
+              class="badge rounded-pill ps-3 me-1 bg-secondary d-inline-flex align-items-center justify-content-center"
+            >
+              <!-- consider refactoring this into a separate component -->
+              <div class="dropdown">
+                <button
+                  class="btn btn-sm btn-secondary p-0"
+                  @click="console.log('not implemented')"
+                  :id="'dropdown_' + tileIndex + '_' + typeIndex"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {{ type }}
+                </button>
+                <ul
+                  class="dropdown-menu"
+                  :aria-labelledby="'dropdown_' + tileIndex + '_' + typeIndex"
+                >
+                  <template
+                    v-for="(availableType, allTypesIndex) in world.getWorldData().config.tileTypes"
+                    :key="allTypesIndex"
+                  >
+                    <li v-if="availableType.name != type">
+                      <a class="dropdown-item" href="#" @click="console.log('not implemented')">{{
+                        availableType.name
+                      }}</a>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+              <button href="#" class="btn btn-sm p-0 text-white ms-2">
+                <FontAwesomeIcon :icon="faTimesCircle" />
+              </button>
+            </span>
+          </template>
+          <span class="p-1"></span>
+          <span class="dropdown align-text-top">
+            <button
+              class="btn text-secondary p-0"
+              @click="console.log('not implemented')"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              :id="'dropdown_' + tileIndex + '_add'"
+            >
+              <FontAwesomeIcon :icon="faSquarePlus" />
+            </button>
+            <ul class="dropdown-menu" :aria-labelledby="'dropdown_' + tileIndex + '_add'">
+              <template
+                v-for="(availableType, allTypesIndex) in world.getWorldData().config.tileTypes"
+                :key="allTypesIndex"
+              >
+                <li v-if="!tile.types.includes(availableType.name)">
+                  <a class="dropdown-item" href="#" @click="console.log('not implemented!')">{{
+                    availableType.name
+                  }}</a>
+                </li>
+              </template>
+            </ul>
+          </span>
+        </div>
+        <div class="col-6 d-flex">
           <div class="pe-2 pt-1">
             <div
               class="tile-icon pixelart"
@@ -78,7 +145,7 @@ const typeMap = computed(() => {
               { value: 'Empty', onclick: () => tilesetUtils.setEmpty(tile) },
               { value: 'From tileset', onclick: () => tilesetUtils.setFromTileset(tile, 0, 0) },
             ]"
-            :default="tilesetUtils.isEmptyTileIndex(index) ? 'Empty' : 'From tileset'"
+            :default="tilesetUtils.isEmptyTileIndex(tileIndex) ? 'Empty' : 'From tileset'"
           />
           <template v-if="tile.x != undefined">
             <div class="p-1 ps-3">x:</div>
@@ -93,9 +160,9 @@ const typeMap = computed(() => {
           <button
             class="btn btn-sm btn-secondary ms-auto me-1"
             @click="
-              showPropertiesForIndex === index
+              showPropertiesForIndex === tileIndex
                 ? (showPropertiesForIndex = -1)
-                : (showPropertiesForIndex = index)
+                : (showPropertiesForIndex = tileIndex)
             "
             data-bs-toggle="tooltip"
             data-bs-placement="top"
@@ -103,16 +170,16 @@ const typeMap = computed(() => {
             title="Show/hide properties"
           >
             <FontAwesomeIcon
-              :icon="showPropertiesForIndex === index ? faAnglesUp : faAnglesDown"
+              :icon="showPropertiesForIndex === tileIndex ? faAnglesUp : faAnglesDown"
               class=""
             />
           </button>
-          <button class="btn btn-sm btn-secondary ms-auto" @click="deleteTile(index)">
+          <button class="btn btn-sm btn-secondary ms-auto" @click="deleteTile(tileIndex)">
             <FontAwesomeIcon :icon="faTrash" />
           </button>
         </div>
       </div>
-      <div class="row pb-3" v-if="index === showPropertiesForIndex">
+      <div class="row pb-3" v-if="tileIndex === showPropertiesForIndex">
         <template v-for="(typeName, index3) in tile.types" :key="index3">
           <div class="row">
             <div class="col-1"></div>
@@ -179,8 +246,13 @@ const typeMap = computed(() => {
 <style scoped>
 .size-input {
   width: 5em;
+  min-width: 5em;
 }
 .header {
   font-weight: bold;
+}
+.dropdown-translate-left {
+  position: relative;
+  left: -2em;
 }
 </style>
