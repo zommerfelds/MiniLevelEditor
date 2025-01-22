@@ -75,6 +75,7 @@ To develop serverless mode, run `npm run client-dev-serverless`.
 - [ ] Copy paste
 - [ ] Change favicon
 - [ ] Select a tool when tile is selected (instead of keeping eraser)
+- [ ] Changing type name should update all references
 
 ## Appendix: Notes
 
