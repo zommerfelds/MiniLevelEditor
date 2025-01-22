@@ -3,6 +3,7 @@ import { faSquarePlus, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const selectedLabels = defineModel({
+  required: true,
   type: Array<string>,
 })
 
@@ -29,14 +30,21 @@ const props = defineProps<{
         <ul class="dropdown-menu" :aria-labelledby="'dropdown_' + $.uid + '_' + selectedLabelIndex">
           <template v-for="(label, labelIndex) in props.labels" :key="labelIndex">
             <li v-if="label != selectedLabel">
-              <a class="dropdown-item" href="#" @click="console.log('not implemented')">{{
-                label
-              }}</a>
+              <a
+                class="dropdown-item"
+                href="#"
+                @click="selectedLabels[selectedLabelIndex] = label"
+                >{{ label }}</a
+              >
             </li>
           </template>
         </ul>
       </div>
-      <button href="#" class="btn btn-sm p-0 text-white ms-2">
+      <button
+        href="#"
+        class="btn btn-sm p-0 text-white ms-2"
+        @click="selectedLabels.splice(selectedLabelIndex, 1)"
+      >
         <FontAwesomeIcon :icon="faTimesCircle" />
       </button>
     </span>
@@ -45,7 +53,6 @@ const props = defineProps<{
   <span class="dropdown align-text-top">
     <button
       class="btn text-secondary p-0"
-      @click="console.log('not implemented')"
       data-bs-toggle="dropdown"
       aria-expanded="false"
       :id="'dropdown_' + $.uid + '_add'"
@@ -55,7 +62,7 @@ const props = defineProps<{
     <ul class="dropdown-menu" :aria-labelledby="'dropdown_' + $.uid + '_add'">
       <template v-for="(label, labelIndex) in props.labels" :key="labelIndex">
         <li v-if="!selectedLabels?.includes(label)">
-          <a class="dropdown-item" href="#" @click="console.log('not implemented!')">{{ label }}</a>
+          <a class="dropdown-item" href="#" @click="selectedLabels.push(label)">{{ label }}</a>
         </li>
       </template>
     </ul>
