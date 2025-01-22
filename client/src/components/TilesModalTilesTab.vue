@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import { useWorldStore } from '@/stores/world'
 import { TilesetUtils } from '@/logic/TilesetUtils'
-import MyDropdown from '@/components/MyDropdown.vue'
+import MyDropdown from '@/components/generic/MyDropdown.vue'
+import LabelSelector from '@/components/generic/LabelSelector.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {
-  faTrash,
-  faSquarePlus,
-  faAnglesDown,
-  faAnglesUp,
-  faTimesCircle,
-} from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faSquarePlus, faAnglesDown, faAnglesUp } from '@fortawesome/free-solid-svg-icons'
 import type { Position, PropertySchema, Tile, UserDefinedTypeName } from '@common/dataTypes'
 import { ref, computed } from 'vue'
 
@@ -72,66 +67,10 @@ const typeMap = computed(() => {
           <input type="text" class="form-control" v-model="tile.name" />
         </div>
         <div class="col-3 pt-1 ps-3">
-          <template v-for="(type, typeIndex) in tile.types" :key="typeIndex">
-            <span
-              class="badge rounded-pill ps-3 me-1 bg-secondary d-inline-flex align-items-center justify-content-center"
-            >
-              <!-- consider refactoring this into a separate component -->
-              <div class="dropdown">
-                <button
-                  class="btn btn-sm btn-secondary p-0"
-                  @click="console.log('not implemented')"
-                  :id="'dropdown_' + tileIndex + '_' + typeIndex"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {{ type }}
-                </button>
-                <ul
-                  class="dropdown-menu"
-                  :aria-labelledby="'dropdown_' + tileIndex + '_' + typeIndex"
-                >
-                  <template
-                    v-for="(availableType, allTypesIndex) in world.getWorldData().config.tileTypes"
-                    :key="allTypesIndex"
-                  >
-                    <li v-if="availableType.name != type">
-                      <a class="dropdown-item" href="#" @click="console.log('not implemented')">{{
-                        availableType.name
-                      }}</a>
-                    </li>
-                  </template>
-                </ul>
-              </div>
-              <button href="#" class="btn btn-sm p-0 text-white ms-2">
-                <FontAwesomeIcon :icon="faTimesCircle" />
-              </button>
-            </span>
-          </template>
-          <span class="p-1"></span>
-          <span class="dropdown align-text-top">
-            <button
-              class="btn text-secondary p-0"
-              @click="console.log('not implemented')"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              :id="'dropdown_' + tileIndex + '_add'"
-            >
-              <FontAwesomeIcon :icon="faSquarePlus" />
-            </button>
-            <ul class="dropdown-menu" :aria-labelledby="'dropdown_' + tileIndex + '_add'">
-              <template
-                v-for="(availableType, allTypesIndex) in world.getWorldData().config.tileTypes"
-                :key="allTypesIndex"
-              >
-                <li v-if="!tile.types.includes(availableType.name)">
-                  <a class="dropdown-item" href="#" @click="console.log('not implemented!')">{{
-                    availableType.name
-                  }}</a>
-                </li>
-              </template>
-            </ul>
-          </span>
+          <LabelSelector
+            v-model="tile.types"
+            :labels="world.getWorldData().config.tileTypes.map((t) => t.name)"
+          />
         </div>
         <div class="col-6 d-flex">
           <div class="pe-2 pt-1">

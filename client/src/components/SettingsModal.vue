@@ -2,7 +2,7 @@
 // import { Modal } from 'bootstrap'
 import { ref, onMounted } from 'vue'
 import { useWorldStore } from '@/stores/world'
-import MyDropdown from '@/components/MyDropdown.vue'
+import MyDropdown from '@/components/generic/MyDropdown.vue'
 
 const worldStore = useWorldStore()
 

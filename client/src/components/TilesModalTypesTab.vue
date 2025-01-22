@@ -7,7 +7,7 @@ import type {
   PropertySchemaTypeName,
   UserDefinedType,
 } from '@common/dataTypes'
-import MyDropdown from '@/components/MyDropdown.vue'
+import MyDropdown from '@/components/generic/MyDropdown.vue'
 const world = useWorldStore()
 
 function addTileType() {
