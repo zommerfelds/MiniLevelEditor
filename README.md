@@ -57,7 +57,7 @@ To develop serverless mode, run `npm run client-dev-serverless`.
 - [ ] Paint multiple tiles at the same time
 - [ ] Show unselected layers above slightly transparent
 - [ ] Add a "base" tile type, to have properties every tile has
-- [ ] [WIP] More basic tools (e.g. eraser, move tile(s), selection) - missing: move selection
+- [x] More basic tools (e.g. eraser, move tile(s), selection) - missing: move selection
 - [ ] Support multiple tilesets
 - [ ] Randomize drawing (maybe: way to define brushes)
 - [ ] Add warning for old version

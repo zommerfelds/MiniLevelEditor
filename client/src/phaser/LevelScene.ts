@@ -17,9 +17,6 @@ export class LevelScene extends Scene {
   // For each layer, a 2D array with all the tiles:
   tiles: Array<Array<Array<Phaser.GameObjects.Image>>> = []
   // Used to render tiles on top of the map, e.g. for the move tool.
-  overlayTile?: Phaser.GameObjects.Image
-  overlayTile2?: Phaser.GameObjects.Rectangle
-  overlayTile3?: Phaser.GameObjects.Image
   oldDisplayWidth?: number
   oldScrollX?: number
   oldScrollY?: number
@@ -33,6 +30,7 @@ export class LevelScene extends Scene {
   cellHeight = 1
   renderedSelection?: { left: number; top: number; right: number; bottom: number }
   selectionToolGraphics?: Phaser.GameObjects.Graphics
+  overlayTiles: Array<Array<Phaser.GameObjects.Image>> = []
 
   constructor() {
     super({ key: 'MyScene' })
@@ -139,19 +137,15 @@ export class LevelScene extends Scene {
         }
       }
     }
-    this.overlayTile = this.add.image(0, 0, 'tiles')
-    this.overlayTile.setOrigin(0.5, 1)
-    this.overlayTile.visible = false
-    this.overlayTile.alpha = 0.7
-
-    this.overlayTile2 = this.add.rectangle(0, 0, this.cellWidth, this.cellHeight, 0x000000, 0.6)
-    this.overlayTile2.setOrigin(0.5, 1)
-    this.overlayTile2.visible = false
-
-    this.overlayTile3 = this.add.image(0, 0, 'tiles')
-    this.overlayTile3.setOrigin(0.5, 1)
-    this.overlayTile3.visible = false
-    this.overlayTile3.alpha = 0.7
+    this.overlayTiles = Array.from({ length: this.level!.width }, () =>
+      Array.from({ length: this.level!.height }, () => {
+        const overlay = this.add.image(0, 0, 'tiles')
+        overlay.setOrigin(0.5, 1)
+        overlay.visible = false
+        overlay.alpha = 0.7
+        return overlay
+      })
+    )
 
     this.addGrid(this.level.width, this.level.height, this.cellWidth, this.cellHeight)
 
@@ -279,6 +273,9 @@ export class LevelScene extends Scene {
         break
       case Tool.Select:
         this.select()
+        if (!mouseDown && this.tools.selectionToolRect) {
+          this.tools.selectedTool = Tool.Move
+        }
         break
     }
     if (!mouseDown) {
@@ -341,15 +338,15 @@ export class LevelScene extends Scene {
     this.setTileId(tilePos.x, tilePos.y, tileId)
   }
 
-  move(doneMove: boolean) {
-    // TODO: respect the current selection (e.g. move the entire selection)
-
-    const clearOverlays = () => {
-      this.overlayTile!.visible = false
-      this.overlayTile2!.visible = false
-      this.overlayTile3!.visible = false
+  clearOverlays() {
+    for (let x = 0; x < this.level!.width; x++) {
+      for (let y = 0; y < this.level!.height; y++) {
+        this.overlayTiles[x]![y]!.visible = false
+      }
     }
+  }
 
+  move(doneMove: boolean) {
     const startTilePos = this.worldToTile(this.dragStart!)
     const currentLayer = this.level?.layers[this.tools.selectedLayer]
 
@@ -371,47 +368,108 @@ export class LevelScene extends Scene {
       targetTilePos.y < 0 ||
       targetTilePos.y >= this.level.height
     ) {
-      clearOverlays()
+      this.clearOverlays()
       return
     }
 
-    const startTileId = currentLayer.data[startTilePos.x + startTilePos.y * this.level.width]!
-    const targetTileId = currentLayer.data[targetTilePos.x + targetTilePos.y * this.level.width]!
-    if (this.tilesetUtils.isEmptyTileIndex(startTileId)) return
+    const selectionRect = this.tools.selectionToolRect || {
+      left: startTilePos.x,
+      right: startTilePos.x + 1,
+      top: startTilePos.y,
+      bottom: startTilePos.y + 1,
+    }
+
+    const deltaX = targetTilePos.x - startTilePos.x
+    const deltaY = targetTilePos.y - startTilePos.y
 
     if (doneMove) {
-      clearOverlays()
-      if (this.tools.toolOptionMoveSwap) {
-        this.setTileId(startTilePos.x, startTilePos.y, targetTileId)
-      } else {
-        this.setTileId(startTilePos.x, startTilePos.y, -1)
-      }
-      this.setTileId(targetTilePos.x, targetTilePos.y, startTileId)
-    } else {
-      this.overlayTile!.visible = true
-      this.overlayTile!.setFrame(startTileId)
-      this.overlayTile!.x =
-        this.tiles[this.tools.selectedLayer]![targetTilePos.x]![targetTilePos.y]!.x
-      this.overlayTile!.y =
-        this.tiles[this.tools.selectedLayer]![targetTilePos.x]![targetTilePos.y]!.y
+      this.clearOverlays()
+      const tempTiles: Array<{ x: number; y: number; tileId: number }> = []
 
-      if (this.tools.toolOptionMoveSwap && !this.tilesetUtils.isEmptyTileIndex(targetTileId)) {
-        // TODO: This black layer looks bad. Better to add transparency to the actual object. But this would require refactoring the code to separate
-        //       the tiles from the real committed data.
-        this.overlayTile2!.visible = false
-        this.overlayTile3!.visible = true
-        this.overlayTile3!.setFrame(targetTileId)
-        this.overlayTile3!.x =
-          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.x
-        this.overlayTile3!.y =
-          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.y
-      } else {
-        this.overlayTile3!.visible = false
-        this.overlayTile2!.visible = true
-        this.overlayTile2!.x =
-          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.x
-        this.overlayTile2!.y =
-          this.tiles[this.tools.selectedLayer]![startTilePos.x]![startTilePos.y]!.y
+      // Store tiles in a temporary array
+      for (let x = selectionRect.left; x < selectionRect.right; x++) {
+        for (let y = selectionRect.top; y < selectionRect.bottom; y++) {
+          const tileId = currentLayer.data[x + y * this.level.width]!
+          if (!this.tilesetUtils.isEmptyTileIndex(tileId)) {
+            tempTiles.push({ x, y, tileId })
+            this.setTileId(x, y, -1) // Clear original position
+          }
+        }
+      }
+
+      if (this.tools.toolOptionMoveSwap) {
+        for (let x = selectionRect.left; x < selectionRect.right; x++) {
+          for (let y = selectionRect.top; y < selectionRect.bottom; y++) {
+            const targetX = x + deltaX
+            const targetY = y + deltaY
+            if (
+              targetX >= selectionRect.left &&
+              targetX < selectionRect.right &&
+              targetY >= selectionRect.top &&
+              targetY < selectionRect.bottom
+            ) {
+              continue // Overlapping area, assume empty
+            }
+            const targetTileId = currentLayer.data[targetX + targetY * this.level.width]!
+            if (!this.tilesetUtils.isEmptyTileIndex(targetTileId)) {
+              this.setTileId(x, y, targetTileId) // Swap back to original position
+              this.setTileId(targetX, targetY, -1) // Clear the target position
+            }
+          }
+        }
+      }
+
+      // Move tiles from temporary array to new position
+      for (const { x, y, tileId } of tempTiles) {
+        this.setTileId(x + deltaX, y + deltaY, tileId)
+      }
+
+      if (this.tools.selectionToolRect) {
+        this.tools.selectionToolRect = {
+          left: selectionRect.left + deltaX,
+          right: selectionRect.right + deltaX,
+          top: selectionRect.top + deltaY,
+          bottom: selectionRect.bottom + deltaY,
+        }
+      }
+    } else {
+      this.clearOverlays()
+      for (let x = selectionRect.left; x < selectionRect.right; x++) {
+        for (let y = selectionRect.top; y < selectionRect.bottom; y++) {
+          const tileId = currentLayer.data[x + y * this.level.width]!
+          if (!this.tilesetUtils.isEmptyTileIndex(tileId)) {
+            const overlay = this.overlayTiles[x + deltaX]![y + deltaY]!
+            overlay.setFrame(tileId)
+            overlay.x = this.tiles[this.tools.selectedLayer]![x + deltaX]![y + deltaY]!.x!
+            overlay.y = this.tiles[this.tools.selectedLayer]![x + deltaX]![y + deltaY]!.y!
+            overlay.visible = true
+          }
+        }
+      }
+
+      if (this.tools.toolOptionMoveSwap) {
+        for (let x = selectionRect.left; x < selectionRect.right; x++) {
+          for (let y = selectionRect.top; y < selectionRect.bottom; y++) {
+            const targetX = x + deltaX
+            const targetY = y + deltaY
+            if (
+              targetX >= selectionRect.left &&
+              targetX < selectionRect.right &&
+              targetY >= selectionRect.top &&
+              targetY < selectionRect.bottom
+            ) {
+              continue // Overlapping area, assume empty
+            }
+            const targetTileId = currentLayer.data[targetX + targetY * this.level.width]!
+            if (!this.tilesetUtils.isEmptyTileIndex(targetTileId)) {
+              const swapOverlay = this.overlayTiles[x]![y]!
+              swapOverlay.setFrame(targetTileId)
+              swapOverlay.x = this.tiles[this.tools.selectedLayer]![x]![y]!.x!
+              swapOverlay.y = this.tiles[this.tools.selectedLayer]![x]![y]!.y!
+              swapOverlay.visible = true
+            }
+          }
+        }
       }
     }
   }
