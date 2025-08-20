@@ -272,7 +272,7 @@ export class LevelScene extends Scene {
         this.move(!mouseDown)
         break
       case Tool.Select:
-        this.select()
+        this.select(mouseDown)
         if (!mouseDown && this.tools.selectionToolRect) {
           this.tools.selectedTool = Tool.Move
         }
@@ -474,7 +474,7 @@ export class LevelScene extends Scene {
     }
   }
 
-  select() {
+  select(mouseDown: boolean) {
     const startTilePos = this.worldToTile(this.dragStart!)
     const currentLayer = this.level?.layers[this.tools.selectedLayer]
 
@@ -498,11 +498,27 @@ export class LevelScene extends Scene {
     )
       return
 
-    this.tools.selectionToolRect = {
-      left: Math.min(startTilePos.x, targetTilePos.x),
-      right: Math.max(startTilePos.x, targetTilePos.x) + 1,
-      top: Math.min(startTilePos.y, targetTilePos.y),
-      bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
+    if (this.dragStart!.x === targetWorldPos!.x && this.dragStart!.y === targetWorldPos!.y) {
+      if (!mouseDown) {
+        if (this.tools.selectionToolRect) {
+          this.tools.selectionToolRect = undefined
+          return
+        } else {
+          this.tools.selectionToolRect = {
+            left: Math.min(startTilePos.x, targetTilePos.x),
+            right: Math.max(startTilePos.x, targetTilePos.x) + 1,
+            top: Math.min(startTilePos.y, targetTilePos.y),
+            bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
+          }
+        }
+      }
+    } else {
+      this.tools.selectionToolRect = {
+        left: Math.min(startTilePos.x, targetTilePos.x),
+        right: Math.max(startTilePos.x, targetTilePos.x) + 1,
+        top: Math.min(startTilePos.y, targetTilePos.y),
+        bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
+      }
     }
   }
 
