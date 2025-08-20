@@ -10,6 +10,7 @@ export class LevelScene extends Scene {
   lastDragPt?: Phaser.Math.Vector2 = undefined
   origToolBeforeDrag?: Tool = undefined
   dragStart?: Phaser.Math.Vector2 = undefined
+  movedDuringDrag: boolean = false
   levelUtils = new LevelUtils()
   world = useWorldStore()
   tools = useToolsStore()
@@ -258,6 +259,16 @@ export class LevelScene extends Scene {
         this.game.input.activePointer.position.x,
         this.game.input.activePointer.position.y
       )
+      this.movedDuringDrag = false
+    }
+    if (mouseDown) {
+      const worldPos = this.cameras.main.getWorldPoint(
+        this.game.input.activePointer.position.x,
+        this.game.input.activePointer.position.y
+      )
+      if (this.dragStart!.x !== worldPos.x || this.dragStart!.y !== worldPos.y) {
+        this.movedDuringDrag = true
+      }
     }
     if (this.dragStart === undefined) return
     switch (this.tools.selectedTool) {
@@ -498,27 +509,22 @@ export class LevelScene extends Scene {
     )
       return
 
-    if (this.dragStart!.x === targetWorldPos!.x && this.dragStart!.y === targetWorldPos!.y) {
+    const tileSelection = {
+      left: Math.min(startTilePos.x, targetTilePos.x),
+      right: Math.max(startTilePos.x, targetTilePos.x) + 1,
+      top: Math.min(startTilePos.y, targetTilePos.y),
+      bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
+    }
+    if (!this.movedDuringDrag) {
       if (!mouseDown) {
         if (this.tools.selectionToolRect) {
           this.tools.selectionToolRect = undefined
-          return
         } else {
-          this.tools.selectionToolRect = {
-            left: Math.min(startTilePos.x, targetTilePos.x),
-            right: Math.max(startTilePos.x, targetTilePos.x) + 1,
-            top: Math.min(startTilePos.y, targetTilePos.y),
-            bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
-          }
+          this.tools.selectionToolRect = tileSelection
         }
       }
     } else {
-      this.tools.selectionToolRect = {
-        left: Math.min(startTilePos.x, targetTilePos.x),
-        right: Math.max(startTilePos.x, targetTilePos.x) + 1,
-        top: Math.min(startTilePos.y, targetTilePos.y),
-        bottom: Math.max(startTilePos.y, targetTilePos.y) + 1,
-      }
+      this.tools.selectionToolRect = tileSelection
     }
   }
 
