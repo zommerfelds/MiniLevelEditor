@@ -22,7 +22,7 @@ const world = useWorldStore()
 
 watchEffect(() => {
   const warnText = 'Tool not fully implemented yet'
-  if (tools.selectedTool === Tool.Select || tools.selectedTool === Tool.Bucket) {
+  if (tools.selectedTool === Tool.Select) {
     tools.warningMessage = warnText
   } else if (tools.warningMessage === warnText) {
     tools.warningMessage = ''

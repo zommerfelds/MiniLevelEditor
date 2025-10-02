@@ -550,7 +550,40 @@ export class LevelScene extends Scene {
     const currentLayer = this.level?.layers[this.tools.selectedLayer]
     if (this.level === undefined || currentLayer === undefined || tilePos === undefined) return
 
-    console.log('bucket! TODO', tilePos, currentLayer)
+    // Get the target tile ID to replace
+    const width = this.level.width
+    const height = this.level.height
+    const data = currentLayer.data
+    const targetIndex = tilePos.x + tilePos.y * width
+    const targetTileId = data[targetIndex]
+    const newTileId = this.tools.selectedTile
+
+    // If the target tile is already the selected tile, do nothing
+    if (targetTileId === newTileId) return
+
+    // Helper to check bounds
+    const inBounds = (x: number, y: number) => x >= 0 && x < width && y >= 0 && y < height
+
+    // Flood fill using queue (BFS)
+    const queue: Array<{ x: number; y: number }> = [{ x: tilePos.x, y: tilePos.y }]
+    const visited = new Set<string>()
+
+    while (queue.length > 0) {
+      const { x, y } = queue.shift()!
+      const idx = x + y * width
+      if (!inBounds(x, y) || visited.has(`${x},${y}`)) continue
+      if (data[idx] !== targetTileId) continue
+
+      // Fill tile
+      this.setTileId(x, y, newTileId)
+      visited.add(`${x},${y}`)
+
+      // Add neighbors
+      queue.push({ x: x + 1, y })
+      queue.push({ x: x - 1, y })
+      queue.push({ x, y: y + 1 })
+      queue.push({ x, y: y - 1 })
+    }
   }
 
   setTileId(x: number, y: number, tileId: number) {
