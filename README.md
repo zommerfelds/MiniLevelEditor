@@ -71,7 +71,7 @@ To develop serverless mode, run `npm run client-dev-serverless`.
 - [ ] Fix `npm run client-type-check`
 - [ ] Unit test for loading (makes sure file is not modified)
 - [ ] Check validity of levels.json file (e.g. using https://github.com/gristlabs/ts-interface-checker)
-- [ ] Fill tool
+- [x] Fill tool
 - [ ] Copy paste
 - [ ] Change favicon
 - [ ] Select a tool when tile is selected (instead of keeping eraser)
