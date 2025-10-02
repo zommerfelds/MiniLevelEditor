@@ -7,6 +7,7 @@ export enum Tool {
   Erase,
   Move,
   Select,
+  Bucket,
 }
 
 // Local storage for all level data.

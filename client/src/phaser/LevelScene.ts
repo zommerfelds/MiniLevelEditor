@@ -96,6 +96,8 @@ export class LevelScene extends Scene {
     this.input.off('pointerdown')
     this.input.on('pointerdown', () => (document.activeElement as HTMLElement)?.blur())
 
+    this.input.on('pointerdown', this.onPointerDown, this)
+
     this.cellWidth = this.world.getWorldData().config.gridCellWidth
     this.cellHeight = this.world.getWorldData().config.gridCellHeight
 
@@ -299,6 +301,16 @@ export class LevelScene extends Scene {
     }
   }
 
+  onPointerDown(event: Phaser.Input.Pointer) {
+    if (event.button !== 0) return // Only handle left mouse button
+
+    switch (this.tools.selectedTool) {
+      case Tool.Bucket:
+        this.bucket()
+        break
+    }
+  }
+
   renderSelection() {
     if (this.tools.selectionToolRect === this.renderedSelection) return
 
@@ -327,23 +339,28 @@ export class LevelScene extends Scene {
     this.lastDragPt = this.game.input.activePointer.position.clone()
   }
 
-  draw() {
+  getMouseTilePos(): Phaser.Math.Vector2 | undefined {
+    if (!this.level) return undefined
     const worldPos = this.cameras.main.getWorldPoint(
       this.game.input.activePointer.position.x,
       this.game.input.activePointer.position.y
     )
     const tilePos = this.worldToTile(worldPos)
-
-    const currentLayer = this.level?.layers[this.tools.selectedLayer]
     if (
-      this.level === undefined ||
-      currentLayer === undefined ||
       tilePos.x < 0 ||
       tilePos.x >= this.level.width ||
       tilePos.y < 0 ||
       tilePos.y >= this.level.height
-    )
-      return
+    ) {
+      return undefined
+    }
+    return tilePos
+  }
+
+  draw() {
+    const tilePos = this.getMouseTilePos()
+    const currentLayer = this.level?.layers[this.tools.selectedLayer]
+    if (this.level === undefined || currentLayer === undefined || tilePos === undefined) return
 
     const tileId = this.tools.selectedTool === Tool.Erase ? -1 : this.tools.selectedTile // selectedTile is the index in this.world.getWorldData().config.tiles
     this.setTileId(tilePos.x, tilePos.y, tileId)
@@ -526,6 +543,14 @@ export class LevelScene extends Scene {
     } else {
       this.tools.selectionToolRect = tileSelection
     }
+  }
+
+  bucket() {
+    const tilePos = this.getMouseTilePos()
+    const currentLayer = this.level?.layers[this.tools.selectedLayer]
+    if (this.level === undefined || currentLayer === undefined || tilePos === undefined) return
+
+    console.log('bucket! TODO', tilePos, currentLayer)
   }
 
   setTileId(x: number, y: number, tileId: number) {

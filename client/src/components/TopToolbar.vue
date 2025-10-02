@@ -13,6 +13,7 @@ import {
   faEraser,
   faUpDownLeftRight,
   faVectorSquare,
+  faFillDrip,
 } from '@fortawesome/free-solid-svg-icons'
 import { watchEffect } from 'vue'
 
@@ -20,8 +21,8 @@ const tools = useToolsStore()
 const world = useWorldStore()
 
 watchEffect(() => {
-  const warnText = 'Selection tool not fully implemented yet'
-  if (tools.selectedTool === Tool.Select) {
+  const warnText = 'Tool not fully implemented yet'
+  if (tools.selectedTool === Tool.Select || tools.selectedTool === Tool.Bucket) {
     tools.warningMessage = warnText
   } else if (tools.warningMessage === warnText) {
     tools.warningMessage = ''
@@ -73,6 +74,11 @@ watchEffect(() => {
           :tool="Tool.Select"
           :icon="faVectorSquare"
           tooltipText="Selection tool"
+        />
+        <TopToolbarToolButton
+          :tool="Tool.Bucket"
+          :icon="faFillDrip"
+          tooltipText="Bucket tool"
         />
       </div>
 
