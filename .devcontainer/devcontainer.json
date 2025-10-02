@@ -8,5 +8,14 @@
       "label": "NodeJs backend server",
       "onAutoForward": "ignore"
     }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Vue.volar",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
   }
 }
